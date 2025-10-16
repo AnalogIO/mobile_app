@@ -115,3 +115,8 @@ app.*.map.json
 
 # Generated l10n files
 lib/l10n/gen/
+
+# Generated files by packages
+*.g.dart
+*.mocks.dart
+/lib/generated/
