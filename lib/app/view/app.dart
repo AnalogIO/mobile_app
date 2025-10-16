@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:router_test_app/app/view/details_screen.dart';
 import 'package:router_test_app/app/view/screen_with_next_page.dart';
+import 'package:router_test_app/settings/view/settings_screen.dart';
 
 final goRouter = GoRouter(
   initialLocation: '/login',
@@ -10,7 +11,7 @@ final goRouter = GoRouter(
     GoRoute(
       path: '/login',
       pageBuilder: (context, state) => const MaterialPage(
-        child: ScreenWithNextPage(label: 'LOGIN', nextPagePath: '/a'),
+        child: ScreenWithNextPage(label: 'Login', nextPagePath: '/a'),
       ),
     ),
     StatefulShellRoute.indexedStack(
@@ -24,14 +25,14 @@ final goRouter = GoRouter(
               path: '/a',
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: ScreenWithNextPage(
-                  label: 'A',
+                  label: 'Tickets',
                   nextPagePath: '/a/details',
                 ),
               ),
               routes: [
                 GoRoute(
                   path: 'details',
-                  builder: (_, _) => const DetailsScreen(label: 'A'),
+                  builder: (_, _) => const ReceiptsScreen(label: 'A'),
                 ),
               ],
             ),
@@ -43,16 +44,45 @@ final goRouter = GoRouter(
               path: '/b',
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: ScreenWithNextPage(
-                  label: 'B',
+                  label: 'Receipts',
                   nextPagePath: '/b/details',
                 ),
               ),
               routes: [
                 GoRoute(
                   path: 'details',
-                  builder: (context, state) => const DetailsScreen(label: 'B'),
+                  builder: (context, state) =>
+                      const ReceiptsScreen(label: 'Receipts'),
                 ),
               ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/c',
+              pageBuilder: (context, state) => const NoTransitionPage(
+                child: ScreenWithNextPage(
+                  label: 'Stats',
+                ),
+              ),
+              routes: [
+                GoRoute(
+                  path: 'details',
+                  builder: (context, state) =>
+                      const ReceiptsScreen(label: 'Stats'),
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/d',
+              pageBuilder: (context, state) =>
+                  const NoTransitionPage(child: SettingsScreen()),
             ),
           ],
         ),
@@ -72,7 +102,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: goRouter,
-      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF362619)),
+      ),
     );
   }
 }
@@ -127,9 +159,33 @@ class ScaffoldWithNavigationBar extends StatelessWidget {
       body: body,
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
-        destinations: const [
-          NavigationDestination(label: 'Section A', icon: Icon(Icons.home)),
-          NavigationDestination(label: 'Section B', icon: Icon(Icons.settings)),
+        destinations: [
+          NavigationDestination(
+            label: 'Tickets',
+            icon: selectedIndex == 0
+                ? const Icon(Icons.confirmation_num)
+                : const Icon(Icons.confirmation_num_outlined),
+          ),
+          NavigationDestination(
+            label: 'Receipts',
+            icon: Icon(
+              selectedIndex == 1 ? Icons.receipt : Icons.receipt_outlined,
+            ),
+          ),
+          NavigationDestination(
+            label: 'Stats',
+            icon: Icon(
+              selectedIndex == 2
+                  ? Icons.leaderboard
+                  : Icons.leaderboard_outlined,
+            ),
+          ),
+          NavigationDestination(
+            label: 'Settings',
+            icon: Icon(
+              selectedIndex == 3 ? Icons.settings : Icons.settings_outlined,
+            ),
+          ),
         ],
         onDestinationSelected: onDestinationSelected,
       ),

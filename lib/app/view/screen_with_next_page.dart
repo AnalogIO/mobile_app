@@ -4,12 +4,12 @@ import 'package:go_router/go_router.dart';
 class ScreenWithNextPage extends StatelessWidget {
   const ScreenWithNextPage({
     required this.label,
-    required this.nextPagePath,
+    String? nextPagePath,
     super.key,
-  });
+  }) : _nextPagePath = nextPagePath;
 
   final String label;
-  final String nextPagePath;
+  final String? _nextPagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +26,11 @@ class ScreenWithNextPage extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 4),
-            TextButton(
-              onPressed: () => context.go(nextPagePath),
-              child: const Text('Next page'),
-            ),
+            if (_nextPagePath != null)
+              TextButton(
+                onPressed: () => context.go(_nextPagePath),
+                child: const Text('Next page'),
+              ),
           ],
         ),
       ),

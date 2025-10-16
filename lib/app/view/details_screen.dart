@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 /// The details screen for either the A or B screen.
-class DetailsScreen extends StatefulWidget {
-  /// Constructs a [DetailsScreen].
-  const DetailsScreen({required this.label, super.key});
+class ReceiptsScreen extends StatefulWidget {
+  /// Constructs a [ReceiptsScreen].
+  const ReceiptsScreen({required this.label, super.key});
 
   /// The label to display in the center of the screen.
   final String label;
 
   @override
-  State<StatefulWidget> createState() => DetailsScreenState();
+  State<StatefulWidget> createState() => ReceiptsScreenState();
 }
 
-/// The state for DetailsScreen
-class DetailsScreenState extends State<DetailsScreen> {
+/// The state for ReceiptsScreen
+class ReceiptsScreenState extends State<ReceiptsScreen> {
   int _counter = 0;
 
   @override
