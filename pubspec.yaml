@@ -15,10 +15,11 @@ dependencies:
     sdk: flutter
   go_router: ^16.2.1
   intl: ^0.20.2
-
-  # swagger generator
-  chopper: ^8.0.3
-  json_annotation: ^4.9.0
+  chopper: ^8.0.3 # swagger generator
+  json_annotation: ^4.9.0 # swagger generator
+  fpdart: ^1.1.1
+  logger: ^2.6.2
+  equatable: ^2.0.7
 
 dev_dependencies:
   bloc_test: ^10.0.0
@@ -26,12 +27,10 @@ dev_dependencies:
     sdk: flutter
   mocktail: ^1.0.4
   very_good_analysis: ^9.0.0
-
-  # swagger generator
-  build_runner: ^2.4.9
-  chopper_generator: ^8.0.3
-  json_serializable: ^6.8.0
-  swagger_dart_code_generator: ^3.0.1
+  build_runner: ^2.4.9 # swagger generator
+  chopper_generator: ^8.0.3 # swagger generator
+  json_serializable: ^6.8.0 # swagger generator
+  swagger_dart_code_generator: ^3.0.1 # swagger generator
 
 flutter:
   generate: true
