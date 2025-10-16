@@ -164,23 +164,21 @@ class ScaffoldWithNavigationBar extends StatelessWidget {
           ),
           NavigationDestination(
             label: 'Receipts',
-            icon: Icon(
-              selectedIndex == 1 ? Icons.receipt : Icons.receipt_outlined,
-            ),
+            icon: selectedIndex == 1
+                ? const Icon(Icons.receipt)
+                : const Icon(Icons.receipt_outlined),
           ),
           NavigationDestination(
             label: 'Stats',
-            icon: Icon(
-              selectedIndex == 2
-                  ? Icons.leaderboard
-                  : Icons.leaderboard_outlined,
-            ),
+            icon: selectedIndex == 2
+                ? const Icon(Icons.leaderboard)
+                : const Icon(Icons.leaderboard_outlined),
           ),
           NavigationDestination(
             label: 'Settings',
-            icon: Icon(
-              selectedIndex == 3 ? Icons.settings : Icons.settings_outlined,
-            ),
+            icon: selectedIndex == 3
+                ? const Icon(Icons.settings)
+                : const Icon(Icons.settings_outlined),
           ),
         ],
         onDestinationSelected: onDestinationSelected,
