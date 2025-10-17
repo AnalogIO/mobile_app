@@ -12,8 +12,10 @@ enum TextFieldType { text, email, passcode }
 class FormBase extends StatelessWidget {
   const FormBase({
     required this.inputValidators,
-    this.title,
     required this.label,
+    required this.onSubmit,
+    super.key,
+    this.title,
     this.hint,
     this.initialValue = '',
     this.type = TextFieldType.text,
@@ -21,7 +23,6 @@ class FormBase extends StatelessWidget {
     this.debounce = false,
     this.showCheckMark = false,
     this.autoSubmitValidInput = false,
-    required this.onSubmit,
   });
 
   /// Validates the input whenever it changes.
