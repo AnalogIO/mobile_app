@@ -1,7 +1,7 @@
+import 'package:cafe_analog_app/core/failures.dart';
 import 'package:chopper/chopper.dart' show Response;
 import 'package:fpdart/fpdart.dart';
 import 'package:logger/logger.dart';
-import 'package:router_test_app/core/failures.dart';
 
 class NetworkRequestExecutor {
   const NetworkRequestExecutor({required this.logger});

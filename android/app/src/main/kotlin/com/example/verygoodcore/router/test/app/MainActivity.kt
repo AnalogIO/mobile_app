@@ -1,4 +1,4 @@
-package com.example.verygoodcore.router_test_app
+package com.example.verygoodcore.cafe_analog_app
 
 import io.flutter.embedding.android.FlutterActivity
 

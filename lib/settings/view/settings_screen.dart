@@ -1,6 +1,6 @@
+import 'package:cafe_analog_app/core/widgets/analog_app_bar.dart';
+import 'package:cafe_analog_app/core/widgets/list_group_title.dart';
 import 'package:flutter/material.dart';
-import 'package:router_test_app/core/widgets/analog_app_bar.dart';
-import 'package:router_test_app/core/widgets/list_group_title.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});

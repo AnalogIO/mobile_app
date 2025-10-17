@@ -1,9 +1,9 @@
+import 'package:cafe_analog_app/app/view/details_screen.dart';
+import 'package:cafe_analog_app/app/view/screen_with_next_page.dart';
+import 'package:cafe_analog_app/login/login_screen.dart';
+import 'package:cafe_analog_app/settings/view/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:router_test_app/app/view/details_screen.dart';
-import 'package:router_test_app/app/view/screen_with_next_page.dart';
-import 'package:router_test_app/login/login_screen.dart';
-import 'package:router_test_app/settings/view/settings_screen.dart';
 
 final goRouter = GoRouter(
   initialLocation: '/login',

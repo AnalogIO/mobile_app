@@ -92,7 +92,7 @@ This project relies on [flutter_localizations][flutter_localizations_link] and f
 3. Use the new string
 
 ```dart
-import 'package:router_test_app/l10n/l10n.dart';
+import 'package:cafe_analog_app/l10n/l10n.dart';
 
 @override
 Widget build(BuildContext context) {

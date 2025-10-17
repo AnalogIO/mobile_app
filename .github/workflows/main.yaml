@@ -1,4 +1,4 @@
-name: router_test_app
+name: cafe_analog_app
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
