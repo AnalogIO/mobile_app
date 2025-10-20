@@ -4,9 +4,10 @@ import 'package:router_test_app/app/view/details_screen.dart';
 import 'package:router_test_app/app/view/screen_with_next_page.dart';
 import 'package:router_test_app/login/login_screen.dart';
 import 'package:router_test_app/settings/view/settings_screen.dart';
+import 'package:router_test_app/stats/view/stats_screen.dart';
 
 final goRouter = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/stats',
   debugLogDiagnostics: true,
   routes: [
     GoRoute(
@@ -21,11 +22,11 @@ final goRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/a',
+              path: '/tickets',
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: ScreenWithNextPage(
                   label: 'Tickets',
-                  nextPagePath: '/a/details',
+                  nextPagePath: '/tickets/details',
                 ),
               ),
               routes: [
@@ -40,11 +41,11 @@ final goRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/b',
+              path: '/receipts',
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: ScreenWithNextPage(
                   label: 'Receipts',
-                  nextPagePath: '/b/details',
+                  nextPagePath: '/receipts/details',
                 ),
               ),
               routes: [
@@ -60,26 +61,16 @@ final goRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/c',
-              pageBuilder: (context, state) => const NoTransitionPage(
-                child: ScreenWithNextPage(
-                  label: 'Stats',
-                ),
-              ),
-              routes: [
-                GoRoute(
-                  path: 'details',
-                  builder: (context, state) =>
-                      const ReceiptsScreen(label: 'Stats'),
-                ),
-              ],
+              path: '/stats',
+              pageBuilder: (context, state) =>
+                  const NoTransitionPage(child: StatsScreen()),
             ),
           ],
         ),
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/d',
+              path: '/settings',
               pageBuilder: (context, state) =>
                   const NoTransitionPage(child: SettingsScreen()),
             ),
