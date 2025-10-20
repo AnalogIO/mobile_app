@@ -7,9 +7,10 @@ targets:
     builders:
       swagger_dart_code_generator:
         options:
-          input_folder: 'swagger/'
-          output_folder: 'lib/generated/api/'
+          input_folder: "swagger/"
+          output_folder: "lib/generated/api/"
           with_base_url: false
           separate_models: true
           enums_case_sensitive: false
           include_if_null: true
+          cut_from_model_names: "ApiV[0-9]"
