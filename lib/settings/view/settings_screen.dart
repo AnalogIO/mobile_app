@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:router_test_app/core/widgets/analog_app_bar.dart';
-import 'package:router_test_app/core/widgets/list_group_title.dart';
+import 'package:router_test_app/core/widgets/components/section_title.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -11,7 +11,7 @@ class SettingsScreen extends StatelessWidget {
       appBar: const AnalogAppBar(title: 'Settings'),
       body: ListView(
         children: const <Widget>[
-          ListGroupTitle(title: 'Account'),
+          SectionTitle('Account'),
           ListTile(
             leading: Icon(Icons.email_outlined),
             title: Text('Email'),
@@ -37,7 +37,7 @@ class SettingsScreen extends StatelessWidget {
             leading: Icon(Icons.logout_outlined),
             title: Text('Log out'),
           ),
-          ListGroupTitle(title: 'About'),
+          SectionTitle('About'),
           ListTile(
             leading: Icon(Icons.storefront_outlined),
             title: Text('Opening hours'),
@@ -52,7 +52,7 @@ class SettingsScreen extends StatelessWidget {
             title: Text('Contact us'),
             subtitle: Text('Report a bug or give us feedback'),
           ),
-          ListGroupTitle(title: 'Legal'),
+          SectionTitle('Legal'),
           ListTile(
             leading: Icon(Icons.privacy_tip_outlined),
             title: Text('Privacy policy'),
@@ -61,7 +61,7 @@ class SettingsScreen extends StatelessWidget {
             leading: Icon(Icons.code),
             title: Text('Credits and licenses'),
           ),
-          ListGroupTitle(title: 'Danger zone'),
+          SectionTitle('Danger zone'),
           ListTile(
             leading: Icon(Icons.delete_outline),
             iconColor: Colors.red,

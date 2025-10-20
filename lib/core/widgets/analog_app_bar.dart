@@ -15,7 +15,7 @@ class AnalogAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(title),
       titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w900,
         fontSize: 25,
       ),
       centerTitle: false,
