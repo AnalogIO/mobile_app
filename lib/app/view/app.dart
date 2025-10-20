@@ -2,6 +2,7 @@ import 'package:cafe_analog_app/app/view/details_screen.dart';
 import 'package:cafe_analog_app/app/view/screen_with_next_page.dart';
 import 'package:cafe_analog_app/login/login_screen.dart';
 import 'package:cafe_analog_app/settings/view/settings_screen.dart';
+import 'package:cafe_analog_app/stats/view/stats_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

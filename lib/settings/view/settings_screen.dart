@@ -1,5 +1,5 @@
 import 'package:cafe_analog_app/core/widgets/analog_app_bar.dart';
-import 'package:cafe_analog_app/core/widgets/list_group_title.dart';
+import 'package:cafe_analog_app/core/widgets/components/section_title.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
