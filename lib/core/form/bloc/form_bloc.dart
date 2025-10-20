@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:cafe_analog_app/core/form/debouncing.dart';
+import 'package:cafe_analog_app/core/form/validator/input_validator.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:router_test_app/core/form/debouncing.dart';
-import 'package:router_test_app/core/form/validator/input_validator.dart';
 
 part 'form_event.dart';
 part 'form_state.dart';

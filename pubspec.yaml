@@ -1,5 +1,5 @@
-name: router_test_app
-description: A Very Good Project created by Very Good CLI.
+name: cafe_analog_app
+description: A coffeecard app for Café Analog.
 version: 1.0.0+1
 publish_to: none
 

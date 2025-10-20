@@ -90,11 +90,11 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example.verygoodcore.router-test-app" "\0"
-            VALUE "FileDescription", "router_test_app" "\0"
+            VALUE "FileDescription", "cafe_analog_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "router_test_app" "\0"
+            VALUE "InternalName", "cafe_analog_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example.verygoodcore.router-test-app. All rights reserved." "\0"
-            VALUE "OriginalFilename", "router_test_app.exe" "\0"
+            VALUE "OriginalFilename", "cafe_analog_app.exe" "\0"
             VALUE "ProductName", "Router Test App" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END

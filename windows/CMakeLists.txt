@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(router_test_app LANGUAGES CXX)
+project(cafe_analog_app LANGUAGES CXX)
 
-set(BINARY_NAME "router_test_app")
+set(BINARY_NAME "cafe_analog_app")
 
 cmake_policy(SET CMP0063 NEW)
 

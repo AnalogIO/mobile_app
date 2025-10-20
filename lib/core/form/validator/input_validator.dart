@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:cafe_analog_app/core/form/validator/email_is_valid.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:router_test_app/core/form/validator/email_is_valid.dart';
 
 part 'input_validator_helpers.dart';
 

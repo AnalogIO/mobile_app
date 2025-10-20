@@ -1,8 +1,8 @@
+import 'package:cafe_analog_app/counter/counter.dart';
+import 'package:cafe_analog_app/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:router_test_app/counter/counter.dart';
-import 'package:router_test_app/l10n/l10n.dart';
 
 class CounterPage extends StatelessWidget {
   const CounterPage({super.key});
