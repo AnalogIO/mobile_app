@@ -76,9 +76,9 @@ class SettingsScreen extends StatelessWidget {
         const SectionTitle('Danger zone'),
         ListTile(
           leading: const Icon(Icons.delete_outline),
-          iconColor: Colors.red,
           title: const Text('Delete my account'),
-          textColor: Colors.red,
+          iconColor: Theme.of(context).colorScheme.error,
+          textColor: Theme.of(context).colorScheme.error,
           onTap: () {},
         ),
       ],
