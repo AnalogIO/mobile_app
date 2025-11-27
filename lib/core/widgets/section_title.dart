@@ -8,16 +8,13 @@ class SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8, left: 16, right: 16, top: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Text(
         title,
-        style:
-            Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
       ),
     );
   }

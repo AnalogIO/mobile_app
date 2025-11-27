@@ -30,7 +30,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="cafeanalog" />
-                <data android:host="yourDomain.com" />
+                <data android:host="cafeanalog.dk" />
 
                 <data android:pathPrefix="/claim-voucher/" />
                 <data android:pathPrefix="/verify-mobilepay/" />

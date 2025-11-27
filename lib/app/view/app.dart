@@ -4,6 +4,8 @@ import 'package:cafe_analog_app/login/login_screen.dart';
 import 'package:cafe_analog_app/login/secret_page.dart';
 import 'package:cafe_analog_app/settings/view/settings_screen.dart';
 import 'package:cafe_analog_app/stats/view/stats_screen.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets_screen.dart';
+import 'package:cafe_analog_app/tickets/tickets_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -31,12 +33,13 @@ final goRouter = GoRouter(
             GoRoute(
               path: '/tickets',
               pageBuilder: (context, state) => const NoTransitionPage(
-                child: ScreenWithNextPage(
-                  label: 'Tickets',
-                  nextPagePath: '/tickets/details',
-                ),
+                child: TicketsScreen(),
               ),
               routes: [
+                GoRoute(
+                  path: 'buy',
+                  builder: (_, _) => const BuyTicketsScreen(),
+                ),
                 GoRoute(
                   path: 'details',
                   builder: (_, _) => const ReceiptsScreen(label: 'A'),
@@ -96,7 +99,10 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: goRouter,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF362619)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF362619),
+          brightness: Brightness.dark,
+        ),
       ),
     );
   }

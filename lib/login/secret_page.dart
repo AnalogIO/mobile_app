@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/core/widgets/analog_app_bar.dart';
+import 'package:cafe_analog_app/core/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 
 class SecretScreen extends StatelessWidget {
