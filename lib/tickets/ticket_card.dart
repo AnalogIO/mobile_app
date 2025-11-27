@@ -44,16 +44,16 @@ class TicketCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Icon(
+                    Icons.local_cafe,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
                   Text(
-                    '$clipsLeft clips left',
+                    '$clipsLeft ticket${clipsLeft == 1 ? '' : 's'} left',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSecondary,
                       fontSize: 16,
                     ),
-                  ),
-                  Icon(
-                    Icons.local_cafe,
-                    color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ],
               ),

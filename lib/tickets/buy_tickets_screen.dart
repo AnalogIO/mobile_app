@@ -1,5 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/screen.dart';
+import 'package:cafe_analog_app/tickets/products.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BuyTicketsScreen extends StatelessWidget {
   const BuyTicketsScreen({super.key});
@@ -8,43 +10,21 @@ class BuyTicketsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Screen(
       name: 'Buy tickets',
-      children: [
-        ListTile(
-          leading: const Icon(Icons.local_cafe),
-          title: const Text('Fancy'),
-          subtitle: const Text('5 tickets • 150 kr'),
+      children: products.map((product) {
+        return ListTile(
+          title: Text(product.title),
+          subtitle: Text(
+            '${product.noTickets} tickets • ${product.priceDKK} kr',
+          ),
           trailing: const Icon(Icons.chevron_right),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.local_cafe),
-          title: const Text('Large'),
-          subtitle: const Text('5 tickets • 100 kr'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.local_cafe),
-          title: const Text('Small'),
-          subtitle: const Text('5 tickets • 50 kr'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.local_cafe),
-          title: const Text('Filter'),
-          subtitle: const Text('10 tickets • 110 kr'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.local_cafe),
-          title: const Text('Tea'),
-          subtitle: const Text('10 tickets • 100 kr'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () {},
-        ),
-      ],
+          onTap: () {
+            context.push(
+              '/tickets/buy/ticket/${product.title}',
+              extra: product,
+            );
+          },
+        );
+      }).toList(),
     );
   }
 }

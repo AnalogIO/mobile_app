@@ -5,12 +5,14 @@ import 'package:cafe_analog_app/login/secret_page.dart';
 import 'package:cafe_analog_app/settings/view/settings_screen.dart';
 import 'package:cafe_analog_app/stats/view/stats_screen.dart';
 import 'package:cafe_analog_app/tickets/buy_tickets_screen.dart';
+import 'package:cafe_analog_app/tickets/product.dart';
+import 'package:cafe_analog_app/tickets/ticket_detail_screen.dart';
 import 'package:cafe_analog_app/tickets/tickets_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final goRouter = GoRouter(
-  initialLocation: '/stats',
+  initialLocation: '/tickets',
   debugLogDiagnostics: true,
   routes: [
     GoRoute(
@@ -39,6 +41,18 @@ final goRouter = GoRouter(
                 GoRoute(
                   path: 'buy',
                   builder: (_, _) => const BuyTicketsScreen(),
+                  routes: [
+                    GoRoute(
+                      path: 'ticket/:id',
+                      pageBuilder: (context, state) {
+                        final product = state.extra! as Product;
+                        return MaterialPage(
+                          fullscreenDialog: true,
+                          child: TicketDetailScreen(product: product),
+                        );
+                      },
+                    ),
+                  ],
                 ),
                 GoRoute(
                   path: 'details',
@@ -101,7 +115,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF362619),
-          brightness: Brightness.dark,
+          brightness: Brightness.light,
         ),
       ),
     );

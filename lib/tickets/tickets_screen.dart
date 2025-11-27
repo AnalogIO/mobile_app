@@ -19,18 +19,13 @@ class TicketsScreen extends StatelessWidget {
       children: [
         const TicketCard(
           name: 'Fancy',
-          clipsLeft: 2,
+          clipsLeft: 4,
           backgroundImage: 'assets/images/ticket_fancy.png',
         ),
         const TicketCard(
-          name: 'Fancy',
-          clipsLeft: 2,
-          backgroundImage: 'assets/images/ticket_fancy.png',
-        ),
-        const TicketCard(
-          name: 'Fancy',
-          clipsLeft: 2,
-          backgroundImage: 'assets/images/ticket_fancy.png',
+          name: 'Filter',
+          clipsLeft: 1,
+          backgroundImage: 'assets/images/ticket_filter.png',
         ),
         ListTile(
           leading: const Icon(Icons.local_cafe),
