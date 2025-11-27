@@ -17,12 +17,12 @@ class FormState extends Equatable {
 
   @override
   List<Object?> get props => [
-        loading,
-        text,
-        canSubmit,
-        shouldDisplayError,
-        error,
-      ];
+    loading,
+    text,
+    canSubmit,
+    shouldDisplayError,
+    error,
+  ];
 
   FormState copyWith({
     bool? loading,
