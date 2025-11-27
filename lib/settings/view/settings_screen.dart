@@ -1,6 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/core/widgets/section_title.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -18,11 +19,17 @@ class SettingsScreen extends StatelessWidget {
           subtitle: const Text('Tap to change'),
           onTap: () {},
         ),
-        const ListTile(
-          enabled: false,
-          leading: Icon(Icons.person),
-          title: Text('User ID'),
-          subtitle: Text('1234'),
+        ListTile(
+          leading: const Icon(Icons.person),
+          title: const Text('User ID'),
+          subtitle: const Text('1234'),
+          trailing: const Icon(Icons.copy, size: 20),
+          onTap: () {
+            Clipboard.setData(const ClipboardData(text: '1234'));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('User ID copied to clipboard')),
+            );
+          },
         ),
         ListTile(
           leading: const Icon(Icons.card_giftcard),
