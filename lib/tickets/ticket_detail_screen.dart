@@ -60,6 +60,7 @@ class TicketDetailScreen extends StatelessWidget {
               ),
             ),
           ),
+          // TODO(marfavi): This can proabbly be simplified
           SliverFillRemaining(
             hasScrollBody: false,
             child: Align(
