@@ -5,7 +5,7 @@ import 'package:gap/gap.dart';
 
 class LeaderboardListEntry extends StatelessWidget {
   const LeaderboardListEntry({
-    required this.id,
+    required this.userId,
     required this.name,
     required this.score,
     required this.rank,
@@ -15,13 +15,13 @@ class LeaderboardListEntry extends StatelessWidget {
 
   // TODO(marfavi): Is placeholder needed?
   const LeaderboardListEntry.placeholder({super.key})
-    : id = 0,
+    : userId = 0,
       name = 'placeholder',
       score = 0,
       rank = 10,
       isYou = false,
       isPlaceholder = true;
-  final int id;
+  final int userId;
   final String name;
   final int score;
   final int rank;
@@ -33,14 +33,15 @@ class LeaderboardListEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      // tileColor: isYou ? Colors.yellow.withAlpha(64) : null,
-      tileColor: isYou ? Theme.of(context).colorScheme.primaryContainer : null,
+      tileColor: isYou
+          ? Theme.of(context).colorScheme.surfaceContainerHighest
+          : null,
       leading: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           LeaderboardRankMedal(rank),
           const Gap(16),
-          UserIcon.small(id: id),
+          UserIcon.small(id: userId),
         ],
       ),
       title: Text(

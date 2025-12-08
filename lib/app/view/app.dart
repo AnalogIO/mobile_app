@@ -1,12 +1,12 @@
-import 'package:cafe_analog_app/app/view/details_screen.dart';
-import 'package:cafe_analog_app/app/view/screen_with_next_page.dart';
+import 'package:cafe_analog_app/buy_tickets/buy_tickets_screen.dart';
+import 'package:cafe_analog_app/buy_tickets/product.dart';
+import 'package:cafe_analog_app/buy_tickets/ticket_detail_screen.dart';
 import 'package:cafe_analog_app/login/login_screen.dart';
 import 'package:cafe_analog_app/login/secret_page.dart';
+import 'package:cafe_analog_app/receipts/receipts_screen.dart';
+import 'package:cafe_analog_app/redeem_voucher/redeem_voucher_screen.dart';
 import 'package:cafe_analog_app/settings/view/settings_screen.dart';
 import 'package:cafe_analog_app/stats/view/stats_screen.dart';
-import 'package:cafe_analog_app/tickets/buy_tickets_screen.dart';
-import 'package:cafe_analog_app/tickets/product.dart';
-import 'package:cafe_analog_app/tickets/ticket_detail_screen.dart';
 import 'package:cafe_analog_app/tickets/tickets_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -55,8 +55,10 @@ final goRouter = GoRouter(
                   ],
                 ),
                 GoRoute(
-                  path: 'details',
-                  builder: (_, _) => const ReceiptsScreen(label: 'A'),
+                  path: 'redeem_voucher',
+                  pageBuilder: (context, state) => const MaterialPage(
+                    child: RedeemVoucherScreen(),
+                  ),
                 ),
               ],
             ),
@@ -67,16 +69,18 @@ final goRouter = GoRouter(
             GoRoute(
               path: '/receipts',
               pageBuilder: (context, state) => const NoTransitionPage(
-                child: ScreenWithNextPage(
-                  label: 'Receipts',
-                  nextPagePath: '/receipts/details',
-                ),
+                child: ReceiptsScreen(),
               ),
               routes: [
                 GoRoute(
-                  path: 'details',
+                  path: 'purchase_receipt/:id',
                   builder: (context, state) =>
-                      const ReceiptsScreen(label: 'Receipts'),
+                      Container(), // TODO(marfavi): Implement receipt screen
+                ),
+                GoRoute(
+                  path: 'swipe_receipt/:id',
+                  builder: (context, state) =>
+                      Container(), // TODO(marfavi): Implement receipt screen
                 ),
               ],
             ),
@@ -105,20 +109,70 @@ final goRouter = GoRouter(
   ],
 );
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  // TODO(marfavi): Remove theme switching when all widgets support system theme
+  Brightness _brightness = Brightness.light;
+
+  void _setBrightness(Brightness brightness) {
+    setState(() {
+      _brightness = brightness;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: goRouter,
       theme: ThemeData(
+        brightness: _brightness,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF362619),
-          brightness: Brightness.light,
+          brightness: _brightness,
+          // brightness: Brightness.dark,
+          // dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
+          seedColor: const Color(0xFF785B38),
+          // seedColor: const Color(0xFF362619), // GOOD
+          // primary: const Color(0xFF785B38),
+          // surface: const Color(0xFFF9F8F2),
+          // surfaceContainer: const Color(0xFFF0E8D8),
+          // secondaryContainer: const Color(0xFFE9D4B7),
         ),
       ),
+      builder: (context, child) {
+        return AppBrightnessProvider(
+          onBrightnessChanged: _setBrightness,
+          child: child!,
+        );
+      },
     );
+  }
+}
+
+class AppBrightnessProvider extends InheritedWidget {
+  const AppBrightnessProvider({
+    required this.onBrightnessChanged,
+    required super.child,
+    super.key,
+  });
+
+  final void Function(Brightness) onBrightnessChanged;
+
+  static AppBrightnessProvider of(BuildContext context) {
+    final result = context
+        .dependOnInheritedWidgetOfExactType<AppBrightnessProvider>();
+    assert(result != null, 'No AppBrightnessProvider found in context');
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(AppBrightnessProvider oldWidget) {
+    return onBrightnessChanged != oldWidget.onBrightnessChanged;
   }
 }
 

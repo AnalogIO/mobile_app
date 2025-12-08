@@ -1,5 +1,5 @@
 import 'package:cafe_analog_app/core/widgets/screen.dart';
-import 'package:cafe_analog_app/tickets/ticket_card.dart';
+import 'package:cafe_analog_app/tickets/my_tickets_section.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,20 +13,11 @@ class TicketsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Screen(
+    return Screen.listView(
       name: 'Tickets',
       onRefresh: _refreshTickets,
       children: [
-        const TicketCard(
-          name: 'Fancy',
-          clipsLeft: 4,
-          backgroundImage: 'assets/images/ticket_fancy.png',
-        ),
-        const TicketCard(
-          name: 'Filter',
-          clipsLeft: 1,
-          backgroundImage: 'assets/images/ticket_filter.png',
-        ),
+        const MyTicketsSection(),
         ListTile(
           leading: const Icon(Icons.local_cafe),
           title: const Text('Buy more tickets'),
@@ -37,7 +28,7 @@ class TicketsScreen extends StatelessWidget {
           leading: const Icon(Icons.card_giftcard),
           title: const Text('Redeem a code'),
           trailing: const Icon(Icons.chevron_right),
-          onTap: () {},
+          onTap: () => context.push('/tickets/redeem_voucher'),
         ),
       ],
     );

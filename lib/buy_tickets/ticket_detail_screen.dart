@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class TicketDetailScreen extends StatelessWidget {
-  const TicketDetailScreen({
-    required this.product,
-    super.key,
-  });
+  const TicketDetailScreen({required this.product, super.key});
 
   final Product product;
 

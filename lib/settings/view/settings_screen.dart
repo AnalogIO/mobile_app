@@ -9,7 +9,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Screen(
+    return Screen.listView(
       name: 'Settings',
       children: [
         const SectionTitle('Account'),

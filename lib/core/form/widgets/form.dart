@@ -1,13 +1,12 @@
 import 'package:cafe_analog_app/core/form/bloc/form_bloc.dart';
 import 'package:cafe_analog_app/core/form/validator/input_validator.dart';
 import 'package:flutter/material.dart' hide FormState;
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 part 'form_text_field.dart';
 
-enum TextFieldType { text, email, passcode }
+enum TextFieldType { text, email }
 
 class FormBase extends StatelessWidget {
   const FormBase({
@@ -70,9 +69,10 @@ class FormBase extends StatelessWidget {
   @override
   Widget build(BuildContext _) {
     return BlocProvider(
-      create: (_) =>
-          FormBloc(validators: inputValidators, debounce: debounce)
-            ..add(FormValidateStarted(input: initialValue)),
+      create: (_) {
+        return FormBloc(validators: inputValidators, debounce: debounce)
+          ..add(FormValidateStarted(input: initialValue));
+      },
       child: BlocConsumer<FormBloc, FormState>(
         listenWhen: (_, current) => autoSubmitValidInput && current.canSubmit,
         listener: (_, state) => onSubmit(state.text),
@@ -107,7 +107,7 @@ class FormBase extends StatelessWidget {
                     maxLength: maxLength,
                     loading: state.loading,
                     showCheckMark: state.canSubmit && showCheckMark,
-                    type: type,
+                    textFieldType: type,
                   ),
                 ],
               ),

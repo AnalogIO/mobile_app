@@ -1,5 +1,6 @@
-import 'package:cafe_analog_app/tickets/product.dart';
+import 'package:cafe_analog_app/buy_tickets/product.dart';
 
+// TODO(marfavi): Get products from backend
 const products = [
   Product(
     title: 'Fancy',
