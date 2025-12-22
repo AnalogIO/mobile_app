@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/core/form.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:flutter/material.dart';
 
@@ -8,11 +9,16 @@ class RedeemVoucherScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Screen.withBody(
       name: 'Redeem voucher',
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: TextField(
-          decoration: InputDecoration(labelText: 'Voucher code'),
-        ),
+      body: AnalogForm(
+        labelText: 'Voucher code',
+        submitText: 'Redeem',
+        errorMessage: 'Please enter a voucher code',
+        onSubmit: (value) {
+          // TODO(marfavi): Handle actual voucher code submission
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Redeemed voucher code: $value')),
+          );
+        },
       ),
     );
   }
