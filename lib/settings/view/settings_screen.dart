@@ -14,12 +14,6 @@ class SettingsScreen extends StatelessWidget {
       children: [
         const SectionTitle('Account'),
         ListTile(
-          leading: const Icon(Icons.password),
-          title: const Text('Passcode'),
-          subtitle: const Text('Tap to change'),
-          onTap: () {},
-        ),
-        ListTile(
           leading: const Icon(Icons.person),
           title: const Text('User ID'),
           subtitle: const Text('1234'),
@@ -32,11 +26,6 @@ class SettingsScreen extends StatelessWidget {
           },
         ),
         ListTile(
-          leading: const Icon(Icons.card_giftcard),
-          title: const Text('Redeem voucher'),
-          onTap: () {},
-        ),
-        ListTile(
           leading: const Icon(Icons.logout_outlined),
           title: const Text('Log out'),
           onTap: () {},
@@ -46,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.storefront_outlined),
           title: const Text('Opening hours'),
-          subtitle: const Text('Mondays: 08:00-16:00'),
+          subtitle: const Text('Mondays: 08:00-15:30'),
           onTap: () {},
         ),
         ListTile(
