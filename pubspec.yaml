@@ -17,7 +17,7 @@ dependencies:
   intl: ^0.20.2
   chopper: ^8.0.3 # swagger generator
   json_annotation: ^4.9.0 # swagger generator
-  fpdart: ^1.1.1
+  fpdart: ^1.2.0
   logger: ^2.6.2
   equatable: ^2.0.7
   gap: ^3.0.1
