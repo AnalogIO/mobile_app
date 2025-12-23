@@ -17,7 +17,7 @@ class ReceiptsListEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     final title = isSwipe
         ? 'Swiped a ${product.title}'
-        : 'Purchased ${product.noTickets} ${product.title}';
+        : 'Purchased ${product.numberOfTickets} ${product.title}';
 
     final trailing = isSwipe
         ? null

@@ -14,7 +14,7 @@ const products = [
       'Dirty Chai',
       'Dirty Matcha',
     ],
-    noTickets: 5,
+    numberOfTickets: 5,
     priceDKK: 150,
   ),
   Product(
@@ -26,7 +26,7 @@ const products = [
       'Chai Latte',
       'Matcha Latte',
     ],
-    noTickets: 5,
+    numberOfTickets: 5,
     priceDKK: 100,
   ),
   Product(
@@ -38,7 +38,7 @@ const products = [
       'Cortado',
       'Espresso',
     ],
-    noTickets: 5,
+    numberOfTickets: 5,
     priceDKK: 50,
   ),
   Product(
@@ -47,7 +47,7 @@ const products = [
         'Used for filter coffee brewed with fresh ground coffee. '
         'Add milk at no extra cost.',
     eligibleMenuItems: ['Filter Coffee', 'Iced Filter Coffee'],
-    noTickets: 10,
+    numberOfTickets: 10,
     priceDKK: 110,
   ),
   Product(
@@ -55,7 +55,7 @@ const products = [
     description:
         'Our wide variety of tea is perfect for any occasion. '
         'Add milk at no extra cost.',
-    noTickets: 10,
+    numberOfTickets: 10,
     priceDKK: 100,
   ),
 ];

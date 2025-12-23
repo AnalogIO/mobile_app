@@ -14,7 +14,7 @@ class BuyTicketsScreen extends StatelessWidget {
         return ListTile(
           title: Text(product.title),
           subtitle: Text(
-            '${product.noTickets} tickets • ${product.priceDKK} kr',
+            '${product.numberOfTickets} tickets • ${product.priceDKK} kr',
           ),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {

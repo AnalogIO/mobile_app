@@ -4,7 +4,7 @@ class Product extends Equatable {
   const Product({
     required this.title,
     required this.description,
-    required this.noTickets,
+    required this.numberOfTickets,
     required this.priceDKK,
     this.eligibleMenuItems,
   });
@@ -12,15 +12,17 @@ class Product extends Equatable {
   final String title;
   final String description;
   final List<String>? eligibleMenuItems;
-  final int noTickets;
+  final int numberOfTickets;
   final int priceDKK;
 
   @override
+  // use the Equatable package to simplify equality checks between Products
+  // if all properties are equal, two Products are considered equal
   List<Object?> get props => [
     title,
     description,
     eligibleMenuItems,
-    noTickets,
+    numberOfTickets,
     priceDKK,
   ];
 }

@@ -75,7 +75,7 @@ class TicketDetailScreen extends StatelessWidget {
                       ).colorScheme.onSecondary,
                     ),
                     child: Text(
-                      'Buy ${product.noTickets} tickets '
+                      'Buy ${product.numberOfTickets} tickets '
                       'for ${product.priceDKK} kr',
                     ),
                   ),

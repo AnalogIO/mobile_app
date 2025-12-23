@@ -21,14 +21,14 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
     const cappuccino = Product(
       title: 'Cappuccino',
       description: 'Creamy cappuccino with foam',
-      noTickets: 5,
+      numberOfTickets: 5,
       priceDKK: 120,
     );
 
     const caffeLatte = Product(
       title: 'Caffè Latte',
       description: 'Smooth latte with steamed milk',
-      noTickets: 10,
+      numberOfTickets: 10,
       priceDKK: 230,
     );
 
