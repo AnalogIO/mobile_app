@@ -13,15 +13,13 @@ class QuickStatCard extends StatelessWidget {
   final int number;
   final String? ordinalSuffix;
 
-  static const double _borderRadius = 24;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF3E6D9),
-        borderRadius: BorderRadius.circular(_borderRadius),
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(24),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -32,18 +30,25 @@ class QuickStatCard extends StatelessWidget {
             description,
             style: theme.textTheme.bodyLarge?.copyWith(fontSize: 14),
           ),
-          Gap(30),
+          const Gap(24),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                '$number${ordinalSuffix ?? ''}',
+                number.toString(),
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontSize: 32,
                   fontWeight: FontWeight.w800,
                 ),
               ),
+              if (ordinalSuffix != null) const SizedBox(width: 1),
+              if (ordinalSuffix != null)
+                Text(
+                  ordinalSuffix!,
+                  style: theme.textTheme.bodyLarge?.copyWith(fontSize: 18),
+                ),
             ],
           ),
         ],
