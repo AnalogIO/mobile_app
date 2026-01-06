@@ -18,6 +18,7 @@ class MyTicketsSection extends StatelessWidget {
     );
   }
 
+// TODO(marfavi): hent data fra backend
   @override
   Widget build(BuildContext context) {
     return Padding(
