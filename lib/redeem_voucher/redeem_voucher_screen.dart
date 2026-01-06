@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/core/form.dart';
+import 'package:cafe_analog_app/core/widgets/form.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:flutter/material.dart';
 
