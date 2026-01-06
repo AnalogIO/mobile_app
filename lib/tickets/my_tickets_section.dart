@@ -1,7 +1,10 @@
-import 'package:cafe_analog_app/tickets/ticket_card.dart';
+import 'package:cafe_analog_app/tickets/owned_ticket_card.dart';
+import 'package:cafe_analog_app/tickets/select_menu_item_ticket_card.dart';
+import 'package:cafe_analog_app/tickets/ticket_card_base.dart';
 import 'package:cafe_analog_app/tickets/use_ticket_modal.dart';
 import 'package:flutter/material.dart';
 
+// TODO(monir): add placeholder when user doesn't have any tickets.
 class MyTicketsSection extends StatelessWidget {
   const MyTicketsSection({super.key});
 
@@ -18,7 +21,7 @@ class MyTicketsSection extends StatelessWidget {
     );
   }
 
-// TODO(marfavi): hent data fra backend
+  // TODO(marfavi): hent data fra backend
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -26,17 +29,29 @@ class MyTicketsSection extends StatelessWidget {
       child: Column(
         spacing: 16,
         children: [
-          TicketCard(
+          OwnedTicketCard(
             name: 'Fancy',
             clipsLeft: 4,
             backgroundImage: 'assets/images/ticket_fancy.png',
             onTap: () => _showTicketModal(context, 'Fancy', 4),
           ),
-          TicketCard(
+          OwnedTicketCard(
             name: 'Filter',
             clipsLeft: 1,
             backgroundImage: 'assets/images/ticket_filter.png',
             onTap: () => _showTicketModal(context, 'Filter', 1),
+          ),
+          const TicketCardBase(
+            name: "Can't tap this TicketCardBase",
+            backgroundImage: 'assets/images/ticket_filter.png',
+            children: [
+              // SlideAction(text: 'Swipe to use'),
+            ],
+          ),
+          const SelectMenuItemTicketCard(
+            name: 'Some Selected Ticket',
+            menuItems: ['Espresso', 'Latte', 'Cappuccino'],
+            backgroundImage: 'assets/images/ticket_filter.png',
           ),
         ],
       ),

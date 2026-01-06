@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 
-class TicketCard extends StatelessWidget {
-  const TicketCard({
+class TicketCardBase extends StatelessWidget {
+  const TicketCardBase({
     required this.name,
-    required this.clipsLeft,
     required this.backgroundImage,
+    required this.children,
     this.onTap,
     super.key,
   });
 
   final String name;
-  final int clipsLeft;
   final String backgroundImage;
+  final List<Widget> children;
   final void Function()? onTap;
 
-  static const double _cardHeight = 150;
   static const double _borderRadius = 24;
 
   @override
@@ -28,13 +27,7 @@ class TicketCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(_borderRadius),
           child: Stack(
             children: [
-              // Background grid pattern
-              CustomPaint(
-                size: const Size(double.infinity, _cardHeight),
-                painter: _TicketBackgroundPainter(
-                  color: Theme.of(context).colorScheme.scrim,
-                ),
-              ),
+              // TODO(marfavi): Insert background graphic here
               // Gradient overlay
               Positioned.fill(
                 child: DecoratedBox(
@@ -51,11 +44,10 @@ class TicketCard extends StatelessWidget {
                 ),
               ),
               // Content
-              Container(
+              Padding(
                 padding: const EdgeInsets.all(24),
-                height: _cardHeight,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -66,22 +58,7 @@ class TicketCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(
-                          Icons.local_cafe,
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        ),
-                        Text(
-                          '$clipsLeft ticket${clipsLeft == 1 ? '' : 's'} left',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
+                    ...children,
                   ],
                 ),
               ),
@@ -122,33 +99,4 @@ class _Tappable extends StatelessWidget {
       ),
     );
   }
-}
-
-class _TicketBackgroundPainter extends CustomPainter {
-  _TicketBackgroundPainter({required this.color});
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-
-    const gridSize = 30.0;
-
-    // Draw vertical lines
-    for (double x = 0; x <= size.width; x += gridSize) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-
-    // Draw horizontal lines
-    for (double y = 0; y <= size.height; y += gridSize) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_TicketBackgroundPainter oldDelegate) => false;
 }
