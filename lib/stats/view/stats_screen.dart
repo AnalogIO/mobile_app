@@ -17,7 +17,7 @@ class StatsScreen extends StatelessWidget {
         const SectionTitle('Quick stats'),
         const Gap(12),
         const _QuickStats(
-          [
+          children: [
             // TODO(marfavi): Load actual stats
             // For now, using placeholder values
             QuickStatCard(
@@ -81,7 +81,7 @@ class StatsScreen extends StatelessWidget {
 }
 
 class _QuickStats extends StatelessWidget {
-  const _QuickStats(this.children);
+  const _QuickStats({required this.children});
   final List<Widget> children;
 
   @override
