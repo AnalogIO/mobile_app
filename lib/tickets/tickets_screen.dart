@@ -20,7 +20,7 @@ class TicketsScreen extends StatelessWidget {
         const MyTicketsSection(),
         ListTile(
           leading: const Icon(Icons.local_cafe),
-          title: const Text('Buy more tickets'),
+          title: const Text('Buy drink tickets'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.push('/tickets/buy'),
         ),
