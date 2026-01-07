@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/tickets/next_button.dart';
 import 'package:cafe_analog_app/tickets/ticket_card_base.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -16,39 +17,35 @@ class SelectMenuItemTicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TicketCardBase(
       name: name,
       backgroundImage: backgroundImage,
       children: [
         Text(
           'Select a drink to spend your ticket on',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+          style: TextStyle(color: colorScheme.onSecondary),
         ),
-        const Gap(48),
+        const Gap(36),
         Row(
-          spacing: 12,
+          spacing: 16,
           children: [
             Expanded(
-              child: ColoredBox(
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
-                child: DropdownButton(
-                  dropdownColor: Theme.of(
-                    context,
-                  ).colorScheme.surface,
-                  items: menuItems
-                      .map(
-                        (item) =>
-                            DropdownMenuItem(value: item, child: Text(item)),
-                      )
-                      .toList(),
-                  onChanged: (String? value) {},
+              child: DropdownMenu(
+                // fills out the full width
+                expandedInsets: EdgeInsets.zero,
+                enableSearch: false,
+                hintText: 'Select drink',
+                inputDecorationTheme: InputDecorationTheme(
+                  filled: true,
+                  fillColor: colorScheme.surfaceContainerHighest,
                 ),
+                dropdownMenuEntries: menuItems
+                    .map((item) => DropdownMenuEntry(value: item, label: item))
+                    .toList(),
               ),
             ),
-            IconButton.filledTonal(
-              onPressed: () {},
-              icon: const Icon(Icons.chevron_right),
-            ),
+            NextButton(onPressed: () {}),
           ],
         ),
       ],

@@ -22,6 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import 'package:cafe_analog_app/tickets/next_button.dart';
 import 'package:flutter/material.dart';
 
 /// Slider call to action component
@@ -33,17 +34,14 @@ class SlideAction extends StatefulWidget {
     this.sliderButtonIconSize = 24,
     this.sliderButtonIconPadding = 16,
     this.horizontalPadding = 4,
-    this.height = 72,
+    this.height = 64,
     this.outerColor,
     this.borderRadius = 52,
-    this.elevation = 1,
     this.animationDuration = const Duration(milliseconds: 300),
-    this.submittedIcon,
     this.onSubmit,
     this.child,
     this.innerColor,
     this.textStyle,
-    this.sliderButtonIcon,
   });
 
   /// The size of the sliding icon
@@ -84,15 +82,6 @@ class SlideAction extends StatefulWidget {
   /// If this is null the component will not animate to complete
   final VoidCallback? onSubmit;
 
-  /// Elevation of the component
-  final double elevation;
-
-  /// The widget to render instead of the default icon
-  final Widget? sliderButtonIcon;
-
-  /// The widget to render instead of the default submitted icon
-  final Widget? submittedIcon;
-
   /// The duration of the animations
   final Duration animationDuration;
   @override
@@ -123,7 +112,6 @@ class SlideActionState extends State<SlideAction>
           ? null
           : BoxConstraints.expand(height: widget.height),
       child: Material(
-        elevation: widget.elevation,
         color: widget.outerColor ?? theme.colorScheme.secondary,
         borderRadius: BorderRadius.circular(widget.borderRadius),
         child: Stack(
@@ -137,13 +125,10 @@ class SlideActionState extends State<SlideAction>
                   Text(
                     widget.text,
                     textAlign: TextAlign.center,
-                    style:
-                        widget.textStyle ??
-                        TextStyle(
-                          color:
-                              widget.innerColor ?? theme.primaryIconTheme.color,
-                          fontSize: 24,
-                        ),
+                    style: TextStyle(
+                      color: widget.innerColor ?? theme.primaryIconTheme.color,
+                      fontSize: 24,
+                    ).merge(widget.textStyle),
                   ),
             ),
             Positioned(
@@ -162,29 +147,8 @@ class SlideActionState extends State<SlideAction>
                         widget.onSubmit!();
                       }
                     },
-                    child: Material(
-                      borderRadius: BorderRadius.circular(
-                        widget.borderRadius,
-                      ),
-                      color:
-                          widget.innerColor ??
-                          Theme.of(context).primaryIconTheme.color,
-                      child: Container(
-                        padding: EdgeInsets.all(
-                          widget.sliderButtonIconPadding,
-                        ),
-                        child: Center(
-                          child:
-                              widget.sliderButtonIcon ??
-                              Icon(
-                                Icons.arrow_forward,
-                                size: widget.sliderButtonIconSize,
-                                color:
-                                    widget.outerColor ??
-                                    Theme.of(context).colorScheme.secondary,
-                              ),
-                        ),
-                      ),
+                    child: NextButton(
+                      onPressed: () {},
                     ),
                   ),
                 ),

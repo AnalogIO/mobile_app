@@ -1,5 +1,6 @@
 import 'package:cafe_analog_app/tickets/owned_ticket_card.dart';
 import 'package:cafe_analog_app/tickets/select_menu_item_ticket_card.dart';
+import 'package:cafe_analog_app/tickets/swipe_ticket_card.dart';
 import 'package:cafe_analog_app/tickets/ticket_card_base.dart';
 import 'package:cafe_analog_app/tickets/use_ticket_modal.dart';
 import 'package:flutter/material.dart';
@@ -49,9 +50,14 @@ class MyTicketsSection extends StatelessWidget {
             ],
           ),
           const SelectMenuItemTicketCard(
-            name: 'Some Selected Ticket',
+            name: 'Small',
             menuItems: ['Espresso', 'Latte', 'Cappuccino'],
             backgroundImage: 'assets/images/ticket_filter.png',
+          ),
+          const SwipeTicketCard(
+            ticketName: 'Large',
+            menuItemName: 'Chai latte',
+            backgroundImage: 'backgroundImage',
           ),
         ],
       ),

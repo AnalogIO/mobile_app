@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/tickets/owned_ticket_card.dart';
+import 'package:cafe_analog_app/tickets/select_menu_item_ticket_card.dart';
 import 'package:flutter/material.dart';
 
 class UseTicketModal extends StatelessWidget {
@@ -18,17 +18,18 @@ class UseTicketModal extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: OwnedTicketCard(
-                name: name,
-                clipsLeft: clipsLeft + 100,
-                backgroundImage: '',
-                onTap: () {},
+          child: Column(
+            verticalDirection: VerticalDirection.up,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SelectMenuItemTicketCard(
+                  name: name,
+                  backgroundImage: '',
+                  menuItems: const ['Espresso', 'Latte', 'Cappuccino'],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
