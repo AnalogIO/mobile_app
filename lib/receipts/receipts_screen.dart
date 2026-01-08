@@ -33,20 +33,25 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
     );
 
     // Generate all receipts
-    final allReceipts = List.generate(
-      15,
-      (index) {
-        final isSwipe = index % 5 != 0;
-        final products = [cappuccino, caffeLatte];
-        final product = products[index % 2];
-        final day = 4 - (index ~/ 5);
-        return ReceiptsListEntry(
-          product: product,
-          date: '0$day.05.2022 11:${15 + index * 3}',
-          isSwipe: isSwipe,
-        );
-      },
-    );
+    final allReceipts =
+        List.generate(
+          15,
+          (index) {
+            final isSwipe = index % 5 != 0;
+            final products = [cappuccino, caffeLatte];
+            final product = products[index % 2];
+            final day = 4 - (index ~/ 5);
+            final hour = 11 + (index % 5);
+            final minute = (index % 5) * 12;
+            return ReceiptsListEntry(
+              product: product,
+              date: '0$day.05.2022 $hour:${minute.toString().padLeft(2, '0')}',
+              isSwipe: isSwipe,
+            );
+          },
+        )..sort(
+          (a, b) => b.date.compareTo(a.date),
+        ); // Sort chronologically (newest first)
 
     // Filter receipts based on selected filter
     final filteredReceipts = switch (_selectedFilter) {
