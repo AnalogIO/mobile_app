@@ -4,6 +4,8 @@ import 'package:gap/gap.dart';
 
 class OwnedTicketCard extends StatelessWidget {
   const OwnedTicketCard({
+    required this.icon,
+    required this.id,
     required this.name,
     required this.clipsLeft,
     required this.backgroundImage,
@@ -11,14 +13,17 @@ class OwnedTicketCard extends StatelessWidget {
     super.key,
   });
 
+  final String id;
   final String name;
   final int clipsLeft;
   final String backgroundImage;
+  final IconData icon;
   final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
     return TicketCardBase(
+      id: id,
       name: name,
       backgroundImage: backgroundImage,
       onTap: onTap,
@@ -28,7 +33,7 @@ class OwnedTicketCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Icon(
-              Icons.local_cafe,
+              icon,
               color: Theme.of(context).colorScheme.onSecondary,
             ),
             Text(

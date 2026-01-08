@@ -18,10 +18,10 @@ class TicketDetailScreen extends StatelessWidget {
             collapsedHeight: 150,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: false,
-              background: CustomPaint(
-                painter: _GridPatternPainter(
-                  lineColor: Theme.of(context).colorScheme.onSurface,
-                ),
+              background: Image.asset(
+                'assets/images/latteart.png',
+                fit: BoxFit.cover,
+                opacity: AlwaysStoppedAnimation(0.3),
               ),
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(

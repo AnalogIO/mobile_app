@@ -5,11 +5,13 @@ class UseTicketModal extends StatelessWidget {
   const UseTicketModal({
     required this.name,
     required this.clipsLeft,
+    required this.backgroundImage,
     super.key,
   });
 
   final String name;
   final int clipsLeft;
+  final String backgroundImage;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class UseTicketModal extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: SelectMenuItemTicketCard(
                   name: name,
-                  backgroundImage: '',
+                  backgroundImage: backgroundImage,
                   menuItems: const ['Espresso', 'Latte', 'Cappuccino'],
                 ),
               ),
