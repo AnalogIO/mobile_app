@@ -21,7 +21,7 @@ class StatsScreen extends StatelessWidget {
             // TODO(marfavi): Load actual stats
             // For now, using placeholder values
             QuickStatCard(
-              description: 'Coffees purchased',
+              description: 'Drinks purchased',
               number: 42,
             ),
             QuickStatCard(
@@ -58,16 +58,16 @@ class StatsScreen extends StatelessWidget {
           (index) => LeaderboardListEntry(
             userId: index,
             name: [
-              'Alice',
-              'Bob',
-              'Charlie',
-              'David',
-              'Eve',
-              'Frank',
-              'Grace',
-              'Heidi',
-              'Ivan',
-              'Judy',
+              'Monir',
+              'Omid',
+              'Tobias',
+              'Josefine',
+              'Signe',
+              'Edith',
+              'Zacharias',
+              'Esra',
+              'Jaden',
+              'Vahab',
             ][index],
             score: (10 - index) * 3,
             rank: index + 1,

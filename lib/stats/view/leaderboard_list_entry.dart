@@ -11,22 +11,13 @@ class LeaderboardListEntry extends StatelessWidget {
     required this.rank,
     required this.isYou,
     super.key,
-  }) : isPlaceholder = false;
+  });
 
-  // TODO(marfavi): Is placeholder needed?
-  const LeaderboardListEntry.placeholder({super.key})
-    : userId = 0,
-      name = 'placeholder',
-      score = 0,
-      rank = 10,
-      isYou = false,
-      isPlaceholder = true;
   final int userId;
   final String name;
   final int score;
   final int rank;
   final bool isYou;
-  final bool isPlaceholder;
 
   String get _scoreText => '$score ${score != 1 ? 'cups' : 'cup'}';
 
