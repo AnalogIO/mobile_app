@@ -30,7 +30,7 @@ class StatsScreen extends StatelessWidget {
               ordinalSuffix: 'th',
             ),
             QuickStatCard(
-              description: 'Your rank this week (vs ITU',
+              description: 'Your rank this week (vs ITU)',
               number: 125,
               ordinalSuffix: 'th',
             ),

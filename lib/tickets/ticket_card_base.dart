@@ -5,10 +5,12 @@ class TicketCardBase extends StatelessWidget {
     required this.name,
     required this.backgroundImage,
     required this.children,
+    this.id = 'Fancy',
     this.onTap,
     super.key,
   });
 
+  final String id;
   final String name;
   final String backgroundImage;
   final List<Widget> children;
@@ -19,7 +21,7 @@ class TicketCardBase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: 'ticket_$name',
+      tag: 'ticket_$id',
       child: _Tappable(
         onTap: onTap,
         borderRadius: BorderRadius.circular(_borderRadius),
@@ -27,22 +29,28 @@ class TicketCardBase extends StatelessWidget {
           borderRadius: BorderRadius.circular(_borderRadius),
           child: Stack(
             children: [
-              // TODO(marfavi): Insert background graphic here
-              // Gradient overlay
+              // positioned.fill helps fit the container properly with background image
               Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Theme.of(context).colorScheme.secondary,
-                        Theme.of(context).colorScheme.secondary.withAlpha(165),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
+                child: Image.asset(
+                  backgroundImage,
+                  fit: BoxFit.cover,
                 ),
               ),
+              // Gradient overlay
+              // Positioned.fill(
+              //   child: DecoratedBox(
+              //     decoration: BoxDecoration(
+              //       gradient: LinearGradient(
+              //         colors: [
+              //           Theme.of(context).colorScheme.secondary,
+              //           Theme.of(context).colorScheme.secondary.withAlpha(165),
+              //         ],
+              //         begin: Alignment.topLeft,
+              //         end: Alignment.bottomRight,
+              //       ),
+              //     ),
+              //   ),
+              // ),
               // Content
               Padding(
                 padding: const EdgeInsets.all(24),
