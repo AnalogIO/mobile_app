@@ -19,6 +19,7 @@ class SwipeTicketCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return TicketCardBase(
+      id: 'Fancy',
       name: menuItemName,
       backgroundImage: backgroundImage,
       children: [

@@ -1,4 +1,5 @@
 import 'package:cafe_analog_app/tickets/next_button.dart';
+import 'package:cafe_analog_app/tickets/swipe_ticket_modal.dart';
 import 'package:cafe_analog_app/tickets/ticket_card_base.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -45,7 +46,18 @@ class SelectMenuItemTicketCard extends StatelessWidget {
                     .toList(),
               ),
             ),
-            NextButton(onPressed: () {}),
+            NextButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).push(
+                  PageRouteBuilder<void>(
+                    opaque: false,
+                    barrierColor: Colors.transparent,
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const SwipeTicketModal(),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ],
