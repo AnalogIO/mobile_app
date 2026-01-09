@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 
 class TicketCardBase extends StatelessWidget {
   const TicketCardBase({
+    required this.id,
     required this.name,
     required this.backgroundImage,
     required this.children,
-    this.id = 'Fancy',
     this.onTap,
     super.key,
   });
 
-  final String id;
+  /// Ticket id. Is the unique identifier for Hero animations
+  final int id;
   final String name;
   final String backgroundImage;
   final List<Widget> children;
@@ -29,14 +30,14 @@ class TicketCardBase extends StatelessWidget {
           borderRadius: BorderRadius.circular(_borderRadius),
           child: Stack(
             children: [
-              // positioned.fill helps fit the container properly with background image
+              // fill the background image to cover the entire card
               Positioned.fill(
                 child: Image.asset(
                   backgroundImage,
                   fit: BoxFit.cover,
                 ),
               ),
-              // Gradient overlay
+              // TODO(marfavi): re-enable overlay when we have better images
               // Positioned.fill(
               //   child: DecoratedBox(
               //     decoration: BoxDecoration(

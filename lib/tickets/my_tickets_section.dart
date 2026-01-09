@@ -34,7 +34,7 @@ class MyTicketsSection extends StatelessWidget {
         spacing: 16,
         children: [
           OwnedTicketCard(
-            id: 'Fancy',
+            id: 0,
             name: 'Fancy',
             icon: Icons.local_cafe,
             clipsLeft: 4,
@@ -47,7 +47,7 @@ class MyTicketsSection extends StatelessWidget {
             ),
           ),
           OwnedTicketCard(
-            id: 'f',
+            id: 1,
             name: 'Filter',
             icon: Icons.coffee_maker,
             clipsLeft: 1,

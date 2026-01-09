@@ -20,6 +20,7 @@ class SelectMenuItemTicketCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return TicketCardBase(
+      id: 0,
       name: name,
       backgroundImage: backgroundImage,
       children: [

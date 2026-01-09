@@ -13,7 +13,7 @@ class OwnedTicketCard extends StatelessWidget {
     super.key,
   });
 
-  final String id;
+  final int id;
   final String name;
   final int clipsLeft;
   final String backgroundImage;
