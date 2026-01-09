@@ -27,70 +27,71 @@ class TicketCardBase extends StatelessWidget {
       child: _Tappable(
         onTap: onTap,
         borderRadius: BorderRadius.circular(_borderRadius),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(_borderRadius),
-          child: Stack(
-            children: [
-              // Background graphic
-              Positioned.fill(
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    // darkened version of the secondary color
-                    Color.alphaBlend(
-                      Colors.black.withAlpha(150),
+        child: Stack(
+          children: [
+            // Background graphic
+            Positioned.fill(
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  // darkened version of the secondary color
+                  Color.alphaBlend(
+                    Colors.black.withAlpha(150),
+                    colorScheme.secondary,
+                  ),
+                  BlendMode.srcIn,
+                ),
+                child: Image.asset(
+                  backgroundImage,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            // Gradient overlay to increase contrast for "X tickets left" text
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
                       colorScheme.secondary,
-                    ),
-                    BlendMode.srcIn,
-                  ),
-                  child: Image.asset(
-                    backgroundImage,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              // Gradient overlay to increase contrast for "X tickets left" text
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        colorScheme.secondary,
-                        colorScheme.secondary.withAlpha(0),
-                      ],
-                      stops: const [0.3, 1],
-                      begin: Alignment.bottomRight,
-                      end: const Alignment(0.6, -1),
-                    ),
+                      colorScheme.secondary.withAlpha(0),
+                    ],
+                    stops: const [0.3, 1],
+                    begin: Alignment.bottomRight,
+                    end: const Alignment(0.6, -1),
                   ),
                 ),
               ),
-              // Content
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        color: colorScheme.onSecondary,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+            ),
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: colorScheme.onSecondary,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
-                    ...children,
-                  ],
-                ),
+                  ),
+                  ...children,
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
+/// A widget that provides tap feedback (ripple effect) and border radius
+/// to its child.
+/// 
+/// It puts an [InkWell] on top of the [child] to provide the tap feedback.
 class _Tappable extends StatelessWidget {
   const _Tappable({
     required this.child,
@@ -104,19 +105,29 @@ class _Tappable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSecondary = Theme.of(context).colorScheme.onSecondary;
+    final colorScheme = Theme.of(context).colorScheme;
     return Material(
-      color: Theme.of(context).colorScheme.secondary,
+      color: colorScheme.secondary,
       borderRadius: borderRadius,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: borderRadius,
-        overlayColor: WidgetStateProperty.fromMap({
-          WidgetState.hovered: onSecondary.withAlpha(15),
-          WidgetState.focused: onSecondary.withAlpha(20),
-          WidgetState.pressed: onSecondary.withAlpha(30),
-        }),
-        child: child,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          child,
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onTap,
+                borderRadius: borderRadius,
+                overlayColor: WidgetStateProperty.fromMap({
+                  WidgetState.hovered: colorScheme.onSecondary.withAlpha(15),
+                  WidgetState.focused: colorScheme.onSecondary.withAlpha(20),
+                  WidgetState.pressed: colorScheme.onSecondary.withAlpha(30),
+                }),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
