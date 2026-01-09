@@ -21,7 +21,7 @@ class TicketDetailScreen extends StatelessWidget {
               background: Image.asset(
                 'assets/images/latteart.png',
                 fit: BoxFit.cover,
-                opacity: AlwaysStoppedAnimation(0.3),
+                opacity: const AlwaysStoppedAnimation(0.3),
               ),
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(
@@ -89,31 +89,31 @@ class TicketDetailScreen extends StatelessWidget {
   }
 }
 
-class _GridPatternPainter extends CustomPainter {
-  const _GridPatternPainter({required this.lineColor});
+// class _GridPatternPainter extends CustomPainter {
+//   const _GridPatternPainter({required this.lineColor});
 
-  final Color lineColor;
+//   final Color lineColor;
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = lineColor.withAlpha(25)
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint = Paint()
+//       ..color = lineColor.withAlpha(25)
+//       ..strokeWidth = 1
+//       ..style = PaintingStyle.stroke;
 
-    const gridSize = 40.0;
+//     const gridSize = 40.0;
 
-    // Draw vertical lines
-    for (double x = 0; x <= size.width; x += gridSize) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
+//     // Draw vertical lines
+//     for (double x = 0; x <= size.width; x += gridSize) {
+//       canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+//     }
 
-    // Draw horizontal lines
-    for (double y = 0; y <= size.height; y += gridSize) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-  }
+//     // Draw horizontal lines
+//     for (double y = 0; y <= size.height; y += gridSize) {
+//       canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+//     }
+//   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+// }
