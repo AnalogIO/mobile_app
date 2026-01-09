@@ -21,6 +21,7 @@ class TicketCardBase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Hero(
       tag: 'ticket_$id',
       child: _Tappable(
@@ -30,28 +31,39 @@ class TicketCardBase extends StatelessWidget {
           borderRadius: BorderRadius.circular(_borderRadius),
           child: Stack(
             children: [
-              // fill the background image to cover the entire card
+              // Background graphic
               Positioned.fill(
-                child: Image.asset(
-                  backgroundImage,
-                  fit: BoxFit.cover,
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    // darkened version of the secondary color
+                    Color.alphaBlend(
+                      Colors.black.withAlpha(150),
+                      colorScheme.secondary,
+                    ),
+                    BlendMode.srcIn,
+                  ),
+                  child: Image.asset(
+                    backgroundImage,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              // TODO(marfavi): re-enable overlay when we have better images
-              // Positioned.fill(
-              //   child: DecoratedBox(
-              //     decoration: BoxDecoration(
-              //       gradient: LinearGradient(
-              //         colors: [
-              //           Theme.of(context).colorScheme.secondary,
-              //           Theme.of(context).colorScheme.secondary.withAlpha(165),
-              //         ],
-              //         begin: Alignment.topLeft,
-              //         end: Alignment.bottomRight,
-              //       ),
-              //     ),
-              //   ),
-              // ),
+              // Gradient overlay to increase contrast for "X tickets left" text
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        colorScheme.secondary,
+                        colorScheme.secondary.withAlpha(0),
+                      ],
+                      stops: const [0.3, 1],
+                      begin: Alignment.bottomRight,
+                      end: const Alignment(0.6, -1),
+                    ),
+                  ),
+                ),
+              ),
               // Content
               Padding(
                 padding: const EdgeInsets.all(24),
@@ -62,7 +74,7 @@ class TicketCardBase extends StatelessWidget {
                     Text(
                       name,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary,
+                        color: colorScheme.onSecondary,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
