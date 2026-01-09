@@ -1,132 +1,162 @@
 import 'package:flutter/material.dart';
 
+/// A card displaying a ticket with a background graphic, title, and content.
+///
+/// Uses [Hero] animations with a unique tag based on [id].
 class TicketCardBase extends StatelessWidget {
   const TicketCardBase({
     required this.id,
-    required this.name,
-    required this.backgroundImage,
+    required this.title,
+    required this.backgroundImagePath,
     required this.children,
     this.onTap,
     super.key,
   });
 
-  /// Ticket id. Is the unique identifier for Hero animations
+  /// Unique identifier, used for Hero animation tag.
   final int id;
-  final String name;
-  final String backgroundImage;
+
+  /// The title displayed at the top; the ticket or menu item name.
+  final String title;
+
+  /// Asset path for the background graphic.
+  final String backgroundImagePath;
+
+  /// Content widgets displayed below the name.
   final List<Widget> children;
-  final void Function()? onTap;
+
+  /// Called when the card is tapped.
+  final VoidCallback? onTap;
 
   static const double _borderRadius = 24;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     return Hero(
       tag: 'ticket_$id',
-      child: _Tappable(
-        onTap: onTap,
+      child: Material(
+        color: colorScheme.secondary,
         borderRadius: BorderRadius.circular(_borderRadius),
-        child: Stack(
-          children: [
-            // Background graphic
-            Positioned.fill(
-              child: ColorFiltered(
-                colorFilter: ColorFilter.mode(
-                  // darkened version of the secondary color
-                  Color.alphaBlend(
-                    Colors.black.withAlpha(150),
-                    colorScheme.secondary,
-                  ),
-                  BlendMode.srcIn,
-                ),
-                child: Image.asset(
-                  backgroundImage,
-                  fit: BoxFit.cover,
-                ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          overlayColor: _buildOverlayColor(colorScheme.onSecondary),
+          child: Stack(
+            children: [
+              _BackgroundGraphic(
+                imagePath: backgroundImagePath,
+                color: colorScheme.secondary,
               ),
-            ),
-            // Gradient overlay to increase contrast for "X tickets left" text
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      colorScheme.secondary,
-                      colorScheme.secondary.withAlpha(0),
-                    ],
-                    stops: const [0.3, 1],
-                    begin: Alignment.bottomRight,
-                    end: const Alignment(0.6, -1),
-                  ),
-                ),
+              _GradientOverlay(color: colorScheme.secondary),
+              _Content(
+                title: title,
+                textColor: colorScheme.onSecondary,
+                children: children,
               ),
-            ),
-            // Content
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    name,
-                    style: TextStyle(
-                      color: colorScheme.onSecondary,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  ...children,
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  WidgetStateProperty<Color?> _buildOverlayColor(Color baseColor) {
+    return WidgetStateProperty.fromMap({
+      WidgetState.hovered: baseColor.withAlpha(15),
+      WidgetState.focused: baseColor.withAlpha(20),
+      WidgetState.pressed: baseColor.withAlpha(30),
+    });
+  }
+}
+
+/// Displays the background image with a darkened tint.
+///
+/// Uses [ColorFiltered] to apply the card's color to the image shape,
+/// creating a subtle branded graphic effect.
+class _BackgroundGraphic extends StatelessWidget {
+  const _BackgroundGraphic({
+    required this.imagePath,
+    required this.color,
+  });
+
+  final String imagePath;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    // Darken the base color for a subtle background effect
+    final darkenedColor = Color.alphaBlend(
+      Colors.black.withAlpha(150),
+      color,
+    );
+
+    return Positioned.fill(
+      child: ColorFiltered(
+        // srcIn: uses the image's shape (alpha) and fills it with our color
+        colorFilter: ColorFilter.mode(darkenedColor, BlendMode.srcIn),
+        child: Image.asset(imagePath, fit: BoxFit.cover),
+      ),
+    );
+  }
+}
+
+/// A gradient overlay that improves text readability in the bottom-right.
+///
+/// This is done using a linear gradient that uses the card's color at the
+/// bottom-right and fades to transparent towards the top-left.
+class _GradientOverlay extends StatelessWidget {
+  const _GradientOverlay({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [color, color.withAlpha(0)],
+            stops: const [0.3, 1],
+            begin: Alignment.bottomRight,
+            end: const Alignment(0.6, -1),
+          ),
         ),
       ),
     );
   }
 }
 
-/// A widget that provides tap feedback (ripple effect) and border radius
-/// to its child.
-/// 
-/// It puts an [InkWell] on top of the [child] to provide the tap feedback.
-class _Tappable extends StatelessWidget {
-  const _Tappable({
-    required this.child,
-    required this.borderRadius,
-    this.onTap,
+/// The card's text content: title and children.
+class _Content extends StatelessWidget {
+  const _Content({
+    required this.title,
+    required this.textColor,
+    required this.children,
   });
 
-  final Widget child;
-  final BorderRadius borderRadius;
-  final VoidCallback? onTap;
+  final String title;
+  final Color textColor;
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Material(
-      color: colorScheme.secondary,
-      borderRadius: borderRadius,
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          child,
-          Positioned.fill(
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onTap,
-                borderRadius: borderRadius,
-                overlayColor: WidgetStateProperty.fromMap({
-                  WidgetState.hovered: colorScheme.onSecondary.withAlpha(15),
-                  WidgetState.focused: colorScheme.onSecondary.withAlpha(20),
-                  WidgetState.pressed: colorScheme.onSecondary.withAlpha(30),
-                }),
-              ),
+          Text(
+            title,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          ...children,
         ],
       ),
     );

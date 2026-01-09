@@ -21,8 +21,8 @@ class SelectMenuItemTicketCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return TicketCardBase(
       id: 0,
-      name: name,
-      backgroundImage: backgroundImage,
+      title: name,
+      backgroundImagePath: backgroundImage,
       children: [
         Text(
           'Select a drink to spend your ticket on',

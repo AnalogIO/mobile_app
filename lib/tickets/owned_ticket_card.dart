@@ -24,8 +24,8 @@ class OwnedTicketCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return TicketCardBase(
       id: id,
-      name: name,
-      backgroundImage: backgroundImage,
+      title: name,
+      backgroundImagePath: backgroundImage,
       onTap: onTap,
       children: [
         const Gap(48),

@@ -20,8 +20,8 @@ class SwipeTicketCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return TicketCardBase(
       id: 0,
-      name: menuItemName,
-      backgroundImage: backgroundImage,
+      title: menuItemName,
+      backgroundImagePath: backgroundImage,
       children: [
         Text(
           'Claiming via ticket: $ticketName',
