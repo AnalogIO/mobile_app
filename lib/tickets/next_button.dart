@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 
 class NextButton extends StatelessWidget {
-  const NextButton({required this.onPressed, super.key});
+  const NextButton({this.onPressed, super.key});
 
-  final void Function() onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {

@@ -25,10 +25,16 @@ class UseTicketModal extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: SelectMenuItemTicketCard(
-                  name: name,
-                  backgroundImage: backgroundImage,
-                  menuItems: const ['Espresso', 'Latte', 'Cappuccino'],
+                // Absorb taps on the card so they don't close the modal
+                child: GestureDetector(
+                  excludeFromSemantics: true,
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {},
+                  child: UseTicketCard(
+                    ticketName: name,
+                    backgroundImage: backgroundImage,
+                    menuItems: const ['Espresso', 'Latte', 'Cappuccino'],
+                  ),
                 ),
               ),
             ],

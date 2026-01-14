@@ -3,10 +3,24 @@ import 'package:flutter/material.dart';
 /// A card displaying a ticket with a background graphic, title, and content.
 ///
 /// Uses [Hero] animations with a unique tag based on [id].
+///
+/// Use [TicketCardBase] for a simple string title, or
+/// [TicketCardBase.customTitleWidget] for a custom title widget.
 class TicketCardBase extends StatelessWidget {
-  const TicketCardBase({
+  /// Creates a ticket card with a string [title].
+  TicketCardBase({
     required this.id,
-    required this.title,
+    required String title,
+    required this.backgroundImagePath,
+    required this.children,
+    this.onTap,
+    super.key,
+  }) : titleWidget = Text(title);
+
+  /// Creates a ticket card with a custom [titleWidget].
+  const TicketCardBase.customTitleWidget({
+    required this.id,
+    required this.titleWidget,
     required this.backgroundImagePath,
     required this.children,
     this.onTap,
@@ -16,8 +30,8 @@ class TicketCardBase extends StatelessWidget {
   /// Unique identifier, used for Hero animation tag.
   final int id;
 
-  /// The title displayed at the top; the ticket or menu item name.
-  final String title;
+  /// The widget displayed at the top; the ticket or menu item name.
+  final Widget titleWidget;
 
   /// Asset path for the background graphic.
   final String backgroundImagePath;
@@ -51,8 +65,7 @@ class TicketCardBase extends StatelessWidget {
               ),
               _GradientOverlay(color: colorScheme.secondary),
               _Content(
-                title: title,
-                textColor: colorScheme.onSecondary,
+                titleWidget: titleWidget,
                 children: children,
               ),
             ],
@@ -131,13 +144,11 @@ class _GradientOverlay extends StatelessWidget {
 /// The card's text content: title and children.
 class _Content extends StatelessWidget {
   const _Content({
-    required this.title,
-    required this.textColor,
+    required this.titleWidget,
     required this.children,
   });
 
-  final String title;
-  final Color textColor;
+  final Widget titleWidget;
   final List<Widget> children;
 
   @override
@@ -148,13 +159,13 @@ class _Content extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
+          DefaultTextStyle(
             style: TextStyle(
-              color: textColor,
+              color: Theme.of(context).colorScheme.onSecondary,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
+            child: titleWidget,
           ),
           ...children,
         ],

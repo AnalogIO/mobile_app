@@ -59,23 +59,6 @@ class MyTicketsSection extends StatelessWidget {
               'assets/images/beans.png',
             ),
           ),
-          // const TicketCardBase(
-          //   name: "Can't tap this TicketCardBase",
-          //   backgroundImage: 'assets/images/ticket_filter.png',
-          //   children: [
-          //     // SlideAction(text: 'Swipe to use'),
-          //   ],
-          // ),
-          // const SelectMenuItemTicketCard(
-          //   name: 'Small',
-          //   menuItems: ['Espresso', 'Latte', 'Cappuccino'],
-          //   backgroundImage: 'assets/images/ticket_filter.png',
-          // ),
-          // const SwipeTicketCard(
-          //   ticketName: 'Large',
-          //   menuItemName: 'Chai latte',
-          //   backgroundImage: 'backgroundImage',
-          // ),
         ],
       ),
     );
