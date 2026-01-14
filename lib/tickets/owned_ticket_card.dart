@@ -6,17 +6,17 @@ class OwnedTicketCard extends StatelessWidget {
   const OwnedTicketCard({
     required this.icon,
     required this.id,
-    required this.name,
-    required this.clipsLeft,
-    required this.backgroundImage,
+    required this.ticketName,
+    required this.ticketsLeft,
+    required this.backgroundImagePath,
     required this.onTap,
     super.key,
   });
 
   final int id;
-  final String name;
-  final int clipsLeft;
-  final String backgroundImage;
+  final String ticketName;
+  final int ticketsLeft;
+  final String backgroundImagePath;
   final IconData icon;
   final void Function() onTap;
 
@@ -24,8 +24,8 @@ class OwnedTicketCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return TicketCardBase(
       id: id,
-      title: name,
-      backgroundImagePath: backgroundImage,
+      title: ticketName,
+      backgroundImagePath: backgroundImagePath,
       onTap: onTap,
       children: [
         const Gap(48),
@@ -37,7 +37,7 @@ class OwnedTicketCard extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSecondary,
             ),
             Text(
-              '$clipsLeft ticket${clipsLeft == 1 ? '' : 's'} left',
+              '$ticketsLeft ticket${ticketsLeft == 1 ? '' : 's'} left',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSecondary,
                 fontSize: 16,

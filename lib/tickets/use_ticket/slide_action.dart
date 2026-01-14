@@ -22,7 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'package:cafe_analog_app/tickets/next_button.dart';
+import 'package:cafe_analog_app/tickets/use_ticket/next_button.dart';
 import 'package:flutter/material.dart';
 
 /// Slider call to action component

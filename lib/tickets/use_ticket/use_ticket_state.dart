@@ -1,4 +1,4 @@
-part of 'select_menu_item_ticket_card.dart';
+part of 'use_ticket_card.dart';
 
 /// The current state of the ticket card.
 sealed class UseTicketState {

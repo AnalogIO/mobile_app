@@ -1,29 +1,10 @@
 import 'package:cafe_analog_app/tickets/owned_ticket_card.dart';
-import 'package:cafe_analog_app/tickets/use_ticket_modal.dart';
+import 'package:cafe_analog_app/tickets/use_ticket/use_ticket_modal.dart';
 import 'package:flutter/material.dart';
 
 // TODO(monir): add placeholder when user doesn't have any tickets.
 class MyTicketsSection extends StatelessWidget {
   const MyTicketsSection({super.key});
-
-  void _showTicketModal(
-    BuildContext context,
-    String name,
-    int clipsLeft,
-    String backgroundImage,
-  ) {
-    Navigator.of(context, rootNavigator: true).push(
-      PageRouteBuilder<void>(
-        opaque: false,
-        barrierColor: Theme.of(context).colorScheme.scrim.withAlpha(200),
-        pageBuilder: (context, animation, secondaryAnimation) => UseTicketModal(
-          name: name,
-          clipsLeft: clipsLeft,
-          backgroundImage: backgroundImage,
-        ),
-      ),
-    );
-  }
 
   // TODO(marfavi): hent data fra backend
   @override
@@ -35,28 +16,26 @@ class MyTicketsSection extends StatelessWidget {
         children: [
           OwnedTicketCard(
             id: 0,
-            name: 'Fancy',
+            ticketName: 'Fancy',
             icon: Icons.local_cafe,
-            clipsLeft: 4,
-            backgroundImage: 'assets/images/latteart.png',
-            onTap: () => _showTicketModal(
-              context,
-              'Fancy',
-              4,
-              'assets/images/latteart.png',
+            ticketsLeft: 4,
+            backgroundImagePath: 'assets/images/latteart.png',
+            onTap: () => UseTicketModal.show(
+              context: context,
+              ticketName: 'Fancy',
+              backgroundImagePath: 'assets/images/latteart.png',
             ),
           ),
           OwnedTicketCard(
             id: 1,
-            name: 'Filter',
+            ticketName: 'Filter',
             icon: Icons.coffee_maker,
-            clipsLeft: 1,
-            backgroundImage: 'assets/images/beans.png',
-            onTap: () => _showTicketModal(
-              context,
-              'Filter',
-              1,
-              'assets/images/beans.png',
+            ticketsLeft: 1,
+            backgroundImagePath: 'assets/images/beans.png',
+            onTap: () => UseTicketModal.show(
+              context: context,
+              ticketName: 'Filter',
+              backgroundImagePath: 'assets/images/beans.png',
             ),
           ),
         ],

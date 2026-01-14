@@ -1,10 +1,10 @@
-import 'package:cafe_analog_app/tickets/next_button.dart';
-import 'package:cafe_analog_app/tickets/slide_action.dart';
 import 'package:cafe_analog_app/tickets/ticket_card_base.dart';
+import 'package:cafe_analog_app/tickets/use_ticket/next_button.dart';
+import 'package:cafe_analog_app/tickets/use_ticket/slide_action.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-part './use_ticket_state.dart';
+part 'use_ticket_state.dart';
 
 /// A ticket card that allows the user to select a menu item,
 /// then swipe to use the ticket.
@@ -14,13 +14,13 @@ class UseTicketCard extends StatefulWidget {
   const UseTicketCard({
     required this.ticketName,
     required this.menuItems,
-    required this.backgroundImage,
+    required this.backgroundImagePath,
     super.key,
   });
 
   final String ticketName;
   final List<String> menuItems;
-  final String backgroundImage;
+  final String backgroundImagePath;
 
   @override
   State<UseTicketCard> createState() => _UseTicketCardState();
@@ -106,7 +106,7 @@ class _UseTicketCardState extends State<UseTicketCard>
           ),
         ],
       ),
-      backgroundImagePath: widget.backgroundImage,
+      backgroundImagePath: widget.backgroundImagePath,
       children: [
         // Stack ensures the height is always the max of both children.
         // IntrinsicHeight allows Positioned.fill children to expand.
