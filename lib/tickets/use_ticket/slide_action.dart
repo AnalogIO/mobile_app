@@ -191,7 +191,7 @@ class SlideActionState extends State<SlideAction>
         });
       }
     });
-    await _cancelAnimationController.forward().orCancel;
+    await _cancelAnimationController.forward();
   }
 
   @override
