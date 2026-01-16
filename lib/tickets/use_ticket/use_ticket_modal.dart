@@ -49,7 +49,7 @@ class UseTicketModal extends StatelessWidget {
                   'Tap outside this card to cancel.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSecondary,
+                color: Colors.white,
               ),
             ),
           ),
