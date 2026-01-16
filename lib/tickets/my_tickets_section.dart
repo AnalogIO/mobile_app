@@ -22,6 +22,7 @@ class MyTicketsSection extends StatelessWidget {
             backgroundImagePath: 'assets/images/latteart.png',
             onTap: () => UseTicketModal.show(
               context: context,
+              ticketId: 0,
               ticketName: 'Fancy',
               backgroundImagePath: 'assets/images/latteart.png',
             ),
@@ -34,6 +35,7 @@ class MyTicketsSection extends StatelessWidget {
             backgroundImagePath: 'assets/images/beans.png',
             onTap: () => UseTicketModal.show(
               context: context,
+              ticketId: 1,
               ticketName: 'Filter',
               backgroundImagePath: 'assets/images/beans.png',
             ),
