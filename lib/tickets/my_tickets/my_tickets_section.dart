@@ -57,7 +57,7 @@ class MyTicketsSection extends StatelessWidget {
               );
             },
             onDismiss: () {
-              // TODO: Remove this card from the list
+              // TODO(marfavi): Remove this card from the list
             },
           ),
         ],
