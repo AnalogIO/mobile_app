@@ -9,7 +9,7 @@ class NoTicketsPlaceholder extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return DottedBorder(
-      color: colorScheme.primary,
+      color: colorScheme.onSurfaceVariant,
       strokeWidth: 2,
       dashPattern: const [6, 4],
       borderType: BorderType.RRect,
