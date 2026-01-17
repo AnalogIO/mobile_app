@@ -1,6 +1,6 @@
 import 'package:cafe_analog_app/core/http_client.dart';
 import 'package:cafe_analog_app/core/widgets/app_bar.dart';
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
+import 'package:cafe_analog_app/http/generated_client/coffeecard_api_v2.models.swagger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

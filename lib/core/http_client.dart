@@ -1,6 +1,5 @@
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v1.swagger.dart'
-    hide $JsonSerializableConverter;
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
+import 'package:cafe_analog_app/http/generated_client/coffeecard_api_v1.swagger.dart' show CoffeecardApiV1;
+import 'package:cafe_analog_app/http/generated_client/coffeecard_api_v2.swagger.dart' show $JsonSerializableConverter, CoffeecardApiV2;
 import 'package:chopper/chopper.dart';
 
 final _httpClient = ChopperClient(

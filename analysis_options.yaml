@@ -3,6 +3,7 @@ analyzer:
   exclude:
     - lib/l10n/gen/*
     - lib/generated/**
+    - lib/http/generated_client/**
 linter:
   rules:
     public_member_api_docs: false

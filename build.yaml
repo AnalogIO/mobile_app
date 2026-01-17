@@ -4,11 +4,12 @@ targets:
       - $package$
       - lib/$lib$
       - swagger/**
+      - pubspec.yaml
     builders:
       swagger_dart_code_generator:
         options:
           input_folder: "swagger/"
-          output_folder: "lib/generated/api/"
+          output_folder: "lib/http/generated_client/"
           with_base_url: false
           separate_models: true
           enums_case_sensitive: false

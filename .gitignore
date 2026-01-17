@@ -120,3 +120,6 @@ lib/l10n/gen/
 *.g.dart
 *.mocks.dart
 /lib/generated/
+
+# don't ignore generated http client files
+!lib/http/generated_client/**
