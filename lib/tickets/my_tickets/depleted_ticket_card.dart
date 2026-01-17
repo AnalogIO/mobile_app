@@ -6,8 +6,8 @@ import 'package:gap/gap.dart';
 ///
 /// Displays a message prompting the user to buy more tickets or dismiss.
 /// Uses [TicketCardBase] with muted colors for a less prominent appearance.
-class NoTicketsLeftCard extends StatelessWidget {
-  const NoTicketsLeftCard({
+class DepletedTicketCard extends StatelessWidget {
+  const DepletedTicketCard({
     required this.id,
     required this.ticketName,
     required this.backgroundImagePath,

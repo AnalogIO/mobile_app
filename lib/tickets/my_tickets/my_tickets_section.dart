@@ -1,5 +1,6 @@
 import 'package:cafe_analog_app/tickets/buy_tickets/products.dart';
-import 'package:cafe_analog_app/tickets/my_tickets/no_tickets_left_card.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/depleted_ticket_card.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/no_tickets_placeholder.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/owned_ticket_card.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/use_ticket_modal.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class MyTicketsSection extends StatelessWidget {
             ),
           ),
           // Sample NoTicketsLeftCard widget
-          NoTicketsLeftCard(
+          DepletedTicketCard(
             id: 2,
             ticketName: dummyEmptyProduct.title,
             backgroundImagePath: 'assets/images/latteart.png',
@@ -60,6 +61,8 @@ class MyTicketsSection extends StatelessWidget {
               // TODO(marfavi): Remove this card from the list
             },
           ),
+          // Shown when user has no tickets at all
+          const NoTicketsPlaceholder(),
         ],
       ),
     );
