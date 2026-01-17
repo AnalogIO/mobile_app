@@ -3,26 +3,15 @@ import 'package:flutter/material.dart';
 /// A card displaying a ticket with a background graphic, title, and content.
 ///
 /// Uses [Hero] animations with a unique tag based on [id].
-///
-/// Use [TicketCardBase] for a simple string title, or
-/// [TicketCardBase.customTitleWidget] for a custom title widget.
 class TicketCardBase extends StatelessWidget {
-  /// Creates a ticket card with a string [title].
-  TicketCardBase({
+  const TicketCardBase({
     required this.id,
-    required String title,
+    required this.title,
     required this.backgroundImagePath,
     required this.children,
-    this.onTap,
-    super.key,
-  }) : titleWidget = Text(title);
-
-  /// Creates a ticket card with a custom [titleWidget].
-  const TicketCardBase.customTitleWidget({
-    required this.id,
-    required this.titleWidget,
-    required this.backgroundImagePath,
-    required this.children,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.backgroundGraphicOpacity = 1.0,
     this.onTap,
     super.key,
   });
@@ -31,7 +20,7 @@ class TicketCardBase extends StatelessWidget {
   final int id;
 
   /// The widget displayed at the top; the ticket or menu item name.
-  final Widget titleWidget;
+  final Widget title;
 
   /// Asset path for the background graphic.
   final String backgroundImagePath;
@@ -42,38 +31,17 @@ class TicketCardBase extends StatelessWidget {
   /// Called when the card is tapped.
   final VoidCallback? onTap;
 
+  /// Optional background color. Defaults to [ColorScheme.secondary].
+  final Color? backgroundColor;
+
+  /// Optional foreground color. Defaults to [ColorScheme.onSecondary].
+  final Color? foregroundColor;
+
+  /// Opacity for the background graphic. Defaults to 1.0 (fully visible).
+  /// Use a lower value (e.g. 0.3) for a more subtle effect.
+  final double backgroundGraphicOpacity;
+
   static const double _borderRadius = 24;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Hero(
-      tag: 'ticket_$id',
-      child: Material(
-        color: colorScheme.secondary,
-        borderRadius: BorderRadius.circular(_borderRadius),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          overlayColor: _buildOverlayColor(colorScheme.onSecondary),
-          child: Stack(
-            children: [
-              _BackgroundGraphic(
-                imagePath: backgroundImagePath,
-                color: colorScheme.secondary,
-              ),
-              _GradientOverlay(color: colorScheme.secondary),
-              _Content(
-                titleWidget: titleWidget,
-                children: children,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   WidgetStateProperty<Color?> _buildOverlayColor(Color baseColor) {
     return WidgetStateProperty.fromMap({
@@ -81,6 +49,41 @@ class TicketCardBase extends StatelessWidget {
       WidgetState.focused: baseColor.withAlpha(20),
       WidgetState.pressed: baseColor.withAlpha(30),
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final bgColor = backgroundColor ?? colorScheme.secondary;
+    final fgColor = foregroundColor ?? colorScheme.onSecondary;
+
+    return Hero(
+      tag: 'ticket_$id',
+      child: Material(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(_borderRadius),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          overlayColor: _buildOverlayColor(fgColor),
+          child: Stack(
+            children: [
+              _BackgroundGraphic(
+                imagePath: backgroundImagePath,
+                color: bgColor,
+                opacity: backgroundGraphicOpacity,
+              ),
+              _GradientOverlay(color: bgColor),
+              _Content(
+                titleWidget: title,
+                foregroundColor: fgColor,
+                children: children,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -92,10 +95,12 @@ class _BackgroundGraphic extends StatelessWidget {
   const _BackgroundGraphic({
     required this.imagePath,
     required this.color,
+    required this.opacity,
   });
 
   final String imagePath;
   final Color color;
+  final double opacity;
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +111,13 @@ class _BackgroundGraphic extends StatelessWidget {
     );
 
     return Positioned.fill(
-      child: ColorFiltered(
-        // srcIn: uses the image's shape (alpha) and fills it with our color
-        colorFilter: ColorFilter.mode(darkenedColor, BlendMode.srcIn),
-        child: Image.asset(imagePath, fit: BoxFit.cover),
+      child: Opacity(
+        opacity: opacity,
+        child: ColorFiltered(
+          // srcIn: uses the image's shape (alpha) and fills it with our color
+          colorFilter: ColorFilter.mode(darkenedColor, BlendMode.srcIn),
+          child: Image.asset(imagePath, fit: BoxFit.cover),
+        ),
       ),
     );
   }
@@ -145,10 +153,12 @@ class _GradientOverlay extends StatelessWidget {
 class _Content extends StatelessWidget {
   const _Content({
     required this.titleWidget,
+    required this.foregroundColor,
     required this.children,
   });
 
   final Widget titleWidget;
+  final Color foregroundColor;
   final List<Widget> children;
 
   @override
@@ -161,7 +171,7 @@ class _Content extends StatelessWidget {
         children: [
           DefaultTextStyle(
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondary,
+              color: foregroundColor,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),

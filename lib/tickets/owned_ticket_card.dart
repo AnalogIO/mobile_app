@@ -24,7 +24,7 @@ class OwnedTicketCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return TicketCardBase(
       id: id,
-      title: ticketName,
+      title: Text(ticketName),
       backgroundImagePath: backgroundImagePath,
       onTap: onTap,
       children: [

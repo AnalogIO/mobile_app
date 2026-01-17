@@ -36,10 +36,10 @@ class _UseTicketCardState extends State<UseTicketCard> {
 
   @override
   Widget build(BuildContext context) {
-    return TicketCardBase.customTitleWidget(
+    return TicketCardBase(
       id: widget.ticketId,
       backgroundImagePath: widget.backgroundImagePath,
-      titleWidget: AnimatedFadeSwitcherSized(
+      title: AnimatedFadeSwitcherSized(
         showSecond: _isSwiping,
         firstChild: Text(widget.ticketName),
         secondChild: Text(_selectedMenuItem ?? ''),

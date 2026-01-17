@@ -1,6 +1,9 @@
+import 'package:cafe_analog_app/buy_tickets/products.dart';
+import 'package:cafe_analog_app/tickets/no_tickets_left_card.dart';
 import 'package:cafe_analog_app/tickets/owned_ticket_card.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/use_ticket_modal.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 // TODO(monir): add placeholder when user doesn't have any tickets.
 class MyTicketsSection extends StatelessWidget {
@@ -9,6 +12,8 @@ class MyTicketsSection extends StatelessWidget {
   // TODO(marfavi): hent data fra backend
   @override
   Widget build(BuildContext context) {
+    final dummyEmptyProduct = products[1];
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -39,6 +44,21 @@ class MyTicketsSection extends StatelessWidget {
               ticketName: 'Filter',
               backgroundImagePath: 'assets/images/beans.png',
             ),
+          ),
+          // Sample NoTicketsLeftCard widget
+          NoTicketsLeftCard(
+            id: 2,
+            ticketName: dummyEmptyProduct.title,
+            backgroundImagePath: 'assets/images/latteart.png',
+            onBuyMore: () {
+              context.push(
+                '/tickets/buy/ticket/${dummyEmptyProduct.title}',
+                extra: dummyEmptyProduct,
+              );
+            },
+            onDismiss: () {
+              // TODO: Remove this card from the list
+            },
           ),
         ],
       ),
