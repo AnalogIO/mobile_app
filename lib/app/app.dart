@@ -7,7 +7,7 @@ import 'package:cafe_analog_app/receipts/receipts_screen.dart';
 import 'package:cafe_analog_app/redeem_voucher/redeem_voucher_screen.dart';
 import 'package:cafe_analog_app/settings/view/settings_screen.dart';
 import 'package:cafe_analog_app/stats/view/stats_screen.dart';
-import 'package:cafe_analog_app/tickets/tickets_screen.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/tickets_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

@@ -1,6 +1,6 @@
 import 'package:cafe_analog_app/buy_tickets/products.dart';
-import 'package:cafe_analog_app/tickets/no_tickets_left_card.dart';
-import 'package:cafe_analog_app/tickets/owned_ticket_card.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/no_tickets_left_card.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/owned_ticket_card.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/use_ticket_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
