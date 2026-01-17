@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/buy_tickets/product.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
 import 'package:flutter/material.dart';
 
 class ReceiptsListEntry extends StatelessWidget {

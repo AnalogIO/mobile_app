@@ -1,5 +1,5 @@
-import 'package:cafe_analog_app/buy_tickets/products.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/products.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

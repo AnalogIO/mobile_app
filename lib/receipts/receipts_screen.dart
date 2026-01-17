@@ -1,7 +1,7 @@
-import 'package:cafe_analog_app/buy_tickets/product.dart';
 import 'package:cafe_analog_app/core/widgets/choice_chips.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/receipts/receipts_list_entry.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 

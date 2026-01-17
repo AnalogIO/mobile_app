@@ -1,12 +1,12 @@
-import 'package:cafe_analog_app/buy_tickets/buy_tickets_screen.dart';
-import 'package:cafe_analog_app/buy_tickets/product.dart';
-import 'package:cafe_analog_app/buy_tickets/ticket_detail_screen.dart';
 import 'package:cafe_analog_app/login/login_screen.dart';
 import 'package:cafe_analog_app/login/secret_page.dart';
 import 'package:cafe_analog_app/receipts/receipts_screen.dart';
 import 'package:cafe_analog_app/redeem_voucher/redeem_voucher_screen.dart';
 import 'package:cafe_analog_app/settings/view/settings_screen.dart';
 import 'package:cafe_analog_app/stats/view/stats_screen.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/buy_tickets_screen.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/ticket_detail_screen.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/tickets_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
