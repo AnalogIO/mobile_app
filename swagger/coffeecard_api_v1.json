@@ -946,7 +946,7 @@
       },
       "CoffeeCardDto": {
         "type": "object",
-        "description": "A CoffeeCard is a union datatype of a product and unused tickets associated with the product. ",
+        "description": "A CoffeeCard is a union datatype of a product and unused tickets associated with the product.",
         "example": {
           "productId": 1,
           "name": "Filter Coffee",

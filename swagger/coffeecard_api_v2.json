@@ -2412,7 +2412,7 @@
           },
           "isPerk": {
             "type": "boolean",
-            "description": "Eligible due to a user perk privilege ",
+            "description": "Eligible due to a user perk privilege",
             "example": true
           },
           "visible": {
