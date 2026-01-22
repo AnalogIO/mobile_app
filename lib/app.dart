@@ -19,6 +19,17 @@ final goRouter = GoRouter(
     GoRoute(
       path: '/login',
       pageBuilder: (context, state) => const MaterialPage(child: LoginScreen()),
+      routes: [
+        GoRoute(
+          path: 'auth/:token',
+          pageBuilder: (context, state) => MaterialPage(
+            // TODO(marfavi): Use a real screen here
+            child: SecretScreen(
+              id: state.pathParameters['token']!,
+            ),
+          ),
+        ),
+      ],
     ),
     GoRoute(
       path: '/verify-mobilepay/:id',

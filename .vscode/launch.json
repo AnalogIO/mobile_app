@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch development",
+      "name": "Development",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
@@ -17,14 +17,7 @@
       ]
     },
     {
-      "name": "Launch staging",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main.dart",
-      "args": ["--flavor", "staging", "--target", "lib/main.dart"]
-    },
-    {
-      "name": "Launch production (release)",
+      "name": "Production (release)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
