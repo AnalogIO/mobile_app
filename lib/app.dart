@@ -2,7 +2,8 @@ import 'package:cafe_analog_app/login/login_screen.dart';
 import 'package:cafe_analog_app/login/secret_page.dart';
 import 'package:cafe_analog_app/receipts/receipts_screen.dart';
 import 'package:cafe_analog_app/redeem_voucher/redeem_voucher_screen.dart';
-import 'package:cafe_analog_app/settings/view/settings_screen.dart';
+import 'package:cafe_analog_app/settings/settings_screen.dart';
+import 'package:cafe_analog_app/settings/your_profile_screen.dart';
 import 'package:cafe_analog_app/stats/view/stats_screen.dart';
 import 'package:cafe_analog_app/tickets/buy_tickets/buy_tickets_screen.dart';
 import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
@@ -106,6 +107,13 @@ final goRouter = GoRouter(
               path: '/settings',
               pageBuilder: (context, state) =>
                   const NoTransitionPage(child: SettingsScreen()),
+              routes: [
+                GoRoute(
+                  path: 'your-profile',
+                  pageBuilder: (context, state) =>
+                      const MaterialPage(child: YourProfileScreen()),
+                ),
+              ],
             ),
           ],
         ),
