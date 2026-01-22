@@ -5,6 +5,9 @@ import 'package:cafe_analog_app/core/widgets/section_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+
+part 'profile_card.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -14,9 +17,19 @@ class SettingsScreen extends StatelessWidget {
     return Screen.listView(
       name: 'Settings',
       children: [
+        const _ProfileCard(
+          name: 'Monir',
+          occupation: 'BSWU',
+        ),
         const SectionTitle('Account'),
         ListTile(
-          leading: const Icon(Icons.person),
+          leading: const Icon(Icons.email_outlined),
+          title: const Text('Email'),
+          subtitle: const Text('monir@example.com'),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(Icons.badge_outlined),
           title: const Text('User ID'),
           subtitle: const Text('1234'),
           trailing: const Icon(Icons.copy, size: 20),
@@ -41,7 +54,7 @@ class SettingsScreen extends StatelessWidget {
           onTap: () {},
         ),
         ListTile(
-          leading: const Icon(Icons.question_mark_outlined),
+          leading: const Icon(Icons.help_outline),
           title: const Text('Frequently Asked Questions'),
           onTap: () {},
         ),
@@ -54,12 +67,12 @@ class SettingsScreen extends StatelessWidget {
         const Gap(24),
         const SectionTitle('Legal'),
         ListTile(
-          leading: const Icon(Icons.privacy_tip_outlined),
+          leading: const Icon(Icons.article_outlined),
           title: const Text('Privacy policy'),
           onTap: () {},
         ),
         ListTile(
-          leading: const Icon(Icons.code),
+          leading: const Icon(Icons.code_outlined),
           title: const Text('Credits and licenses'),
           onTap: () {},
         ),
