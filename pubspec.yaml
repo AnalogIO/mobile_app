@@ -4,7 +4,8 @@ version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.10.7
+  flutter: 3.38.7
 
 dependencies:
   bloc: ^9.0.0
@@ -21,18 +22,18 @@ dependencies:
   logger: ^2.6.2
   equatable: ^2.0.7
   gap: ^3.0.1
-  dotted_border: ^2.1.0
+  dotted_border: ^3.1.0
 
 dev_dependencies:
   bloc_test: ^10.0.0
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.4
-  very_good_analysis: ^9.0.0
+  very_good_analysis: ^10.0.0
   build_runner: ^2.4.9 # swagger generator
   chopper_generator: ^8.0.3 # swagger generator
   json_serializable: ^6.8.0 # swagger generator
-  swagger_dart_code_generator: ^3.0.1 # swagger generator
+  swagger_dart_code_generator: ^4.1.1 # swagger generator
   build_verify: ^3.1.1
 
 flutter:

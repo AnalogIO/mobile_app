@@ -51,13 +51,13 @@ class _AnimatedFadeSwitcherSizedState extends State<AnimatedFadeSwitcherSized>
   }
 
   @override
-  void didUpdateWidget(AnimatedFadeSwitcherSized oldWidget) {
+  Future<void> didUpdateWidget(AnimatedFadeSwitcherSized oldWidget) async {
     super.didUpdateWidget(oldWidget);
     if (widget.showSecond != oldWidget.showSecond) {
       if (widget.showSecond) {
-        _controller.forward();
+        await _controller.forward();
       } else {
-        _controller.reverse();
+        await _controller.reverse();
       }
     }
   }
