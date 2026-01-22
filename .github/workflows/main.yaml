@@ -21,6 +21,7 @@ jobs:
     with:
       flutter_channel: stable
       flutter_version: 3.38.7
+      setup: "dart run build_runner build --delete-conflicting-outputs"
 
   spell-check:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v1
