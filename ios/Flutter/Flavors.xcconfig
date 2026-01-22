@@ -1,0 +1,19 @@
+// Flavor-specific settings
+// This file is included from Debug.xcconfig and Release.xcconfig
+// and uses conditional variable expansion based on FLAVOR
+
+// Default values (production)
+DEEP_LINK_SCHEME = cafeanalog
+FLAVOR_APP_NAME = Analog
+
+// Override for development
+DEEP_LINK_SCHEME[config=Debug-development] = cafeanalog-dev
+DEEP_LINK_SCHEME[config=Release-development] = cafeanalog-dev
+FLAVOR_APP_NAME[config=Debug-development] = [DEV] Analog
+FLAVOR_APP_NAME[config=Release-development] = [DEV] Analog
+
+// Override for production
+DEEP_LINK_SCHEME[config=Debug-production] = cafeanalog
+DEEP_LINK_SCHEME[config=Release-production] = cafeanalog
+FLAVOR_APP_NAME[config=Debug-production] = Analog
+FLAVOR_APP_NAME[config=Release-production] = Analog

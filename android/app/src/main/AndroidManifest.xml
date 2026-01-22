@@ -29,9 +29,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="cafeanalog" />
+                <data android:scheme="${deepLinkScheme}" />
                 <data android:host="cafeanalog.dk" />
 
+                <data android:pathPrefix="/login/" />
                 <data android:pathPrefix="/claim-voucher/" />
                 <data android:pathPrefix="/verify-mobilepay/" />
             </intent-filter>
