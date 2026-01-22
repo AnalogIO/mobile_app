@@ -14,13 +14,13 @@ class UseTicketModal extends StatelessWidget {
   final String ticketName;
   final String backgroundImagePath;
 
-  static void show({
+  static Future<void> show({
     required BuildContext context,
     required int ticketId,
     required String ticketName,
     required String backgroundImagePath,
-  }) {
-    Navigator.of(context, rootNavigator: true).push(
+  }) async {
+    await Navigator.of(context, rootNavigator: true).push(
       PageRouteBuilder<void>(
         barrierDismissible: true,
         barrierLabel: 'Dismiss use ticket dialog',

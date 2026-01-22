@@ -1,6 +1,6 @@
 import 'package:cafe_analog_app/app.dart';
 import 'package:cafe_analog_app/bootstrap.dart';
 
-void main() {
-  bootstrap(() => const App());
+Future<void> main() async {
+  await bootstrap(() => const App());
 }

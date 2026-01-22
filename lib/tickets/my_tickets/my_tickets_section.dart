@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cafe_analog_app/tickets/buy_tickets/products.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/depleted_ticket_card.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/no_tickets_placeholder.dart';
@@ -52,9 +54,11 @@ class MyTicketsSection extends StatelessWidget {
             ticketName: dummyEmptyProduct.title,
             backgroundImagePath: 'assets/images/latteart.png',
             onBuyMore: () {
-              context.push(
-                '/tickets/buy/ticket/${dummyEmptyProduct.title}',
-                extra: dummyEmptyProduct,
+              unawaited(
+                context.push(
+                  '/tickets/buy/ticket/${dummyEmptyProduct.title}',
+                  extra: dummyEmptyProduct,
+                ),
               );
             },
             onDismiss: () {

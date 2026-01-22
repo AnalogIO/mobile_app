@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/tickets/buy_tickets/products.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +20,11 @@ class BuyTicketsScreen extends StatelessWidget {
           ),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            context.push(
-              '/tickets/buy/ticket/${product.title}',
-              extra: product,
+            unawaited(
+              context.push(
+                '/tickets/buy/ticket/${product.title}',
+                extra: product,
+              ),
             );
           },
         );
