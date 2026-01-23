@@ -1,9 +1,8 @@
-import 'package:cafe_analog_app/core/http_client.dart';
-import 'package:cafe_analog_app/core/widgets/app_bar.dart';
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+
+import 'package:cafe_analog_app/core/widgets/form.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,103 +12,72 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final textEditingController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      appBar: const AnalogAppBar(title: 'Login'),
-      body: Form(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              AnalogTextFormField(
-                label: 'Email',
-                textInputType: TextInputType.emailAddress,
-                controller: textEditingController,
+      body: Stack(
+        children: [
+          // Subtle background graphic
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.075,
+              child: Image.asset(
+                'assets/images/beans_half.png',
+                fit: BoxFit.cover,
               ),
-              const Gap(8),
-              FilledButton.icon(
-                label: const Text('Continue'),
-                icon: const Icon(Icons.navigate_next),
-                iconAlignment: IconAlignment.end,
-                onPressed: () async {
-                  final email = textEditingController.text;
-
-                  if (kDebugMode) {
-                    print('Trying to log in with $email...');
-                  }
-
-                  final response = await apiV2.accountLoginPost(
-                    body: UserLoginRequest(
-                      email: email,
-                      loginType: 'shifty',
-                    ),
-                  );
-
-                  if (context.mounted) {
-                    if (response.isSuccessful) {
-                      await showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('EMAIL SENT'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {},
-                                child: const Text('cool'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      await showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('ERROR'),
-                            content: Text(response.error.toString()),
-                            actions: [
-                              TextButton(
-                                onPressed: () {},
-                                child: const Text('når ok'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  }
-                },
-              ),
-            ],
+            ),
           ),
-        ),
+          // Main content
+          SafeArea(
+            child: Column(
+              children: [
+                const Spacer(),
+                Text(
+                  'Analog',
+                  style: textTheme.headlineLarge?.copyWith(fontWeight: .bold),
+                ),
+                Text(
+                  'Enter your email to continue',
+                  style: textTheme.bodyMedium,
+                ),
+                const Spacer(),
+                AnalogForm(
+                  inputType: .email,
+                  labelText: 'Your email',
+                  submitText: 'Continue',
+                  errorMessage: 'Enter a valid email',
+                  onSubmit: (email) async {
+                    // Show loading overlay
+                    unawaited(
+                      showDialog<void>(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) => const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 5,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    );
+
+                    // Simulate network request for 2s
+                    await Future<void>.delayed(const Duration(seconds: 2));
+
+                    // Dismiss loading overlay and navigate
+                    if (context.mounted) {
+                      Navigator.of(context).pop(); // dismiss dialog
+                      context.go('/tickets');
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class AnalogTextFormField extends StatelessWidget {
-  const AnalogTextFormField({
-    required this.label,
-    required this.textInputType,
-    required this.controller,
-    super.key,
-  });
-
-  final String label;
-  final TextInputType textInputType;
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      decoration: InputDecoration(filled: true, labelText: label),
-      keyboardType: textInputType,
-      controller: controller,
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 /// The type of validation to apply to the form input.
 enum FormInputType { email, nonEmptyString }
@@ -99,7 +100,6 @@ class _AnalogFormState extends State<AnalogForm> {
         children: [
           TextFormField(
             controller: _controller,
-            autofocus: true,
             keyboardType: widget.inputType == FormInputType.email
                 ? TextInputType.emailAddress
                 : TextInputType.text,
@@ -109,7 +109,7 @@ class _AnalogFormState extends State<AnalogForm> {
             decoration: InputDecoration(
               labelText: widget.labelText,
               filled: true,
-              helperText: widget.hintText,
+              helperText: widget.hintText ?? '',
               helperMaxLines: 2,
               helperStyle: const TextStyle(
                 fontSize: 12,
@@ -119,6 +119,7 @@ class _AnalogFormState extends State<AnalogForm> {
               errorMaxLines: 2,
             ),
           ),
+          const Gap(8),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.secondary,
