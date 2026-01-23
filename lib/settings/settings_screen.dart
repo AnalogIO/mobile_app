@@ -45,7 +45,16 @@ class SettingsScreen extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.logout_outlined),
           title: const Text('Log out'),
+<<<<<<< ours
           onTap: () => _onLogOutTap(context),
+||||||| ancestor
+          onTap: () {},
+=======
+          onTap: () {
+            // TODO(marfavi): Implement actual logout logic
+            context.go('/login');
+          },
+>>>>>>> theirs
         ),
         const Gap(24),
         const SectionTitle('About'),
