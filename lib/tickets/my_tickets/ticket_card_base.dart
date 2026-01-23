@@ -63,24 +63,30 @@ class TicketCardBase extends StatelessWidget {
         color: bgColor,
         borderRadius: BorderRadius.circular(_borderRadius),
         clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          overlayColor: _buildOverlayColor(fgColor),
-          child: Stack(
-            children: [
-              _BackgroundGraphic(
-                imagePath: backgroundImagePath,
-                color: bgColor,
-                opacity: backgroundGraphicOpacity,
+        child: Stack(
+          children: [
+            _BackgroundGraphic(
+              imagePath: backgroundImagePath,
+              color: bgColor,
+              opacity: backgroundGraphicOpacity,
+            ),
+            _GradientOverlay(color: bgColor),
+            _Content(
+              titleWidget: title,
+              foregroundColor: fgColor,
+              children: children,
+            ),
+            // InkWell on top so splash appears above background
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTap,
+                  overlayColor: _buildOverlayColor(fgColor),
+                ),
               ),
-              _GradientOverlay(color: bgColor),
-              _Content(
-                titleWidget: title,
-                foregroundColor: fgColor,
-                children: children,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
