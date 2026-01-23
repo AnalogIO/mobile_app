@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final goRouter = GoRouter(
-  initialLocation: '/tickets',
+  initialLocation: '/login',
   debugLogDiagnostics: true,
   routes: [
     GoRoute(
