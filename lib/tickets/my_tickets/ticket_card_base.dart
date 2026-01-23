@@ -105,10 +105,7 @@ class _BackgroundGraphic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Darken the base color for a subtle background effect
-    final darkenedColor = Color.alphaBlend(
-      Colors.black.withAlpha(150),
-      color,
-    );
+    final darkenedColor = Color.alphaBlend(Colors.black.withAlpha(30), color);
 
     return Positioned.fill(
       child: Opacity(

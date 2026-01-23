@@ -44,7 +44,7 @@ class DepletedTicketCard extends StatelessWidget {
       backgroundImagePath: backgroundImagePath,
       backgroundColor: colorScheme.surfaceContainerHighest,
       foregroundColor: colorScheme.onSurfaceVariant,
-      backgroundGraphicOpacity: 0.3,
+      backgroundGraphicOpacity: 0.5,
       children: [
         const Gap(36),
         Row(
