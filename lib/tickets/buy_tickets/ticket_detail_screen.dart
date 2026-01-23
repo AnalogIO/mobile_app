@@ -19,7 +19,7 @@ class TicketDetailScreen extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: false,
               background: Image.asset(
-                'assets/images/latteart.png',
+                'assets/images/latteart_cropped.png',
                 fit: BoxFit.cover,
                 opacity: const AlwaysStoppedAnimation(0.3),
               ),

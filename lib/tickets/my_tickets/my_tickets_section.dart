@@ -27,12 +27,12 @@ class MyTicketsSection extends StatelessWidget {
             ticketName: 'Fancy',
             icon: Icons.local_cafe,
             ticketsLeft: 4,
-            backgroundImagePath: 'assets/images/latteart.png',
+            backgroundImagePath: 'assets/images/latteart_cropped.png',
             onTap: () => UseTicketModal.show(
               context: context,
               ticketId: 0,
               ticketName: 'Fancy',
-              backgroundImagePath: 'assets/images/latteart.png',
+              backgroundImagePath: 'assets/images/latteart_cropped.png',
             ),
           ),
           OwnedTicketCard(
@@ -40,19 +40,19 @@ class MyTicketsSection extends StatelessWidget {
             ticketName: 'Filter',
             icon: Icons.coffee_maker,
             ticketsLeft: 1,
-            backgroundImagePath: 'assets/images/beans.png',
+            backgroundImagePath: 'assets/images/beans_cropped.png',
             onTap: () => UseTicketModal.show(
               context: context,
               ticketId: 1,
               ticketName: 'Filter',
-              backgroundImagePath: 'assets/images/beans.png',
+              backgroundImagePath: 'assets/images/beans_cropped.png',
             ),
           ),
           // Sample NoTicketsLeftCard widget
           DepletedTicketCard(
             id: 2,
             ticketName: dummyEmptyProduct.title,
-            backgroundImagePath: 'assets/images/latteart.png',
+            backgroundImagePath: 'assets/images/latteart_cropped.png',
             onBuyMore: () {
               unawaited(
                 context.push(
