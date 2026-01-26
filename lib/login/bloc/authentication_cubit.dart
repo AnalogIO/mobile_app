@@ -16,17 +16,17 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit({
     required AuthTokenRepository authTokenRepository,
     required LoginRepository loginRepository,
-  }) : _authRepository = authTokenRepository,
+  }) : _authTokenRepository = authTokenRepository,
        _loginRepository = loginRepository,
        super(const AuthInitial());
 
-  final AuthTokenRepository _authRepository;
+  final AuthTokenRepository _authTokenRepository;
   final LoginRepository _loginRepository;
 
   /// Check current authentication status and emit appropriate state.
   Future<void> start() async {
     emit(const AuthLoading());
-    final newState = await _authRepository
+    final newState = await _authTokenRepository
         .getTokens()
         .match(
           (couldNotGetTokens) => AuthFailure(reason: couldNotGetTokens.reason),
@@ -42,7 +42,7 @@ class AuthCubit extends Cubit<AuthState> {
   /// Log the user out and clear stored tokens.
   Future<void> logOut() async {
     emit(const AuthLoading());
-    final newState = await _authRepository
+    final newState = await _authTokenRepository
         .clearTokens()
         .match(
           (couldNotClear) => AuthFailure(reason: couldNotClear.reason),
@@ -79,7 +79,7 @@ class AuthCubit extends Cubit<AuthState> {
     final newState = await authenticateEither.match(
       (didNotAuth) async => AuthFailure(reason: didNotAuth.reason),
       (tokens) async {
-        final saveEither = await _authRepository.saveTokens(tokens).run();
+        final saveEither = await _authTokenRepository.saveTokens(tokens).run();
         return saveEither.match(
           (couldNotSave) => AuthFailure(reason: couldNotSave.reason),
           (savedTokens) => AuthAuthenticated(tokens: savedTokens),
