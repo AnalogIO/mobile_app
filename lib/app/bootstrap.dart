@@ -27,6 +27,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 
   Bloc.observer = const AppBlocObserver();
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Add cross-flavor configuration here
 
   runApp(await builder());
