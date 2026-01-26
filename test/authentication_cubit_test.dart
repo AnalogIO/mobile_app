@@ -65,9 +65,12 @@ void main() {
     );
 
     blocTest<AuthCubit, AuthState>(
-      'emits [LoadInProgress, Authenticated] when authorizeWithToken succeeds',
+      'emits [LoadInProgress, Authenticated] '
+      'when authenticateWithMagicLinkToken succeeds',
       setUp: () {
-        when(() => loginRepository.authorizeWithToken('TOKEN')).thenReturn(
+        when(
+          () => loginRepository.authenticateWithMagicLinkToken('TOKEN'),
+        ).thenReturn(
           TaskEither.right(
             const AuthTokens(jwt: 'PROVIDED-JWT', refreshToken: 'REF'),
           ),
@@ -86,9 +89,11 @@ void main() {
         authRepository: authRepository,
         loginRepository: loginRepository,
       ),
-      act: (cubit) => cubit.authorizeWithToken(magicLinkToken: 'TOKEN'),
+      act: (cubit) => cubit.authenticateWithToken(magicLinkToken: 'TOKEN'),
       verify: (_) {
-        verify(() => loginRepository.authorizeWithToken('TOKEN')).called(1);
+        verify(
+          () => loginRepository.authenticateWithMagicLinkToken('TOKEN'),
+        ).called(1);
         verify(
           () => authRepository.saveTokens(
             const AuthTokens(jwt: 'PROVIDED-JWT', refreshToken: 'REF'),

@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Screen displayed when the app is opened via a magic link.
 ///
-/// Blank screen, only responsible for initiating the authorization
+/// Blank screen, only responsible for initiating the authentication
 /// process using the provided magic link token.
 class VerifyMagicLinkScreen extends StatefulWidget {
   const VerifyMagicLinkScreen({required this.magicLinkToken, super.key});
@@ -22,9 +22,9 @@ class _VerifyMagicLinkScreenState extends State<VerifyMagicLinkScreen> {
   void initState() {
     super.initState();
 
-    // Start authorization process with the provided magic link token
+    // Start authentication process with the provided magic link token
     unawaited(
-      context.read<AuthCubit>().authorizeWithToken(
+      context.read<AuthCubit>().authenticateWithToken(
         magicLinkToken: widget.magicLinkToken,
       ),
     );

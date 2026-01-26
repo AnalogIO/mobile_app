@@ -28,8 +28,8 @@ class LoginRepository {
         .map((_) => unit);
   }
 
-  /// Authorizes the user with the provided magic link token.
-  TaskEither<Failure, AuthTokens> authorizeWithToken(String token) {
+  /// Authenticates the user with the provided magic link token.
+  TaskEither<Failure, AuthTokens> authenticateWithMagicLinkToken(String token) {
     final request = TokenLoginRequest(token: token);
     return _executor
         .execute(() => _apiV2.accountAuthPost(body: request))
