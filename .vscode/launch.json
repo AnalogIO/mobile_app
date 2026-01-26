@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Development",
+      "name": "Debug mode (development flavor)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
@@ -17,11 +17,17 @@
       ]
     },
     {
-      "name": "Production (release)",
+      "name": "Release mode (development flavor)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": ["--release", "--flavor", "production", "--target", "lib/main.dart"]
+      "args": [
+        "--release",
+        "--flavor",
+        "development",
+        "--target",
+        "lib/main.dart"
+      ]
     }
   ]
 }
