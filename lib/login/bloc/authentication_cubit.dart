@@ -162,18 +162,18 @@ class AuthCubit extends Cubit<AuthState> {
     emit(newState);
   }
 
-  /// Authorize the user with the token provided from the magic link.
-  Future<void> authorizeWithToken({required String magicLinkToken}) async {
+  /// Authenticate the user with the token provided from the magic link.
+  Future<void> authenticateWithToken({required String magicLinkToken}) async {
     emit(const AuthLoading());
 
     // Exchange the magic link token for auth tokens.
-    final authorizeEither = await _loginRepository
-        .authorizeWithToken(magicLinkToken)
+    final authenticateEither = await _loginRepository
+        .authenticateWithMagicLinkToken(magicLinkToken)
         .run();
 
-    // If authorization failed, emit failure.
+    // If authentication failed, emit failure.
     // Otherwise save tokens and emit authenticated.
-    final newState = await authorizeEither.match(
+    final newState = await authenticateEither.match(
       (didNotAuth) async => AuthFailure(reason: didNotAuth.reason),
       (tokens) async {
         final saveEither = await _authRepository.saveTokens(tokens).run();
