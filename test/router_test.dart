@@ -5,7 +5,7 @@ import 'package:cafe_analog_app/app/router.dart';
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
 import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
-import 'package:cafe_analog_app/login/ui/auth_navigator.dart';
+import 'package:cafe_analog_app/login/ui/authentication_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';

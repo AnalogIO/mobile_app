@@ -1,37 +1,37 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/login/data/authentication_repository.dart';
+import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
 import 'package:cafe_analog_app/login/data/login_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class _MockAuthRepository extends Mock implements AuthRepository {}
+class _MockAuthRepository extends Mock implements AuthTokenRepository {}
 
 class _MockLoginRepository extends Mock implements LoginRepository {}
 
 void main() {
-  late _MockAuthRepository authRepository;
+  late _MockAuthRepository authTokenRepository;
   late _MockLoginRepository loginRepository;
 
   setUp(() {
-    authRepository = _MockAuthRepository();
+    authTokenRepository = _MockAuthRepository();
     loginRepository = _MockLoginRepository();
   });
 
   group('AuthCubit', () {
     blocTest<AuthCubit, AuthState>(
-      'emits [LoadInProgress, Authenticated] when started '
+      'emits [Loading, Authenticated] when started '
       'and AuthRepository reports logged in',
       build: () {
-        when(() => authRepository.getTokens()).thenReturn(
+        when(() => authTokenRepository.getTokens()).thenReturn(
           TaskEither.right(
             some(const AuthTokens(jwt: 'JWT-TOKEN', refreshToken: 'REF')),
           ),
         );
         return AuthCubit(
-          authRepository: authRepository,
+          authTokenRepository: authTokenRepository,
           loginRepository: loginRepository,
         );
       },
@@ -47,13 +47,13 @@ void main() {
     );
 
     blocTest<AuthCubit, AuthState>(
-      'emits [LoadInProgress, Unauthenticated] when started and not logged in',
+      'emits [Loading, Unauthenticated] when started and not logged in',
       build: () {
         when(
-          () => authRepository.getTokens(),
+          () => authTokenRepository.getTokens(),
         ).thenReturn(TaskEither.right(none()));
         return AuthCubit(
-          authRepository: authRepository,
+          authTokenRepository: authTokenRepository,
           loginRepository: loginRepository,
         );
       },
@@ -65,7 +65,7 @@ void main() {
     );
 
     blocTest<AuthCubit, AuthState>(
-      'emits [LoadInProgress, Authenticated] '
+      'emits [Loading, Authenticated] '
       'when authenticateWithMagicLinkToken succeeds',
       setUp: () {
         when(
@@ -76,7 +76,7 @@ void main() {
           ),
         );
         when(
-          () => authRepository.saveTokens(
+          () => authTokenRepository.saveTokens(
             const AuthTokens(jwt: 'PROVIDED-JWT', refreshToken: 'REF'),
           ),
         ).thenReturn(
@@ -86,7 +86,7 @@ void main() {
         );
       },
       build: () => AuthCubit(
-        authRepository: authRepository,
+        authTokenRepository: authTokenRepository,
         loginRepository: loginRepository,
       ),
       act: (cubit) => cubit.authenticateWithToken(magicLinkToken: 'TOKEN'),
@@ -95,7 +95,7 @@ void main() {
           () => loginRepository.authenticateWithMagicLinkToken('TOKEN'),
         ).called(1);
         verify(
-          () => authRepository.saveTokens(
+          () => authTokenRepository.saveTokens(
             const AuthTokens(jwt: 'PROVIDED-JWT', refreshToken: 'REF'),
           ),
         ).called(1);
@@ -111,20 +111,20 @@ void main() {
     );
 
     blocTest<AuthCubit, AuthState>(
-      'emits [LoadInProgress, Unauthenticated] when logged out '
+      'emits [Loading, Unauthenticated] when logged out '
       'and clears tokens',
       build: () {
         when(
-          () => authRepository.clearTokens(),
+          () => authTokenRepository.clearTokens(),
         ).thenReturn(TaskEither.right(unit));
         return AuthCubit(
-          authRepository: authRepository,
+          authTokenRepository: authTokenRepository,
           loginRepository: loginRepository,
         );
       },
       act: (cubit) => cubit.logOut(),
       verify: (_) {
-        verify(() => authRepository.clearTokens()).called(1);
+        verify(() => authTokenRepository.clearTokens()).called(1);
       },
       expect: () => [
         isA<AuthLoading>(),
