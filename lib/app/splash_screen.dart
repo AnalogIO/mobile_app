@@ -1,0 +1,19 @@
+import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
+import 'package:cafe_analog_app/tickets/use_ticket/delayed_fade_in.dart';
+import 'package:flutter/material.dart';
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: DelayedFadeIn(
+          delay: Duration(seconds: 1),
+          child: AnalogCircularProgressIndicator(spinnerColor: .dark),
+        ),
+      ),
+    );
+  }
+}
