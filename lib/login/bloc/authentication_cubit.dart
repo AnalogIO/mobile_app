@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:cafe_analog_app/login/data/authentication_repository.dart';
+import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
 import 'package:cafe_analog_app/login/data/login_repository.dart';
+import 'package:cafe_analog_app/login/ui/authentication_navigator.dart';
 import 'package:equatable/equatable.dart';
 
 part 'authentication_state.dart';
@@ -10,16 +11,16 @@ part 'authentication_state.dart';
 ///
 /// It handles login, logout, token refresh, and emits appropriate
 /// states based on the authentication status. These states are used by
-///
+/// [AuthNavigator] to navigate the user through the app.
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit({
-    required AuthRepository authRepository,
+    required AuthTokenRepository authTokenRepository,
     required LoginRepository loginRepository,
-  }) : _authRepository = authRepository,
+  }) : _authRepository = authTokenRepository,
        _loginRepository = loginRepository,
        super(const AuthInitial());
 
-  final AuthRepository _authRepository;
+  final AuthTokenRepository _authRepository;
   final LoginRepository _loginRepository;
 
   /// Check current authentication status and emit appropriate state.
@@ -28,7 +29,7 @@ class AuthCubit extends Cubit<AuthState> {
     final newState = await _authRepository
         .getTokens()
         .match(
-          (failure) => AuthFailure(reason: failure.reason),
+          (couldNotGetTokens) => AuthFailure(reason: couldNotGetTokens.reason),
           (maybeTokens) => maybeTokens.match(
             AuthUnauthenticated.new, // on none
             (tokens) => AuthAuthenticated(tokens: tokens), // on some
@@ -44,7 +45,7 @@ class AuthCubit extends Cubit<AuthState> {
     final newState = await _authRepository
         .clearTokens()
         .match(
-          (failure) => AuthFailure(reason: failure.reason),
+          (couldNotClear) => AuthFailure(reason: couldNotClear.reason),
           (_) => const AuthUnauthenticated(),
         )
         .run();
@@ -57,7 +58,7 @@ class AuthCubit extends Cubit<AuthState> {
     final newState = await _loginRepository
         .requestMagicLink(email)
         .match(
-          (failure) => AuthFailure(reason: failure.reason),
+          (didNotSendLink) => AuthFailure(reason: didNotSendLink.reason),
           (_) => AuthEmailSent(email: email),
         )
         .run();
