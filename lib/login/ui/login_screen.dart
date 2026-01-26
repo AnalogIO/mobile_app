@@ -1,9 +1,7 @@
-import 'dart:async';
-
-import 'package:cafe_analog_app/core/loading_overlay.dart';
 import 'package:cafe_analog_app/core/widgets/form.dart';
+import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,14 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   submitText: 'Continue',
                   errorMessage: 'Enter a valid email',
                   onSubmit: (email) async {
-                    showLoadingOverlay(context);
-                    // TODO(marfavi): Implement actual login logic
-                    await Future<void>.delayed(const Duration(seconds: 2));
-                    if (context.mounted) {
-                      context
-                        ..pop()
-                        ..go('/tickets');
-                    }
+                    await context.read<AuthCubit>().sendLoginLink(email: email);
                   },
                 ),
               ],
