@@ -4,8 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fpdart/fpdart.dart';
 
 /// Handles storing and retrieving JWT and refresh tokens securely.
-class AuthRepository {
-  AuthRepository({required FlutterSecureStorage secureStorage})
+class AuthTokenRepository {
+  AuthTokenRepository({required FlutterSecureStorage secureStorage})
     : _secureStorage = secureStorage;
 
   final FlutterSecureStorage _secureStorage;

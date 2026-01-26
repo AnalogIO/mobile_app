@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cafe_analog_app/core/http_client.dart';
 import 'package:cafe_analog_app/core/network_request_executor.dart';
 import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/login/data/authentication_repository.dart';
+import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/login_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,7 +32,8 @@ class DependenciesProvider extends StatelessWidget {
               LoginRepository(apiV2: context.read(), executor: context.read()),
         ),
         RepositoryProvider(
-          create: (context) => AuthRepository(secureStorage: context.read()),
+          create: (context) =>
+              AuthTokenRepository(secureStorage: context.read()),
         ),
       ],
       child: MultiBlocProvider(
@@ -40,7 +41,7 @@ class DependenciesProvider extends StatelessWidget {
           BlocProvider(
             create: (context) {
               final authCubit = AuthCubit(
-                authRepository: context.read(),
+                authTokenRepository: context.read(),
                 loginRepository: context.read(),
               );
               unawaited(authCubit.start());

@@ -6,9 +6,9 @@ import 'package:go_router/go_router.dart';
 
 /// A widget that listens to authentication state changes from [AuthCubit]
 /// and performs app-wide navigation and UI side effects:
-///   - shows/hides a loading overlay while `AuthLoading` is emitted
+///   - shows/hides a loading overlay while [AuthLoading] is emitted
 ///   - navigates to `/tickets`, `/login/email-sent`, or `/login` based on state
-///   - displays a `SnackBar` when `AuthFailure` occurs with the failure reason
+///   - displays a [SnackBar] when [AuthFailure] occurs with the failure reason
 class AuthNavigator extends StatefulWidget {
   const AuthNavigator({required this.child, super.key});
 

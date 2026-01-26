@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cafe_analog_app/app/navigation_scaffolds.dart';
 import 'package:cafe_analog_app/app/splash_screen.dart';
 import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/login/ui/auth_navigator.dart';
+import 'package:cafe_analog_app/login/ui/authentication_navigator.dart';
 import 'package:cafe_analog_app/login/ui/email_sent_screen.dart';
 import 'package:cafe_analog_app/login/ui/login_screen.dart';
 import 'package:cafe_analog_app/login/ui/verify_magic_link_screen.dart';
