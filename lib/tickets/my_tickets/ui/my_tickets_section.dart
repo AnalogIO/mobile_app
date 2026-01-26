@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:cafe_analog_app/tickets/buy_tickets/products.dart';
-import 'package:cafe_analog_app/tickets/my_tickets/depleted_ticket_card.dart';
-import 'package:cafe_analog_app/tickets/my_tickets/no_tickets_placeholder.dart';
-import 'package:cafe_analog_app/tickets/my_tickets/owned_ticket_card.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/ui/depleted_ticket_card.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/ui/no_tickets_placeholder.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/ui/owned_ticket_card.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/use_ticket_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
