@@ -6,7 +6,7 @@ else
 	SED_INPLACE := sed -i -E
 endif
 
-.PHONY: help  upgrade generate clean get swagger
+.PHONY: help upgrade generate clean get swagger coverage
 
 .DEFAULT_GOAL := help
 
@@ -37,3 +37,8 @@ get: ## Get dependencies
 swagger: ## Fetch latest Swagger API specs
 	curl -o swagger/coffeecard_api_v1.json https://core.dev.analogio.dk/swagger/v1/swagger.json
 	curl -o swagger/coffeecard_api_v2.json https://core.dev.analogio.dk/swagger/v2/swagger.json
+
+coverage: ## Run tests with coverage and generate HTML report
+	flutter test --coverage
+	genhtml coverage/lcov.info -o coverage/html
+	@echo "Coverage HTML available at coverage/html/index.html"
