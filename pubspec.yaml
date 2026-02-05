@@ -31,7 +31,7 @@ dev_dependencies:
   mocktail: ^1.0.4
   very_good_analysis: ^10.0.0
   build_runner: ^2.4.9 # swagger generator
-  chopper_generator: ^8.0.3 # swagger generator
+  chopper_generator: ^8.6.0 # swagger generator
   json_serializable: ^6.8.0 # swagger generator
   swagger_dart_code_generator: ^4.1.1 # swagger generator
   build_verify: ^3.1.1
