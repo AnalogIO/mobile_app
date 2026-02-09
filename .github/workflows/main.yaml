@@ -20,7 +20,7 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
     with:
       flutter_channel: stable
-      flutter_version: 3.38.7
+      flutter_version: 3.38.9
       # Run code generation
       # (also format the generated code to avoid failing the format check)
       setup: "dart run build_runner build --delete-conflicting-outputs && dart format lib/generated"
