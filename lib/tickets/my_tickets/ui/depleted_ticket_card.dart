@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/tickets/my_tickets/ticket_card_base.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/ui/ticket_card_base.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 

@@ -1,22 +1,40 @@
 import 'package:cafe_analog_app/core/failures.dart';
+import 'package:cafe_analog_app/generated/api/client_index.dart';
 import 'package:chopper/chopper.dart' show Response;
 import 'package:fpdart/fpdart.dart';
 import 'package:logger/logger.dart';
 
 class NetworkRequestExecutor {
-  const NetworkRequestExecutor({required this.logger});
+  const NetworkRequestExecutor({
+    required this.logger,
+    required this.apiV1,
+    required this.apiV2,
+  });
 
   final Logger logger;
+  final CoffeecardApiV1 apiV1;
+  final CoffeecardApiV2 apiV2;
 
   /// Executes a network request and returns a [TaskEither].
   ///
-  /// If the request fails, a [NetworkFailure] is returned in a [Left].
+  /// If the request fails, a [Failure] is returned in a [Left].
   /// If the request succeeds, the response body of type
   /// [BodyType] is returned in a [Right].
-  TaskEither<NetworkFailure, BodyType> execute<BodyType>(
+  ///
+  /// ```dart
+  /// executor.run((api) => api.v2.accountAuthPost(...));
+  /// ```
+  TaskEither<Failure, BodyType> run<BodyType>(
+    Future<Response<BodyType>> Function(ApiClients api) request,
+  ) {
+    final clients = ApiClients(v1: apiV1, v2: apiV2);
+    return _execute<BodyType>(() => request(clients));
+  }
+
+  TaskEither<Failure, BodyType> _execute<BodyType>(
     Future<Response<BodyType>> Function() request,
   ) {
-    return TaskEither<NetworkFailure, Response<BodyType>>.tryCatch(
+    return TaskEither<Failure, Response<BodyType>>.tryCatch(
       request,
       (error, stackTrace) {
         logger.e(error.toString());
@@ -33,4 +51,12 @@ class NetworkRequestExecutor {
       },
     );
   }
+}
+
+/// Small helper that groups generated API clients.
+class ApiClients {
+  const ApiClients({required this.v1, required this.v2});
+
+  final CoffeecardApiV1 v1;
+  final CoffeecardApiV2 v2;
 }

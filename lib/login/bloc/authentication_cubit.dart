@@ -1,9 +1,9 @@
-import 'package:bloc/bloc.dart';
 import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
 import 'package:cafe_analog_app/login/data/login_repository.dart';
 import 'package:cafe_analog_app/login/ui/authentication_navigator.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'authentication_state.dart';
 

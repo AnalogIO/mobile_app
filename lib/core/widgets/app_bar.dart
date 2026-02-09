@@ -7,6 +7,7 @@ class AnalogAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBrightnessChanged,
     super.key,
   });
+
   final String title;
   final void Function(Brightness)? onBrightnessChanged;
 
