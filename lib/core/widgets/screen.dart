@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/app.dart';
+import 'package:cafe_analog_app/app/app_brightness_provider.dart';
 import 'package:cafe_analog_app/core/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
