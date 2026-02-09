@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/tickets/my_tickets/ticket_card_base.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/ui/ticket_card_base.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/animated_fade_switcher_sized.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/next_button.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/slide_action.dart';

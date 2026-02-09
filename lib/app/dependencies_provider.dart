@@ -25,11 +25,14 @@ class DependenciesProvider extends StatelessWidget {
         RepositoryProvider.value(value: apiV2),
         RepositoryProvider(create: (_) => Logger()),
         RepositoryProvider(
-          create: (context) => NetworkRequestExecutor(logger: context.read()),
+          create: (context) => NetworkRequestExecutor(
+            logger: context.read(),
+            apiV1: context.read(),
+            apiV2: context.read(),
+          ),
         ),
         RepositoryProvider(
-          create: (context) =>
-              LoginRepository(apiV2: context.read(), executor: context.read()),
+          create: (context) => LoginRepository(executor: context.read()),
         ),
         RepositoryProvider(
           create: (context) =>
