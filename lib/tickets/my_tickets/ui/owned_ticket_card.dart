@@ -1,4 +1,5 @@
-import 'package:cafe_analog_app/tickets/my_tickets/ticket_card_base.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/data/owned_ticket.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/ui/ticket_card_base.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -12,6 +13,20 @@ class OwnedTicketCard extends StatelessWidget {
     required this.onTap,
     super.key,
   });
+
+  factory OwnedTicketCard.fromOwnedTicket({
+    required OwnedTicket ticket,
+    required void Function() onTap,
+  }) {
+    return OwnedTicketCard(
+      id: ticket.productId,
+      ticketName: ticket.ticketName,
+      ticketsLeft: ticket.ticketsLeft,
+      backgroundImagePath: ticket.backgroundImagePath,
+      icon: Icons.coffee,
+      onTap: onTap,
+    );
+  }
 
   final int id;
   final String ticketName;

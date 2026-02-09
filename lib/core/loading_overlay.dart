@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
-import 'package:cafe_analog_app/tickets/use_ticket/delayed_fade_in.dart';
+import 'package:cafe_analog_app/core/widgets/delayed_fade_in.dart';
 import 'package:flutter/material.dart';
 
 /// Shows a loading overlay dialog.

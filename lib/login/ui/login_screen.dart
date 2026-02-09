@@ -30,23 +30,24 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 Flexible(
-                  fit: .tight,
-                  child: FittedBox(
-                    fit: .scaleDown,
-                    child: Column(
-                      mainAxisSize: .min,
-                      children: [
-                        Text(
-                          'Café Analog',
-                          style: textTheme.headlineLarge?.copyWith(
-                            fontWeight: .w900,
+                  child: Center(
+                    child: FittedBox(
+                      fit: .scaleDown,
+                      child: Column(
+                        mainAxisSize: .min,
+                        children: [
+                          Text(
+                            'Café Analog',
+                            style: textTheme.headlineLarge?.copyWith(
+                              fontWeight: .w900,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Enter your email to continue',
-                          style: textTheme.bodyMedium,
-                        ),
-                      ],
+                          Text(
+                            'Enter your email to continue',
+                            style: textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

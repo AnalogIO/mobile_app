@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/tickets/my_tickets/ui/ticket_card_base.dart';
-import 'package:cafe_analog_app/tickets/use_ticket/animated_fade_switcher_sized.dart';
-import 'package:cafe_analog_app/tickets/use_ticket/next_button.dart';
-import 'package:cafe_analog_app/tickets/use_ticket/slide_action.dart';
+import 'package:cafe_analog_app/tickets/use_ticket/ui/animated_fade_switcher_sized.dart';
+import 'package:cafe_analog_app/tickets/use_ticket/ui/next_button.dart';
+import 'package:cafe_analog_app/tickets/use_ticket/ui/slide_action.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -36,6 +36,11 @@ class _UseTicketCardState extends State<UseTicketCard> {
 
   @override
   Widget build(BuildContext context) {
+    // FIXME(marfavi): When title goes from 2 lines to 1 line (or vice versa),
+    //  the space between the title and the content is wrong when showing the
+    //  title with fewer lines. Might be fixed by wrapping the entire
+    //  card in AnimatedFadeSwitcherSized instead of the
+    //  title/children separately.
     return TicketCardBase(
       id: widget.ticketId,
       backgroundImagePath: widget.backgroundImagePath,

@@ -1,39 +1,79 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/core/http_client.dart';
 import 'package:cafe_analog_app/core/network_request_executor.dart';
+import 'package:cafe_analog_app/core/network_request_interceptor.dart';
+import 'package:cafe_analog_app/generated/api/coffeecard_api_v1.swagger.dart'
+    hide $JsonSerializableConverter;
+import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
 import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
 import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/login_repository.dart';
+import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Provides the dependencies required throughout the app.
 class DependenciesProvider extends StatelessWidget {
-  const DependenciesProvider({required this.child, super.key});
+  const DependenciesProvider({
+    required this.localStorage,
+    required this.child,
+    super.key,
+  });
 
+  final SharedPreferencesWithCache localStorage;
   final MaterialApp child;
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        // Persistence
+        RepositoryProvider.value(value: localStorage),
         RepositoryProvider(create: (_) => const FlutterSecureStorage()),
-        RepositoryProvider.value(value: apiV1),
-        RepositoryProvider.value(value: apiV2),
+        RepositoryProvider(create: (_) => AuthTokenStore()),
+
+        // Http
+        RepositoryProvider(
+          create: (context) => ChopperClient(
+            baseUrl: Uri.parse('https://core.dev.analogio.dk'),
+            interceptors: [
+              NetworkRequestInterceptor(authTokenStore: context.read()),
+            ],
+            converter: $JsonSerializableConverter(),
+            services: [CoffeecardApiV1.create(), CoffeecardApiV2.create()],
+            // FIXME(marfavi): Add authenticator to redirect on 401 responses
+            // authenticator: sl.get<ReactivationAuthenticator>(),
+          ),
+        ),
+        RepositoryProvider(
+          create: (context) =>
+              context.read<ChopperClient>().getService<CoffeecardApiV1>(),
+        ),
+        RepositoryProvider(
+          create: (context) =>
+              context.read<ChopperClient>().getService<CoffeecardApiV2>(),
+        ),
         RepositoryProvider(create: (_) => Logger()),
         RepositoryProvider(
-          create: (context) => NetworkRequestExecutor(logger: context.read()),
+          create: (context) => NetworkRequestExecutor(
+            logger: context.read(),
+            apiV1: context.read(),
+            apiV2: context.read(),
+          ),
+        ),
+
+        // Auth/login repositories
+        RepositoryProvider(
+          create: (context) => LoginRepository(executor: context.read()),
         ),
         RepositoryProvider(
-          create: (context) =>
-              LoginRepository(apiV2: context.read(), executor: context.read()),
-        ),
-        RepositoryProvider(
-          create: (context) =>
-              AuthTokenRepository(secureStorage: context.read()),
+          create: (context) => AuthTokenRepository(
+            secureStorage: context.read(),
+            authTokenStore: context.read(),
+          ),
         ),
       ],
       child: MultiBlocProvider(

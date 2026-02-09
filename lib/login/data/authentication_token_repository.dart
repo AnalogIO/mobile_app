@@ -1,14 +1,19 @@
 import 'package:cafe_analog_app/core/failures.dart';
+import 'package:cafe_analog_app/core/network_request_interceptor.dart';
 import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fpdart/fpdart.dart';
 
 /// Handles storing and retrieving JWT and refresh tokens securely.
 class AuthTokenRepository {
-  AuthTokenRepository({required FlutterSecureStorage secureStorage})
-    : _secureStorage = secureStorage;
+  AuthTokenRepository({
+    required FlutterSecureStorage secureStorage,
+    required AuthTokenStore authTokenStore,
+  }) : _secureStorage = secureStorage,
+       _authTokenStore = authTokenStore;
 
   final FlutterSecureStorage _secureStorage;
+  final AuthTokenStore _authTokenStore;
 
   static const _jwtKey = 'jwt_token';
   static const _refreshTokenKey = 'refresh_token';
@@ -26,6 +31,7 @@ class AuthTokenRepository {
             value: tokens.refreshToken,
           ),
         ]);
+        _authTokenStore.token = tokens.jwt;
         return tokens;
       },
       (error, _) => LocalStorageFailure('Failed to save auth tokens: $error'),
@@ -39,8 +45,10 @@ class AuthTokenRepository {
         final jwt = await _secureStorage.read(key: _jwtKey);
         final refreshToken = await _secureStorage.read(key: _refreshTokenKey);
         if (jwt != null && refreshToken != null) {
+          _authTokenStore.token = jwt;
           return some(AuthTokens(jwt: jwt, refreshToken: refreshToken));
         }
+        _authTokenStore.token = null;
         return none();
       },
       (error, _) =>
@@ -56,6 +64,7 @@ class AuthTokenRepository {
           _secureStorage.delete(key: _jwtKey),
           _secureStorage.delete(key: _refreshTokenKey),
         ]);
+        _authTokenStore.token = null;
         return unit;
       },
       (error, _) => LocalStorageFailure('Failed to clear auth tokens: $error'),

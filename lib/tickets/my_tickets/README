@@ -1,0 +1,13 @@
+# TODO for my_tickets feature
+
+- [X] Separate data sources away from repositories
+- [x] Move away from hydrated cubit and use some data source instead
+- [ ] Floating purchase status indicator below app bar - avoid double-purchase mistakes - clearly comminicate if a purchase is stil pending or has truly been cancelled
+- [ ] Link to products feature (Get products from backend and persist them)
+- [ ] Get menu items from backend and persist them
+- [ ] Implement choosing a menu item and swiping a ticket
+- [ ] Implement showing a DepletedTicketCard when last ticket has been used
+- [ ] Think a bit harder over feature structure and folder structure - right now, we have three subfolders/"subfeatures" inside the "tickets" folder, which is otherwise empty.
+- [ ] More background graphics?
+- [ ] Consider how Barista perks should be implemented - new navigation target or new section below My Tickets (like how it works in app v3)?
+- [ ] Snappier item reordering (requires custom code - make sepearate package?)
