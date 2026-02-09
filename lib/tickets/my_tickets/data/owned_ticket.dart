@@ -8,6 +8,16 @@ class OwnedTicket extends Equatable {
     required this.backgroundImagePath,
   });
 
+  // FIXME(marfavi): Use json_serializable instead?
+  factory OwnedTicket.fromJson(Map<String, dynamic> json) {
+    return OwnedTicket(
+      productId: json['productId'] as int,
+      ticketName: json['ticketName'] as String,
+      ticketsLeft: json['ticketsLeft'] as int,
+      backgroundImagePath: json['backgroundImagePath'] as String,
+    );
+  }
+
   final int productId;
   final String ticketName;
   final int ticketsLeft;
@@ -29,14 +39,4 @@ class OwnedTicket extends Equatable {
     'ticketsLeft': ticketsLeft,
     'backgroundImagePath': backgroundImagePath,
   };
-
-  // FIXME(marfavi): Use json_serializable instead?
-  static OwnedTicket fromJson(Map<String, dynamic> json) {
-    return OwnedTicket(
-      productId: json['productId'] as int,
-      ticketName: json['ticketName'] as String,
-      ticketsLeft: json['ticketsLeft'] as int,
-      backgroundImagePath: json['backgroundImagePath'] as String,
-    );
-  }
 }

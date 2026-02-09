@@ -27,10 +27,9 @@ class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
     }
 
     // FIXME(marfavi): Implement logic to apply preferred order to tickets
-    // Attempt to get preferred order from storage
-
     // ignore: unused_local_variable
     final preferredOrder = await _ownedTicketsRepository
+        // Attempt to get preferred order from storage
         .getTicketOrder()
         .getOrElse((_) => const [])
         .run();
