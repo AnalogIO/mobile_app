@@ -48,9 +48,10 @@ void main() {
     goRouter.go('/');
   });
 
-  /// Wraps [child] with the repository and bloc providers needed by the
-  /// singleton [goRouter] (whose indexed-stack may materialise TicketsScreen).
-  Widget buildApp({required GoRouter router, Widget? child}) {
+  /// Wraps the widget tree with the repository and bloc providers needed by
+  /// the singleton [goRouter] (whose indexed-stack may materialise
+  /// TicketsScreen).
+  Widget buildApp({required GoRouter router}) {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<NetworkRequestExecutor>.value(value: mockExecutor),
@@ -69,6 +70,15 @@ void main() {
     );
   }
 
+  /// Pumps enough frames for navigation, route transitions, and
+  /// post-frame callbacks to complete without relying on [pumpAndSettle]
+  /// (which times out when indeterminate animations or periodic timers
+  /// are running).
+  Future<void> pumpNavigation(WidgetTester tester) async {
+    await tester.pump(); // schedule microtasks / post-frame callbacks
+    await tester.pump(const Duration(milliseconds: 100)); // let transitions run
+  }
+
   testWidgets('redirects to /login when not logged in', (tester) async {
     when(() => mockAuthCubit.state).thenReturn(const AuthUnauthenticated());
     whenListen(
@@ -80,8 +90,7 @@ void main() {
     await tester.pumpWidget(buildApp(router: goRouter));
 
     goRouter.go('/tickets');
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+    await pumpNavigation(tester);
 
     expect(find.text('Please log in to continue.'), findsOneWidget);
 
@@ -105,12 +114,10 @@ void main() {
       await tester.pumpWidget(buildApp(router: goRouter));
 
       goRouter.go('/tickets');
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await pumpNavigation(tester);
 
       goRouter.go('/login');
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await pumpNavigation(tester);
 
       expect(find.text('Tickets'), findsWidgets);
       expect(find.text('You are already logged in.'), findsOneWidget);
@@ -127,7 +134,8 @@ void main() {
       final ctl = StreamController<AuthState>();
       whenListen(mockAuthCubit, ctl.stream, initialState: const AuthInitial());
 
-      // Use a fresh local GoRouter so AuthNavigator can call context.go safely
+      // Use a fresh local GoRouter so AuthNavigator can call context.go
+      // without side-effects from the singleton's indexed-stack.
       final testRouter = GoRouter(
         routes: [
           GoRoute(
@@ -140,8 +148,7 @@ void main() {
       );
 
       await tester.pumpWidget(buildApp(router: testRouter));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await pumpNavigation(tester);
 
       final preModalCount = tester.widgetList(find.byType(ModalBarrier)).length;
       final preIndicatorCount = tester
@@ -149,8 +156,7 @@ void main() {
           .length;
 
       ctl.add(const AuthLoading());
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await pumpNavigation(tester);
 
       final postModalCount = tester
           .widgetList(find.byType(ModalBarrier))
@@ -163,8 +169,7 @@ void main() {
       expect(postIndicatorCount, greaterThan(preIndicatorCount));
 
       ctl.add(const AuthUnauthenticated());
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await pumpNavigation(tester);
 
       final finalModalCount = tester
           .widgetList(find.byType(ModalBarrier))
@@ -193,7 +198,7 @@ void main() {
     );
 
     await tester.pumpWidget(buildApp(router: goRouter));
-    await tester.pumpAndSettle();
+    await pumpNavigation(tester);
 
     expect(find.text('Authentication failed: bad'), findsOneWidget);
 
@@ -214,7 +219,7 @@ void main() {
       );
 
       await tester.pumpWidget(buildApp(router: goRouter));
-      await tester.pumpAndSettle();
+      await pumpNavigation(tester);
 
       expect(find.text('Check your email'), findsOneWidget);
       expect(find.text('user@example.com'), findsOneWidget);
