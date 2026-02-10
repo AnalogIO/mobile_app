@@ -25,6 +25,15 @@ class OwnedTicket extends Equatable {
 
   bool get isDepleted => ticketsLeft <= 0;
 
+  /// Returns a copy of this ticket with [ticketsLeft] set to 0,
+  /// indicating that the ticket is depleted.
+  OwnedTicket asDepleted() => OwnedTicket(
+    productId: productId,
+    ticketName: ticketName,
+    ticketsLeft: 0,
+    backgroundImagePath: backgroundImagePath,
+  );
+
   @override
   List<Object?> get props => [
     productId,
