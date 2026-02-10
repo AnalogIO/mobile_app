@@ -1,7 +1,5 @@
 import 'package:cafe_analog_app/core/failures.dart';
-import 'package:cafe_analog_app/core/network_request_executor.dart';
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.enums.swagger.dart';
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.models.swagger.dart';
+import 'package:cafe_analog_app/http/http.dart';
 import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
 import 'package:fpdart/fpdart.dart';
 

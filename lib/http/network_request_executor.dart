@@ -1,5 +1,5 @@
 import 'package:cafe_analog_app/core/failures.dart';
-import 'package:cafe_analog_app/generated/api/client_index.dart';
+import 'package:cafe_analog_app/http/http.dart';
 import 'package:chopper/chopper.dart' show Response;
 import 'package:fpdart/fpdart.dart';
 import 'package:logger/logger.dart';

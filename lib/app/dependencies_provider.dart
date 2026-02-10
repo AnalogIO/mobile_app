@@ -1,13 +1,9 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/core/network_request_executor.dart';
-import 'package:cafe_analog_app/core/network_request_interceptor.dart';
-import 'package:cafe_analog_app/core/token_refresh_authenticator.dart';
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v1.swagger.dart'
-    hide $JsonSerializableConverter;
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
+import 'package:cafe_analog_app/http/http.dart';
 import 'package:cafe_analog_app/login/bloc/auth_cubit_handle.dart';
 import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
+import 'package:cafe_analog_app/login/data/auth_token_store.dart';
 import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/login_repository.dart';
 import 'package:chopper/chopper.dart';
@@ -45,29 +41,7 @@ class DependenciesProvider extends StatelessWidget {
         ),
 
         // Http
-        RepositoryProvider(
-          create: (context) {
-            final authClient = ChopperClient(
-              baseUrl: Uri.parse('https://core.dev.analogio.dk'),
-              converter: $JsonSerializableConverter(),
-              services: [CoffeecardApiV2.create()],
-            );
-
-            return ChopperClient(
-              baseUrl: Uri.parse('https://core.dev.analogio.dk'),
-              interceptors: [
-                NetworkRequestInterceptor(authTokenStore: context.read()),
-              ],
-              converter: $JsonSerializableConverter(),
-              services: [CoffeecardApiV1.create(), CoffeecardApiV2.create()],
-              authenticator: TokenRefreshAuthenticator(
-                authTokenRepository: context.read(),
-                authApi: authClient.getService<CoffeecardApiV2>(),
-                authCubitHandle: context.read(),
-              ),
-            );
-          },
-        ),
+        RepositoryProvider(create: makeHttpClient),
         RepositoryProvider(
           create: (context) =>
               context.read<ChopperClient>().getService<CoffeecardApiV1>(),

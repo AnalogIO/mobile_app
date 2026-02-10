@@ -1,5 +1,5 @@
 import 'package:cafe_analog_app/core/failures.dart';
-import 'package:cafe_analog_app/core/network_request_interceptor.dart';
+import 'package:cafe_analog_app/login/data/auth_token_store.dart';
 import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fpdart/fpdart.dart';

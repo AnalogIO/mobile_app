@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
+import 'package:cafe_analog_app/http/http.dart';
 import 'package:cafe_analog_app/login/bloc/auth_cubit_handle.dart';
 import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
@@ -10,16 +10,16 @@ import 'package:chopper/chopper.dart';
 class TokenRefreshAuthenticator extends Authenticator {
   TokenRefreshAuthenticator({
     required AuthTokenRepository authTokenRepository,
-    required CoffeecardApiV2 authApi,
+    required CoffeecardApiV2 tokenRefreshApi,
     required AuthCubitHandle authCubitHandle,
   }) : _authTokenRepository = authTokenRepository,
-       _authApi = authApi,
+       _tokenRefreshApi = tokenRefreshApi,
        _authCubitHandle = authCubitHandle;
 
   static const _retryHeader = 'X-Auth-Retry';
 
   final AuthTokenRepository _authTokenRepository;
-  final CoffeecardApiV2 _authApi;
+  final CoffeecardApiV2 _tokenRefreshApi;
   final AuthCubitHandle _authCubitHandle;
   Completer<AuthTokens?>? _refreshCompleter;
 
@@ -77,7 +77,7 @@ class TokenRefreshAuthenticator extends Authenticator {
         return completer.future;
       }
 
-      final refreshResponse = await _authApi.accountAuthPost(
+      final refreshResponse = await _tokenRefreshApi.accountAuthPost(
         body: TokenLoginRequest(token: existingTokens.refreshToken),
       );
       final responseBody = refreshResponse.body;
