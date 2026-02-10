@@ -70,4 +70,30 @@ class AuthTokenRepository {
       (error, _) => LocalStorageFailure('Failed to clear auth tokens: $error'),
     );
   }
+
+  // TODO(marfavi): Remove this method after properly handling token refresh
+  //  and logout in the app.
+  /// Replaces the stored JWT with an invalid token.
+  ///
+  /// If [invalidateRefreshToken] is true, the refresh token is also replaced
+  /// with an invalid value (not deleted).
+  TaskEither<Failure, Unit> invalidateJwt({
+    bool invalidateRefreshToken = false,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        await _secureStorage.write(key: _jwtKey, value: 'invalid-jwt');
+        if (invalidateRefreshToken) {
+          await _secureStorage.write(
+            key: _refreshTokenKey,
+            value: 'invalid-refresh',
+          );
+        }
+        _authTokenStore.token = 'invalid-jwt';
+        return unit;
+      },
+      (error, _) =>
+          LocalStorageFailure('Failed to invalidate auth token: $error'),
+    );
+  }
 }

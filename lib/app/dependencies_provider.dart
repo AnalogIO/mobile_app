@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cafe_analog_app/core/network_request_executor.dart';
 import 'package:cafe_analog_app/core/network_request_interceptor.dart';
+import 'package:cafe_analog_app/core/token_refresh_authenticator.dart';
 import 'package:cafe_analog_app/generated/api/coffeecard_api_v1.swagger.dart'
     hide $JsonSerializableConverter;
 import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
@@ -28,25 +29,44 @@ class DependenciesProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authCubitCompleter = Completer<AuthCubit>();
+
     return MultiRepositoryProvider(
       providers: [
         // Persistence
         RepositoryProvider.value(value: localStorage),
         RepositoryProvider(create: (_) => const FlutterSecureStorage()),
         RepositoryProvider(create: (_) => AuthTokenStore()),
+        RepositoryProvider(
+          create: (context) => AuthTokenRepository(
+            secureStorage: context.read(),
+            authTokenStore: context.read(),
+          ),
+        ),
 
         // Http
         RepositoryProvider(
-          create: (context) => ChopperClient(
-            baseUrl: Uri.parse('https://core.dev.analogio.dk'),
-            interceptors: [
-              NetworkRequestInterceptor(authTokenStore: context.read()),
-            ],
-            converter: $JsonSerializableConverter(),
-            services: [CoffeecardApiV1.create(), CoffeecardApiV2.create()],
-            // FIXME(marfavi): Add authenticator to redirect on 401 responses
-            // authenticator: sl.get<ReactivationAuthenticator>(),
-          ),
+          create: (context) {
+            final authClient = ChopperClient(
+              baseUrl: Uri.parse('https://core.dev.analogio.dk'),
+              converter: $JsonSerializableConverter(),
+              services: [CoffeecardApiV2.create()],
+            );
+
+            return ChopperClient(
+              baseUrl: Uri.parse('https://core.dev.analogio.dk'),
+              interceptors: [
+                NetworkRequestInterceptor(authTokenStore: context.read()),
+              ],
+              converter: $JsonSerializableConverter(),
+              services: [CoffeecardApiV1.create(), CoffeecardApiV2.create()],
+              authenticator: TokenRefreshAuthenticator(
+                authTokenRepository: context.read(),
+                authApi: authClient.getService<CoffeecardApiV2>(),
+                authCubitProvider: () => authCubitCompleter.future,
+              ),
+            );
+          },
         ),
         RepositoryProvider(
           create: (context) =>
@@ -69,12 +89,6 @@ class DependenciesProvider extends StatelessWidget {
         RepositoryProvider(
           create: (context) => LoginRepository(executor: context.read()),
         ),
-        RepositoryProvider(
-          create: (context) => AuthTokenRepository(
-            secureStorage: context.read(),
-            authTokenStore: context.read(),
-          ),
-        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -85,6 +99,9 @@ class DependenciesProvider extends StatelessWidget {
                 loginRepository: context.read(),
               );
               unawaited(authCubit.start());
+              if (!authCubitCompleter.isCompleted) {
+                authCubitCompleter.complete(authCubit);
+              }
               return authCubit;
             },
           ),
