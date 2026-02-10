@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
-import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
+import 'package:cafe_analog_app/login/bloc/auth_cubit_handle.dart';
 import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
 import 'package:chopper/chopper.dart';
@@ -11,16 +11,16 @@ class TokenRefreshAuthenticator extends Authenticator {
   TokenRefreshAuthenticator({
     required AuthTokenRepository authTokenRepository,
     required CoffeecardApiV2 authApi,
-    required Future<AuthCubit> Function() authCubitProvider,
+    required AuthCubitHandle authCubitHandle,
   }) : _authTokenRepository = authTokenRepository,
        _authApi = authApi,
-       _authCubitProvider = authCubitProvider;
+       _authCubitHandle = authCubitHandle;
 
   static const _retryHeader = 'X-Auth-Retry';
 
   final AuthTokenRepository _authTokenRepository;
   final CoffeecardApiV2 _authApi;
-  final Future<AuthCubit> Function() _authCubitProvider;
+  final AuthCubitHandle _authCubitHandle;
   Completer<AuthTokens?>? _refreshCompleter;
 
   @override
@@ -41,7 +41,7 @@ class TokenRefreshAuthenticator extends Authenticator {
 
     final refreshedTokens = await _refreshTokens();
     if (refreshedTokens == null) {
-      await _handleUnauthorized();
+      await _authCubitHandle.logOut();
       return null;
     }
 
@@ -105,10 +105,5 @@ class TokenRefreshAuthenticator extends Authenticator {
     } finally {
       _refreshCompleter = null;
     }
-  }
-
-  Future<void> _handleUnauthorized() async {
-    final authCubit = await _authCubitProvider();
-    await authCubit.logOut();
   }
 }

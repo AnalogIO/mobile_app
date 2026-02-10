@@ -6,6 +6,7 @@ import 'package:cafe_analog_app/core/token_refresh_authenticator.dart';
 import 'package:cafe_analog_app/generated/api/coffeecard_api_v1.swagger.dart'
     hide $JsonSerializableConverter;
 import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
+import 'package:cafe_analog_app/login/bloc/auth_cubit_handle.dart';
 import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
 import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/login_repository.dart';
@@ -29,14 +30,13 @@ class DependenciesProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authCubitCompleter = Completer<AuthCubit>();
-
     return MultiRepositoryProvider(
       providers: [
         // Persistence
         RepositoryProvider.value(value: localStorage),
         RepositoryProvider(create: (_) => const FlutterSecureStorage()),
         RepositoryProvider(create: (_) => AuthTokenStore()),
+        RepositoryProvider(create: (_) => AuthCubitHandle()),
         RepositoryProvider(
           create: (context) => AuthTokenRepository(
             secureStorage: context.read(),
@@ -63,7 +63,7 @@ class DependenciesProvider extends StatelessWidget {
               authenticator: TokenRefreshAuthenticator(
                 authTokenRepository: context.read(),
                 authApi: authClient.getService<CoffeecardApiV2>(),
-                authCubitProvider: () => authCubitCompleter.future,
+                authCubitHandle: context.read(),
               ),
             );
           },
@@ -99,9 +99,7 @@ class DependenciesProvider extends StatelessWidget {
                 loginRepository: context.read(),
               );
               unawaited(authCubit.start());
-              if (!authCubitCompleter.isCompleted) {
-                authCubitCompleter.complete(authCubit);
-              }
+              context.read<AuthCubitHandle>().bind(authCubit);
               return authCubit;
             },
           ),
