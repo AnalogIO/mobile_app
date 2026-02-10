@@ -12,7 +12,7 @@ part 'owned_tickets_state.dart';
 /// Cubit responsible for managing the state of the user's owned tickets,
 /// including fetching from API and cache, refreshing, reordering,
 /// and dismissing depleted tickets.
-/// 
+///
 /// The cubit treats the cached tickets as the source of truth for the user's
 /// preferred order of their tickets, and therefore always preserves this order
 /// when fetching fresh tickets from the API.
