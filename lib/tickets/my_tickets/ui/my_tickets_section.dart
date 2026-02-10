@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/bloc/owned_tickets_cubit.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_ticket.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/ui/depleted_ticket_card.dart';
@@ -57,13 +58,19 @@ class MyTicketsSection extends StatelessWidget {
                               ticketName: ticket.ticketName,
                               backgroundImagePath:
                                   'assets/images/beans_cropped.png',
-                              onBuyMore: () => context.push(
-                                '/tickets/buy/ticket/${ticket.ticketName}',
-                                extra: ticket,
+                              onBuyMore: (productId) => context.push(
+                                '/tickets/buy/ticket/$productId',
+                                // FIXME(marfavi): Don't pass extra data;
+                                //  the route should get the product info itself
+                                extra: const Product(
+                                  title: '',
+                                  description: '',
+                                  numberOfTickets: 0,
+                                  priceDKK: 0,
+                                  eligibleMenuItems: ['Nothing'],
+                                ),
                               ),
-                              onDismiss: () => cubit.dismissDepletedTicket(
-                                ticket.productId,
-                              ),
+                              onDismiss: cubit.dismissDepletedTicket,
                             ),
                     );
                   },

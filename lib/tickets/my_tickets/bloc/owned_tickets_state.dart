@@ -20,6 +20,10 @@ final class OwnedTicketsLoaded extends OwnedTicketsState {
   List<Object> get props => [ownedTickets];
 }
 
+final class OwnedTicketsRefreshing extends OwnedTicketsLoaded {
+  const OwnedTicketsRefreshing({required super.ownedTickets});
+}
+
 final class OwnedTicketsFailure extends OwnedTicketsState {
   const OwnedTicketsFailure({required this.reason});
 

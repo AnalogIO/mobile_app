@@ -102,11 +102,13 @@ class AnalogGoRouter {
                       builder: (_, _) => const BuyTicketsScreen(),
                       routes: [
                         GoRoute(
-                          path: 'ticket/:id',
+                          path: 'ticket/:productid',
                           pageBuilder: (context, state) {
-                            // we don't use id here, but in a real app you might
-                            // fetch the product details based on the id
-                            // we pass the whole product via extra
+                            // we don't use productid here, but in a real app
+                            // you might fetch the product details based on the
+                            // id; we pass the whole product via extra for now
+                            // TODO(marfavi): Get product details from id
+                            //  instead of passing via extra
                             //
                             // cast state.extra to Product
                             final product = state.extra! as Product;

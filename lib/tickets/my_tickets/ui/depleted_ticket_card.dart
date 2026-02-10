@@ -26,10 +26,10 @@ class DepletedTicketCard extends StatelessWidget {
   final String backgroundImagePath;
 
   /// Called when the user taps "Buy more".
-  final VoidCallback onBuyMore;
+  final void Function(int productId) onBuyMore;
 
   /// Called when the user taps "Dismiss".
-  final VoidCallback onDismiss;
+  final void Function(int productId) onDismiss;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class DepletedTicketCard extends StatelessWidget {
           spacing: 8,
           children: [
             TextButton(
-              onPressed: onDismiss,
+              onPressed: () => onDismiss(id),
               style: TextButton.styleFrom(
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -62,7 +62,7 @@ class DepletedTicketCard extends StatelessWidget {
               ),
             ),
             FilledButton(
-              onPressed: onBuyMore,
+              onPressed: () => onBuyMore(id),
               style: FilledButton.styleFrom(
                 backgroundColor: colorScheme.secondary,
                 foregroundColor: colorScheme.onSecondary,

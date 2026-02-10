@@ -7,7 +7,6 @@ import 'package:cafe_analog_app/tickets/my_tickets/data/owned_ticket.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_tickets_local_data_provider.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_tickets_remote_data_provider.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_tickets_repository.dart';
-import 'package:cafe_analog_app/tickets/my_tickets/data/ticket_order_data_provider.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/ui/my_tickets_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,15 +39,11 @@ class _SuccessScreen extends StatelessWidget {
 
   final List<OwnedTicket> ownedTickets;
 
-  Future<void> _refreshTickets(BuildContext context) {
-    return context.read<OwnedTicketsCubit>().getOwnedTickets();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Screen.listView(
       name: 'Tickets',
-      onRefresh: () => _refreshTickets(context),
+      onRefresh: context.read<OwnedTicketsCubit>().refreshOwnedTickets,
       children: [
         MyTicketsSection(ownedTickets: ownedTickets),
         const _BuyDrinkTicketsTile(),
@@ -95,13 +90,10 @@ class _OwnedTicketsCubitProvider extends StatelessWidget {
       create: (context) {
         final cubit = OwnedTicketsCubit(
           ownedTicketsRepository: OwnedTicketsRepository(
-            ticketsRemoteDataProvider: OwnedTicketsRemoteDataProvider(
+            remoteDataProvider: OwnedTicketsRemoteDataProvider(
               executor: context.read(),
             ),
-            ticketsLocalDataProvider: OwnedTicketsLocalDataProvider(
-              localStorage: context.read(),
-            ),
-            ticketsOrderDataProvider: TicketOrderDataProvider(
+            localDataProvider: OwnedTicketsLocalDataProvider(
               localStorage: context.read(),
             ),
           ),
