@@ -33,7 +33,7 @@ dev_dependencies:
     sdk: flutter
   mocktail: ^1.0.4
   very_good_analysis: ^10.1.0
-  build_runner: ^2.11.0 # swagger generator
+  build_runner: ^2.11.1 # swagger generator
   chopper_generator: ^8.6.0 # swagger generator
   json_serializable: ^6.8.0 # swagger generator
   swagger_dart_code_generator: ^4.1.1 # swagger generator
