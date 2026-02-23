@@ -73,6 +73,7 @@ class TokenRefreshAuthenticator extends Authenticator {
       );
 
       if (existingTokens == null) {
+        log('Token refresh aborted: no tokens found in storage.');
         completer.complete(null);
         return completer.future;
       }
@@ -83,6 +84,10 @@ class TokenRefreshAuthenticator extends Authenticator {
       final responseBody = refreshResponse.body;
 
       if (!refreshResponse.isSuccessful || responseBody == null) {
+        log(
+          'Token refresh failed: server responded with '
+          '${refreshResponse.statusCode}.',
+        );
         completer.complete(null);
         return completer.future;
       }
@@ -97,9 +102,15 @@ class TokenRefreshAuthenticator extends Authenticator {
           .match((_) => null, (tokens) => tokens)
           .run();
 
+      if (savedTokens != null) {
+        log('Token refresh succeeded.');
+      } else {
+        log('Token refresh succeeded but saving new tokens failed.');
+      }
       completer.complete(savedTokens);
       return completer.future;
-    } on Exception {
+    } on Exception catch (e) {
+      log('Token refresh failed with exception: $e.');
       completer.complete(null);
       return completer.future;
     } finally {
