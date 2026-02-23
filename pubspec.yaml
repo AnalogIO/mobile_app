@@ -38,6 +38,7 @@ dev_dependencies:
   json_serializable: ^6.8.0 # swagger generator
   swagger_dart_code_generator: ^4.1.1 # swagger generator
   build_verify: ^3.1.1
+  http: ^1.6.0
 
 flutter:
   generate: true

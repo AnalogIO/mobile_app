@@ -16,6 +16,9 @@ class TokenRefreshAuthenticator extends Authenticator {
        _tokenRefreshApi = tokenRefreshApi,
        _authCubitHandle = authCubitHandle;
 
+  /// This header is added to requests that have already been retried after a
+  /// token refresh. Prevents infinite retry loops in case the new token is also
+  /// invalid for some reason.
   static const _retryHeader = 'X-Auth-Retry';
 
   final AuthTokenRepository _authTokenRepository;
