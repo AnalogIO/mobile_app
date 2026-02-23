@@ -89,10 +89,4 @@ class AuthCubit extends Cubit<AuthState> {
 
     emit(newState);
   }
-
-  /// Refresh the JWT token.
-  Future<void> refreshToken({required AuthTokens tokens}) async {
-    // FIXME(marfavi): implement token refresh logic
-    throw UnimplementedError();
-  }
 }

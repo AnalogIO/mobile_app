@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/core/network_request_executor.dart';
-import 'package:cafe_analog_app/core/network_request_interceptor.dart';
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v1.swagger.dart'
-    hide $JsonSerializableConverter;
-import 'package:cafe_analog_app/generated/api/coffeecard_api_v2.swagger.dart';
+import 'package:cafe_analog_app/http/http.dart';
+import 'package:cafe_analog_app/login/bloc/auth_cubit_handle.dart';
 import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
+import 'package:cafe_analog_app/login/data/auth_token_store.dart';
 import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/login/data/login_repository.dart';
 import 'package:chopper/chopper.dart';
@@ -34,20 +32,16 @@ class DependenciesProvider extends StatelessWidget {
         RepositoryProvider.value(value: localStorage),
         RepositoryProvider(create: (_) => const FlutterSecureStorage()),
         RepositoryProvider(create: (_) => AuthTokenStore()),
-
-        // Http
+        RepositoryProvider(create: (_) => AuthCubitHandle()),
         RepositoryProvider(
-          create: (context) => ChopperClient(
-            baseUrl: Uri.parse('https://core.dev.analogio.dk'),
-            interceptors: [
-              NetworkRequestInterceptor(authTokenStore: context.read()),
-            ],
-            converter: $JsonSerializableConverter(),
-            services: [CoffeecardApiV1.create(), CoffeecardApiV2.create()],
-            // FIXME(marfavi): Add authenticator to redirect on 401 responses
-            // authenticator: sl.get<ReactivationAuthenticator>(),
+          create: (context) => AuthTokenRepository(
+            secureStorage: context.read(),
+            authTokenStore: context.read(),
           ),
         ),
+
+        // Http
+        RepositoryProvider(create: makeHttpClient),
         RepositoryProvider(
           create: (context) =>
               context.read<ChopperClient>().getService<CoffeecardApiV1>(),
@@ -69,12 +63,6 @@ class DependenciesProvider extends StatelessWidget {
         RepositoryProvider(
           create: (context) => LoginRepository(executor: context.read()),
         ),
-        RepositoryProvider(
-          create: (context) => AuthTokenRepository(
-            secureStorage: context.read(),
-            authTokenStore: context.read(),
-          ),
-        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -85,6 +73,7 @@ class DependenciesProvider extends StatelessWidget {
                 loginRepository: context.read(),
               );
               unawaited(authCubit.start());
+              context.read<AuthCubitHandle>().bind(authCubit);
               return authCubit;
             },
           ),

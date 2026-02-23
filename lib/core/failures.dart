@@ -21,7 +21,7 @@ sealed class NetworkFailure extends Failure {
 }
 
 class ServerFailure<BodyType> extends NetworkFailure {
-  const ServerFailure(super.reason, this.statuscode);
+  const ServerFailure(super.reason, this.statusCode);
 
   factory ServerFailure.fromResponse(Response<BodyType> response) {
     try {
@@ -30,15 +30,18 @@ class ServerFailure<BodyType> extends NetworkFailure {
       final message = jsonString['message'] as String?;
 
       return ServerFailure(
-        message ?? 'An unknown error occured',
+        '${message ?? 'An unknown error occurred'} (${response.statusCode})',
         response.statusCode,
       );
     } on Exception {
-      return ServerFailure('An unknown error occured', response.statusCode);
+      return ServerFailure(
+        'An unknown error occurred (${response.statusCode})',
+        response.statusCode,
+      );
     }
   }
 
-  final int statuscode;
+  final int statusCode;
 }
 
 class ConnectionFailure extends NetworkFailure {
