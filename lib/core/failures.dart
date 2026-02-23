@@ -30,12 +30,12 @@ class ServerFailure<BodyType> extends NetworkFailure {
       final message = jsonString['message'] as String?;
 
       return ServerFailure(
-        '${message ?? 'An unknown error occured'} (${response.statusCode})',
+        '${message ?? 'An unknown error occurred'} (${response.statusCode})',
         response.statusCode,
       );
     } on Exception {
       return ServerFailure(
-        'An unknown error occured (${response.statusCode})',
+        'An unknown error occurred (${response.statusCode})',
         response.statusCode,
       );
     }
