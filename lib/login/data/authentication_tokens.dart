@@ -9,7 +9,4 @@ class AuthTokens extends Equatable {
 
   @override
   List<Object> get props => [jwt, refreshToken];
-
-  @override
-  String toString() => 'AuthTokens(jwt: $jwt, refreshToken: $refreshToken)';
 }
