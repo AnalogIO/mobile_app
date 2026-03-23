@@ -58,11 +58,11 @@ class TicketDetailScreen extends StatelessWidget {
                     product.description,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
-                  if (product.eligibleMenuItems != null) ...[
+                  if (product.eligibleDrinks.isNotEmpty) ...[
                     const Gap(24),
                     Text(
-                      'This ticket can be spent on following products:\n'
-                      '${product.eligibleMenuItems!.join(', ')}',
+                      'This ticket can be spent on following drinks:\n'
+                      '${product.eligibleDrinks.map((d) => d.name).join(', ')}',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],

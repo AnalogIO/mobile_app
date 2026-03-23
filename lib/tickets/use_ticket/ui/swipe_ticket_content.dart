@@ -4,9 +4,11 @@ part of 'use_ticket_card.dart';
 class _SwipeTicketContent extends StatelessWidget {
   const _SwipeTicketContent({
     required this.ticketName,
+    required this.onTicketUsed,
   });
 
   final String ticketName;
+  final VoidCallback onTicketUsed;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class _SwipeTicketContent extends StatelessWidget {
           textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           outerColor: colorScheme.onSurface,
           innerColor: colorScheme.surfaceContainer,
+          onSubmit: () => onTicketUsed(),
         ),
       ],
     );

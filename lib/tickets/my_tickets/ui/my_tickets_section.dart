@@ -1,4 +1,5 @@
 import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
+import 'package:cafe_analog_app/tickets/catalog/drink.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/bloc/owned_tickets_cubit.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_ticket.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/ui/depleted_ticket_card.dart';
@@ -51,6 +52,7 @@ class MyTicketsSection extends StatelessWidget {
                                 ticketId: ticket.productId,
                                 ticketName: ticket.ticketName,
                                 backgroundImagePath: ticket.backgroundImagePath,
+                                eligibleDrinks: ticket.eligibleDrinks,
                               ),
                             )
                           : DepletedTicketCard(
@@ -67,7 +69,9 @@ class MyTicketsSection extends StatelessWidget {
                                   description: '',
                                   numberOfTickets: 0,
                                   priceDKK: 0,
-                                  eligibleMenuItems: ['Nothing'],
+                                  eligibleDrinks: [
+                                    Drink(id: 0, name: 'Nothing'),
+                                  ],
                                 ),
                               ),
                               onDismiss: cubit.dismissDepletedTicket,

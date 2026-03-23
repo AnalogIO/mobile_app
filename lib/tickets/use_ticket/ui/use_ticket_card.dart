@@ -18,6 +18,7 @@ class UseTicketCard extends StatefulWidget {
     required this.ticketName,
     required this.menuItems,
     required this.backgroundImagePath,
+    required this.onTicketUsed,
     super.key,
   });
 
@@ -25,6 +26,7 @@ class UseTicketCard extends StatefulWidget {
   final String ticketName;
   final List<String> menuItems;
   final String backgroundImagePath;
+  final VoidCallback onTicketUsed;
 
   @override
   State<UseTicketCard> createState() => _UseTicketCardState();
@@ -62,7 +64,10 @@ class _UseTicketCardState extends State<UseTicketCard> {
                 ? () => setState(() => _isSwiping = true)
                 : null,
           ),
-          secondChild: _SwipeTicketContent(ticketName: widget.ticketName),
+          secondChild: _SwipeTicketContent(
+            ticketName: widget.ticketName,
+            onTicketUsed: widget.onTicketUsed,
+          ),
         ),
       ],
     );

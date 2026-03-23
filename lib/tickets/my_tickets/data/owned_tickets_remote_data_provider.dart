@@ -10,7 +10,7 @@ class OwnedTicketsRemoteDataProvider {
   final NetworkRequestExecutor _executor;
 
   /// Fetches the list of owned tickets for the current user.
-  TaskEither<Failure, List<TicketResponse>> get() {
-    return _executor.run((api) => api.v2.ticketsGet(includeUsed: false));
+  TaskEither<Failure, List<GroupedTicketsResponse>> get() {
+    return _executor.run((api) => api.v2.ticketsGroupedGet());
   }
 }

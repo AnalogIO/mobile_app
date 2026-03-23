@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/tickets/catalog/drink.dart';
 import 'package:equatable/equatable.dart';
 
 class Product extends Equatable {
@@ -6,14 +7,14 @@ class Product extends Equatable {
     required this.description,
     required this.numberOfTickets,
     required this.priceDKK,
-    this.eligibleMenuItems,
+    required this.eligibleDrinks,
   });
 
   final String title;
   final String description;
-  final List<String>? eligibleMenuItems;
   final int numberOfTickets;
   final int priceDKK;
+  final List<Drink> eligibleDrinks;
 
   @override
   // use the Equatable package to simplify equality checks between Products
@@ -21,8 +22,8 @@ class Product extends Equatable {
   List<Object?> get props => [
     title,
     description,
-    eligibleMenuItems,
     numberOfTickets,
     priceDKK,
+    eligibleDrinks,
   ];
 }

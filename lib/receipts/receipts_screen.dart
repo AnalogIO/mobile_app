@@ -2,6 +2,7 @@ import 'package:cafe_analog_app/core/widgets/choice_chips.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/receipts/receipts_list_entry.dart';
 import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
+import 'package:cafe_analog_app/tickets/catalog/drink.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -23,6 +24,7 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
       description: 'Creamy cappuccino with foam',
       numberOfTickets: 5,
       priceDKK: 120,
+      eligibleDrinks: <Drink>[],
     );
 
     const caffeLatte = Product(
@@ -30,6 +32,7 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
       description: 'Smooth latte with steamed milk',
       numberOfTickets: 10,
       priceDKK: 230,
+      eligibleDrinks: <Drink>[],
     );
 
     // Generate all receipts

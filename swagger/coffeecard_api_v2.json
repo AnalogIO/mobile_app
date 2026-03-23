@@ -1426,6 +1426,41 @@
         ]
       }
     },
+    "/api/v2/tickets/grouped": {
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Retrieve the owned tickets of the account (grouped)",
+        "operationId": "Tickets_GetGroupedOwnedTickets",
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupedTicketsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/vouchers/issue-vouchers": {
       "post": {
         "tags": [
@@ -2412,7 +2447,7 @@
           },
           "isPerk": {
             "type": "boolean",
-            "description": "Eligible due to a user perk privilege ",
+            "description": "Eligible due to a user perk privilege",
             "example": true
           },
           "visible": {
@@ -3067,6 +3102,71 @@
             "description": "The id of the menu item to use the ticket on.",
             "format": "int32",
             "example": 1
+          }
+        }
+      },
+      "GroupedTicketsResponse": {
+        "type": "object",
+        "description": "A collection of unused tickets a user owns for a product.",
+        "example": {
+          "productId": 1,
+          "productName": "Filter Coffee",
+          "ticketsLeft": 5,
+          "eligibleMenuItems": [
+            {
+              "id": 1,
+              "name": "Cappuccino"
+            },
+            {
+              "id": 2,
+              "name": "Caffe Latte"
+            }
+          ]
+        },
+        "additionalProperties": false,
+        "required": [
+          "productId",
+          "productName",
+          "ticketsLeft",
+          "eligibleMenuItems"
+        ],
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "description": "Id of product",
+            "format": "int32",
+            "example": 1
+          },
+          "productName": {
+            "type": "string",
+            "description": "Name of product",
+            "minLength": 1,
+            "example": "Filter Coffee"
+          },
+          "ticketsLeft": {
+            "type": "integer",
+            "description": "Remaining (if any) unused tickets left for product",
+            "format": "int32",
+            "example": 5
+          },
+          "eligibleMenuItems": {
+            "type": "array",
+            "description": "The menu items that this ticket can be used on.",
+            "example": [
+              {
+                "id": 1,
+                "name": "Cappuccino",
+                "active": true
+              },
+              {
+                "id": 2,
+                "name": "Caffe Latte",
+                "active": false
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MenuItemResponse"
+            }
           }
         }
       },
