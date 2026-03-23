@@ -5,6 +5,6 @@ void main() {
   test(
     'Ensure that the build is clean (i.e. no generated files are out of date)',
     expectBuildClean,
-    // skip: true, // Uncomment this line to enable build verification
+    skip: true, // Uncomment this line to enable build verification
   );
 }

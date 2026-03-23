@@ -10,7 +10,6 @@ class DepletedTicketCard extends StatelessWidget {
   const DepletedTicketCard({
     required this.id,
     required this.ticketName,
-    required this.backgroundImagePath,
     required this.onBuyMore,
     required this.onDismiss,
     super.key,
@@ -21,9 +20,6 @@ class DepletedTicketCard extends StatelessWidget {
 
   /// The name of the ticket type that has run out.
   final String ticketName;
-
-  /// Asset path for the background graphic.
-  final String backgroundImagePath;
 
   /// Called when the user taps "Buy more".
   final void Function(int productId) onBuyMore;
@@ -41,7 +37,10 @@ class DepletedTicketCard extends StatelessWidget {
         "You've run out of $ticketName tickets",
         style: Theme.of(context).textTheme.titleMedium,
       ),
-      backgroundImagePath: backgroundImagePath,
+      // choose background based on some rudimentary logic
+      backgroundImagePath: ticketName.toLowerCase().contains('filter')
+          ? 'assets/images/beans_cropped.png'
+          : 'assets/images/latteart_cropped.png',
       backgroundColor: colorScheme.surfaceContainerHighest,
       foregroundColor: colorScheme.onSurfaceVariant,
       backgroundGraphicOpacity: 0.5,

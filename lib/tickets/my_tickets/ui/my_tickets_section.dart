@@ -58,8 +58,6 @@ class MyTicketsSection extends StatelessWidget {
                           : DepletedTicketCard(
                               id: ticket.productId,
                               ticketName: ticket.ticketName,
-                              backgroundImagePath:
-                                  'assets/images/beans_cropped.png',
                               onBuyMore: (productId) => context.push(
                                 '/tickets/buy/ticket/$productId',
                                 // FIXME(marfavi): Don't pass extra data;

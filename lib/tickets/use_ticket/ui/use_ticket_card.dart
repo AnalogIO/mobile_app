@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/tickets/catalog/drink.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/ui/ticket_card_base.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/ui/animated_fade_switcher_sized.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/ui/next_button.dart';
@@ -16,7 +17,7 @@ class UseTicketCard extends StatefulWidget {
   const UseTicketCard({
     required this.ticketId,
     required this.ticketName,
-    required this.menuItems,
+    required this.eligibleDrinks,
     required this.backgroundImagePath,
     required this.onTicketUsed,
     super.key,
@@ -24,9 +25,9 @@ class UseTicketCard extends StatefulWidget {
 
   final int ticketId;
   final String ticketName;
-  final List<String> menuItems;
+  final List<Drink> eligibleDrinks;
   final String backgroundImagePath;
-  final VoidCallback onTicketUsed;
+  final ValueChanged<Drink> onTicketUsed;
 
   @override
   State<UseTicketCard> createState() => _UseTicketCardState();
@@ -34,7 +35,7 @@ class UseTicketCard extends StatefulWidget {
 
 class _UseTicketCardState extends State<UseTicketCard> {
   bool _isSwiping = false;
-  String? _selectedMenuItem;
+  Drink? _selectedDrink;
 
   @override
   Widget build(BuildContext context) {
@@ -49,24 +50,28 @@ class _UseTicketCardState extends State<UseTicketCard> {
       title: AnimatedFadeSwitcherSized(
         showSecond: _isSwiping,
         firstChild: Text(widget.ticketName),
-        secondChild: Text(_selectedMenuItem ?? ''),
+        secondChild: Text(_selectedDrink?.name ?? ''),
       ),
       children: [
         AnimatedFadeSwitcherSized(
           showSecond: _isSwiping,
           firstChild: _SelectMenuItemContent(
-            menuItems: widget.menuItems,
-            selectedMenuItem: _selectedMenuItem,
+            menuItems: widget.eligibleDrinks.map((item) => item.name).toList(),
+            selectedMenuItem: _selectedDrink?.name,
             onMenuItemSelected: (item) {
-              setState(() => _selectedMenuItem = item);
+              setState(
+                () => _selectedDrink = widget.eligibleDrinks.firstWhere(
+                  (drink) => drink.name == item,
+                ),
+              );
             },
-            onNextPressed: _selectedMenuItem != null
+            onNextPressed: _selectedDrink != null
                 ? () => setState(() => _isSwiping = true)
                 : null,
           ),
           secondChild: _SwipeTicketContent(
             ticketName: widget.ticketName,
-            onTicketUsed: widget.onTicketUsed,
+            onTicketUsed: () => widget.onTicketUsed(_selectedDrink!),
           ),
         ),
       ],

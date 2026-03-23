@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
-import 'package:cafe_analog_app/tickets/catalog/data/ticket_catalog_remote_data_provider.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/bloc/owned_tickets_cubit.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_ticket.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_tickets_local_data_provider.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/data/owned_tickets_remote_data_provider.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_tickets_repository.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/ui/my_tickets_section.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +93,7 @@ class _OwnedTicketsCubitProvider extends StatelessWidget {
             localDataProvider: OwnedTicketsLocalDataProvider(
               localStorage: context.read(),
             ),
-            catalogRemoteDataProvider: TicketCatalogRemoteDataProvider(
+            remoteDataProvider: OwnedTicketsRemoteDataProvider(
               executor: context.read(),
             ),
           ),
