@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/tickets/catalog/drink.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/drink.dart';
 import 'package:equatable/equatable.dart';
 
 class OwnedTicket extends Equatable {

@@ -1,120 +1,209 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/core/loading_overlay.dart';
+import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/core/widgets/delayed_fade_in.dart';
-import 'package:cafe_analog_app/tickets/catalog/drink.dart';
+import 'package:cafe_analog_app/receipts/swipe_receipt.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/drink.dart';
+import 'package:cafe_analog_app/tickets/my_tickets/data/owned_ticket.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/bloc/use_ticket_cubit.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/data/use_ticket_remote_data_provider.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/data/use_ticket_repository.dart';
 import 'package:cafe_analog_app/tickets/use_ticket/ui/use_ticket_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 
-class UseTicketModal extends StatefulWidget {
-  const UseTicketModal({
-    required this.ticketId,
+/// The modal that is shown when a user taps on a ticket they own to use it.
+///
+/// This modal is shown by calling the static method [UseTicketModal.show],
+/// which pushes a new route with a fade transition.
+class UseTicketModal extends StatelessWidget {
+  const UseTicketModal._({
+    required this.ticket,
+    required this.onTicketUsedSuccessfully,
+  });
+
+  final OwnedTicket ticket;
+  final Future<void> Function() onTicketUsedSuccessfully;
+
+  /// Shows the use ticket modal for the given ticket.
+  static Future<void> show({
+    required BuildContext context,
+    required OwnedTicket ticket,
+    required Future<void> Function() onTicketUsedSuccessfully,
+  }) {
+    return Navigator.of(context, rootNavigator: true).push(
+      PageRouteBuilder<void>(
+        // Whether the route is actually dismissable is determined by the
+        // PopScope in the route's content (see build method).
+        barrierDismissible: true,
+        barrierLabel: 'Dismiss use ticket dialog',
+        opaque: false,
+        barrierColor: Theme.of(context).colorScheme.scrim.withAlpha(225),
+        pageBuilder: (_, _, _) => UseTicketModal._(
+          ticket: ticket,
+          onTicketUsedSuccessfully: onTicketUsedSuccessfully,
+        ),
+        // Transition related
+        transitionDuration: const Duration(milliseconds: 350),
+        reverseTransitionDuration: const Duration(milliseconds: 250),
+        transitionsBuilder: (_, animation, _, child) {
+          return FadeTransition(
+            opacity: CurvedAnimation(
+              parent: animation,
+              curve: Curves.fastOutSlowIn,
+              reverseCurve: Curves.fastEaseInToSlowEaseOut,
+            ),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => UseTicketCubit(
+        repository: UseTicketRepository(
+          remoteDataProvider: UseTicketRemoteDataProvider(
+            executor: context.read(),
+          ),
+        ),
+      ),
+      child: BlocConsumer<UseTicketCubit, UseTicketState>(
+        listener: (context, state) {
+          // Reload the owned tickets after a ticket has been used, to reflect
+          // the updated number of tickets left (or the ticket being depleted)
+          if (state is UseTicketSuccess) {
+            unawaited(onTicketUsedSuccessfully());
+          }
+        },
+        builder: (context, state) {
+          // PopScope prevents dismissing the modal while a ticket is being used
+          return PopScope(
+            canPop: state is! UseTicketLoading,
+            child: switch (state) {
+              UseTicketInitial() => UseTicketScreen(ticket: ticket),
+              UseTicketLoading() => const UseTicketLoadingScreen(),
+              UseTicketFailure(:final reason) => UseTicketFailureScreen(
+                reason: reason,
+              ),
+              final UseTicketSuccess success => UseTicketSuccessScreen(
+                drinkName: success.drinkName,
+                ticketName: success.ticketName,
+                usedAt: success.usedAt,
+              ),
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class UseTicketLoadingScreen extends StatelessWidget {
+  const UseTicketLoadingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: .center,
+        children: [
+          const AnalogCircularProgressIndicator(spinnerColor: .light),
+          const Gap(24),
+          DelayedFadeIn(
+            delay: const Duration(milliseconds: 500),
+            child: Text(
+              'Using ticket... Please wait.',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Theme.of(context).colorScheme.surface,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class UseTicketFailureScreen extends StatelessWidget {
+  const UseTicketFailureScreen({required this.reason, super.key});
+
+  final String reason;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('An error occurred'),
+      content: Text(reason),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('OK'),
+        ),
+      ],
+    );
+  }
+}
+
+// FIXME(marfavi): Implement proper receipt screen with used ticket info
+//  instead of this placeholder success screen that just shows a success message
+class UseTicketSuccessScreen extends StatelessWidget {
+  const UseTicketSuccessScreen({
+    required this.drinkName,
     required this.ticketName,
-    required this.backgroundImagePath,
-    required this.eligibleDrinks,
+    required this.usedAt,
     super.key,
   });
+
+  final String drinkName;
+  final String ticketName;
+  final DateTime usedAt;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: .center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: SwipeReceipt(
+            productName: ticketName,
+            drinkName: drinkName,
+            time: usedAt,
+            isTestEnvironment: false,
+          ),
+        ),
+        const Gap(24),
+        Text(
+          'Tap anywhere to dismiss',
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class UseTicketScreen extends StatelessWidget {
+  UseTicketScreen({required OwnedTicket ticket, super.key})
+    : ticketId = ticket.productId,
+      ticketName = ticket.ticketName,
+      backgroundImagePath = ticket.backgroundImagePath,
+      eligibleDrinks = ticket.eligibleDrinks;
 
   final int ticketId;
   final String ticketName;
   final String backgroundImagePath;
   final List<Drink> eligibleDrinks;
 
-  static Future<void> show({
-    required BuildContext context,
-    required int ticketId,
-    required String ticketName,
-    required String backgroundImagePath,
-    required List<Drink> eligibleDrinks,
-  }) async {
-    final outcome = await Navigator.of(context, rootNavigator: true).push(
-      PageRouteBuilder<_UseTicketModalOutcome>(
-        barrierDismissible: true,
-        barrierLabel: 'Dismiss use ticket dialog',
-        opaque: false,
-        barrierColor: Theme.of(context).colorScheme.scrim.withAlpha(225),
-        pageBuilder: (_, _, _) => BlocProvider(
-          create: (context) => UseTicketCubit(
-            repository: UseTicketRepository(
-              remoteDataProvider: UseTicketRemoteDataProvider(
-                executor: context.read(),
-              ),
-            ),
-          ),
-          child: UseTicketCubitListener(
-            child: UseTicketModal(
-              ticketId: ticketId,
-              ticketName: ticketName,
-              backgroundImagePath: backgroundImagePath,
-              eligibleDrinks: eligibleDrinks,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    if (!context.mounted || outcome == null) {
-      return;
-    }
-
-    final colorScheme = Theme.of(context).colorScheme;
-    switch (outcome) {
-      case _UseTicketModalSuccess():
-        await showDialog<void>(
-          barrierColor: colorScheme.scrim.withAlpha(225),
-          context: context,
-          builder: (dialogContext) {
-            return AlertDialog(
-              title: const Text('Ticket used!'),
-              content: const Text('Your ticket has been successfully used.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      case _UseTicketModalFailure(:final reason):
-        await showDialog<void>(
-          barrierColor: colorScheme.scrim.withAlpha(225),
-          context: context,
-          builder: (dialogContext) {
-            return AlertDialog(
-              title: const Text('Could not use ticket'),
-              content: Text(reason),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-    }
-  }
-
-  @override
-  State<UseTicketModal> createState() => _UseTicketModalState();
-}
-
-class _UseTicketModalState extends State<UseTicketModal> {
-  /// Whether to enable the hero animation for the ticket card.
-  /// We disable it when the ticket is used to avoid jank from the hero
-  /// animation playing at the same time as the loading overlay and success
-  /// dialog animations.
-  bool _enableHeroAnimation = true;
-  void _onTicketUsed(Drink drink) {
-    setState(() => _enableHeroAnimation = false);
+  void onTicketUsed(BuildContext context, Drink drink) {
     unawaited(
       context.read<UseTicketCubit>().useTicket(
-        ticketId: widget.ticketId,
+        ticketId: ticketId,
         drinkId: drink.id,
       ),
     );
@@ -140,87 +229,16 @@ class _UseTicketModalState extends State<UseTicketModal> {
           ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: HeroMode(
-              enabled: _enableHeroAnimation,
-              child: UseTicketCard(
-                // Absorb taps on the card so they don't close the modal
-                ticketId: widget.ticketId,
-                ticketName: widget.ticketName,
-                backgroundImagePath: widget.backgroundImagePath,
-                eligibleDrinks: widget.eligibleDrinks,
-                onTicketUsed: _onTicketUsed,
-              ),
+            child: UseTicketCard(
+              ticketId: ticketId,
+              ticketName: ticketName,
+              backgroundImagePath: backgroundImagePath,
+              eligibleDrinks: eligibleDrinks,
+              onTicketUsed: (drink) => onTicketUsed(context, drink),
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-sealed class _UseTicketModalOutcome {}
-
-final class _UseTicketModalSuccess extends _UseTicketModalOutcome {}
-
-final class _UseTicketModalFailure extends _UseTicketModalOutcome {
-  _UseTicketModalFailure({required this.reason});
-
-  final String reason;
-}
-
-class UseTicketCubitListener extends StatefulWidget {
-  const UseTicketCubitListener({required this.child, super.key});
-
-  final Widget child;
-
-  @override
-  State<UseTicketCubitListener> createState() => _UseTicketCubitListenerState();
-}
-
-class _UseTicketCubitListenerState extends State<UseTicketCubitListener> {
-  var _overlayVisible = false;
-
-  void _showOverlay() {
-    if (!_overlayVisible) {
-      _overlayVisible = true;
-      showLoadingOverlay(context);
-    }
-  }
-
-  void _hideOverlay() {
-    if (_overlayVisible &&
-        Navigator.of(context, rootNavigator: true).canPop()) {
-      Navigator.of(context, rootNavigator: true).pop();
-      _overlayVisible = false;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<UseTicketCubit, UseTicketState>(
-      listener: (context, state) {
-        if (state is UseTicketLoading) {
-          _showOverlay();
-          return;
-        }
-
-        _hideOverlay();
-
-        switch (state) {
-          case UseTicketSuccess():
-            Navigator.of(
-              context,
-              rootNavigator: true,
-            ).pop(_UseTicketModalSuccess());
-          case UseTicketFailure(:final reason):
-            Navigator.of(context, rootNavigator: true).pop(
-              _UseTicketModalFailure(reason: reason),
-            );
-          case UseTicketInitial() || UseTicketLoading():
-            return;
-        }
-      },
-      child: widget.child,
     );
   }
 }

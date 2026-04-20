@@ -11,7 +11,7 @@ class UseTicketCubit extends Cubit<UseTicketState> {
 
   final UseTicketRepository _repository;
 
-  Future<void> useTicket({required int ticketId, required int drinkId}) {
+  Future<void> useTicket({required int ticketId, required int drinkId}) async {
     emit(UseTicketLoading());
 
     return _repository

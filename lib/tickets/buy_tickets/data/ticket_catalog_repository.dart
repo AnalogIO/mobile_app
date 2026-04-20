@@ -1,8 +1,8 @@
 import 'package:cafe_analog_app/core/failures.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/data/drinks_local_data_provider.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/data/ticket_catalog_remote_data_provider.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/drink.dart';
 import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
-import 'package:cafe_analog_app/tickets/catalog/data/drinks_local_data_provider.dart';
-import 'package:cafe_analog_app/tickets/catalog/data/ticket_catalog_remote_data_provider.dart';
-import 'package:cafe_analog_app/tickets/catalog/drink.dart';
 import 'package:fpdart/fpdart.dart';
 
 class TicketCatalogRepository {

@@ -1,5 +1,5 @@
+import 'package:cafe_analog_app/tickets/buy_tickets/data/ticket_catalog_repository.dart';
 import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
-import 'package:cafe_analog_app/tickets/catalog/data/ticket_catalog_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

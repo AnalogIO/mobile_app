@@ -1,5 +1,5 @@
 import 'package:cafe_analog_app/core/failures.dart';
-import 'package:cafe_analog_app/tickets/catalog/drink.dart';
+import 'package:cafe_analog_app/tickets/buy_tickets/drink.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_ticket.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_tickets_local_data_provider.dart';
 import 'package:cafe_analog_app/tickets/my_tickets/data/owned_tickets_remote_data_provider.dart';

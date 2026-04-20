@@ -13,7 +13,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Provides the dependencies required throughout the app.
+/// Provides the top-level dependencies required throughout the app.
 class DependenciesProvider extends StatelessWidget {
   const DependenciesProvider({
     required this.localStorage,

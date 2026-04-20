@@ -29,7 +29,7 @@ class _SwipeTicketContent extends StatelessWidget {
           textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           outerColor: colorScheme.onSurface,
           innerColor: colorScheme.surfaceContainer,
-          onSubmit: () => onTicketUsed(),
+          onSubmit: onTicketUsed,
         ),
       ],
     );
