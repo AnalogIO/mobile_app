@@ -1,0 +1,74 @@
+import 'package:cafe_analog_app/features/tickets/models/drink.dart';
+import 'package:cafe_analog_app/features/tickets/models/owned_ticket_group.dart';
+import 'package:cafe_analog_app/features/tickets/models/purchasable_ticket_group.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/bloc/owned_tickets_cubit.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/depleted_ticket_card.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/no_tickets_placeholder.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/owned_ticket_card.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+class MyTicketsSection extends StatelessWidget {
+  const MyTicketsSection({required this.ownedTickets, super.key});
+
+  final List<OwnedTicketGroup> ownedTickets;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<OwnedTicketsCubit, OwnedTicketsState>(
+      builder: (context, state) {
+        final cubit = context.read<OwnedTicketsCubit>();
+
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: ownedTickets.isEmpty
+              ? const NoTicketsPlaceholder()
+              : ReorderableListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  onReorderStart: (_) => HapticFeedback.mediumImpact(),
+                  onReorder: cubit.reorderTickets,
+                  // By default the ProxyDecorator adds a drop shadow to the
+                  // item being dragged, which we don't want because it exposes
+                  // the card's rounded corners and bottom padding poorly
+                  // against the background. We override it to display no shadow
+                  proxyDecorator: (child, index, animation) => child,
+                  itemCount: ownedTickets.length,
+                  itemBuilder: (context, index) {
+                    // A ticket that a user owns or has owned in the past.
+                    final ticket = ownedTickets[index];
+
+                    return Container(
+                      key: ValueKey(ticket.productId),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: !ticket.isDepleted
+                          ? OwnedTicketCard(ticket: ticket)
+                          : DepletedTicketCard(
+                              id: ticket.productId,
+                              ticketName: ticket.ticketName,
+                              onBuyMore: (productId) => context.push(
+                                '/tickets/view-purchasable/$productId',
+                                // FIXME(marfavi): Don't pass extra data;
+                                //  the route should get the product info itself
+                                extra: const PurchasableTicketGroup(
+                                  title: '',
+                                  description: '',
+                                  numberOfTickets: 0,
+                                  priceDKK: 0,
+                                  eligibleDrinks: [
+                                    Drink(id: 0, name: 'Nothing'),
+                                  ],
+                                ),
+                              ),
+                              onDismiss: cubit.dismissDepletedTicket,
+                            ),
+                    );
+                  },
+                ),
+        );
+      },
+    );
+  }
+}

@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/http/http.dart';
-import 'package:cafe_analog_app/login/bloc/auth_cubit_handle.dart';
-import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/login/data/auth_token_store.dart';
-import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
-import 'package:cafe_analog_app/login/data/login_repository.dart';
+import 'package:cafe_analog_app/features/login/bloc/auth_cubit_handle.dart';
+import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
+import 'package:cafe_analog_app/features/login/data/auth_token_store.dart';
+import 'package:cafe_analog_app/features/login/data/authentication_token_repository.dart';
+import 'package:cafe_analog_app/features/login/data/login_repository.dart';
+import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

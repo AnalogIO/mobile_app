@@ -1,0 +1,77 @@
+import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/ticket_card_base.dart';
+import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+
+/// A card shown when the user has run out of tickets of a specific type.
+///
+/// Displays a message prompting the user to buy more tickets or dismiss.
+/// Uses [TicketCardBase] with muted colors for a less prominent appearance.
+class DepletedTicketCard extends StatelessWidget {
+  const DepletedTicketCard({
+    required this.id,
+    required this.ticketName,
+    required this.onBuyMore,
+    required this.onDismiss,
+    super.key,
+  });
+
+  /// Unique identifier, used for Hero animation tag.
+  final int id;
+
+  /// The name of the ticket type that has run out.
+  final String ticketName;
+
+  /// Called when the user taps "Buy more".
+  final void Function(int productId) onBuyMore;
+
+  /// Called when the user taps "Dismiss".
+  final void Function(int productId) onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return TicketCardBase(
+      id: id,
+      title: Text(
+        "You've run out of $ticketName tickets",
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      // choose background based on some rudimentary logic
+      backgroundImagePath: ticketName.toLowerCase().contains('filter')
+          ? 'assets/images/beans_cropped.png'
+          : 'assets/images/latteart_cropped.png',
+      backgroundColor: colorScheme.surfaceContainerHighest,
+      foregroundColor: colorScheme.onSurfaceVariant,
+      backgroundGraphicOpacity: 0.5,
+      children: [
+        const Gap(36),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          spacing: 8,
+          children: [
+            TextButton(
+              onPressed: () => onDismiss(id),
+              style: TextButton.styleFrom(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                'Dismiss',
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
+              ),
+            ),
+            FilledButton(
+              onPressed: () => onBuyMore(id),
+              style: FilledButton.styleFrom(
+                backgroundColor: colorScheme.secondary,
+                foregroundColor: colorScheme.onSecondary,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Text('Buy more'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}

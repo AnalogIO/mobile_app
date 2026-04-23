@@ -2,20 +2,21 @@ import 'dart:async';
 
 import 'package:cafe_analog_app/app/navigation_scaffolds.dart';
 import 'package:cafe_analog_app/app/splash_screen.dart';
-import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/login/ui/authentication_navigator.dart';
-import 'package:cafe_analog_app/login/ui/email_sent_screen.dart';
-import 'package:cafe_analog_app/login/ui/login_screen.dart';
-import 'package:cafe_analog_app/login/ui/verify_magic_link_screen.dart';
-import 'package:cafe_analog_app/receipts/receipts_screen.dart';
-import 'package:cafe_analog_app/redeem_voucher/redeem_voucher_screen.dart';
-import 'package:cafe_analog_app/settings/settings_screen.dart';
-import 'package:cafe_analog_app/settings/your_profile_screen.dart';
-import 'package:cafe_analog_app/stats/view/stats_screen.dart';
-import 'package:cafe_analog_app/tickets/buy_tickets/buy_tickets_screen.dart';
-import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
-import 'package:cafe_analog_app/tickets/buy_tickets/ticket_detail_screen.dart';
-import 'package:cafe_analog_app/tickets/my_tickets/ui/tickets_screen.dart';
+import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
+import 'package:cafe_analog_app/features/login/ui/authentication_navigator.dart';
+import 'package:cafe_analog_app/features/login/ui/email_sent_screen.dart';
+import 'package:cafe_analog_app/features/login/ui/login_screen.dart';
+import 'package:cafe_analog_app/features/login/ui/verify_magic_link_screen.dart';
+import 'package:cafe_analog_app/features/receipts/receipts_screen.dart';
+import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher_screen.dart';
+import 'package:cafe_analog_app/features/settings/settings_screen.dart';
+import 'package:cafe_analog_app/features/settings/your_profile_screen.dart';
+import 'package:cafe_analog_app/features/statistics/view/stats_screen.dart';
+import 'package:cafe_analog_app/features/tickets/data/data.dart';
+import 'package:cafe_analog_app/features/tickets/models/purchasable_ticket_group.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/screens/buy_tickets_screen.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/screens/ticket_detail_screen.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/screens/tickets_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -91,40 +92,55 @@ class AnalogGoRouter {
           branches: [
             StatefulShellBranch(
               routes: [
-                GoRoute(
-                  path: '/tickets',
-                  pageBuilder: (context, state) => const NoTransitionPage(
-                    child: TicketsScreen(),
-                  ),
+                ShellRoute(
+                  // provide TicketsRepository to all routes under /tickets
+                  builder: (context, state, child) {
+                    return RepositoryProvider<TicketsRepository>(
+                      create: (context) => TicketsRepository(
+                        ticketsApi: TicketsApi(executor: context.read()),
+                        ownedTicketsLocalStore: OwnedTicketsLocalStore(
+                          store: context.read(),
+                        ),
+                        drinksLocalStore: DrinksLocalStore(),
+                        purchasableTicketsLocalStore:
+                            PurchasableTicketsLocalStore(),
+                      ),
+                      child: child,
+                    );
+                  },
                   routes: [
                     GoRoute(
-                      path: 'buy',
-                      builder: (_, _) => const BuyTicketsScreen(),
+                      path: '/tickets',
+                      builder: (_, _) => const TicketsScreen(),
                       routes: [
                         GoRoute(
-                          path: 'ticket/:productid',
-                          pageBuilder: (context, state) {
-                            // we don't use productid here, but in a real app
-                            // you might fetch the product details based on the
-                            // id; we pass the whole product via extra for now
-                            // TODO(marfavi): Get product details from id
-                            //  instead of passing via extra
-                            //
-                            // cast state.extra to Product
-                            final product = state.extra! as Product;
-                            return MaterialPage(
-                              fullscreenDialog: true,
-                              child: TicketDetailScreen(product: product),
-                            );
-                          },
+                          path: 'view-purchasable',
+                          builder: (_, _) => const BuyTicketsScreen(),
+                          routes: [
+                            GoRoute(
+                              path: ':productid',
+                              pageBuilder: (context, state) {
+                                // TODO(marfavi): Get product details from id
+                                //  instead of passing via extra
+                                //
+                                // cast state.extra to Product
+                                final product =
+                                    state.extra! as PurchasableTicketGroup;
+                                return MaterialPage(
+                                  fullscreenDialog: true,
+                                  child: TicketDetailScreen(product: product),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        GoRoute(
+                          path: 'redeem_voucher',
+                          pageBuilder: (context, state) => const MaterialPage(
+                            child: RedeemVoucherScreen(),
+                          ),
                         ),
                       ],
-                    ),
-                    GoRoute(
-                      path: 'redeem_voucher',
-                      pageBuilder: (context, state) => const MaterialPage(
-                        child: RedeemVoucherScreen(),
-                      ),
                     ),
                   ],
                 ),

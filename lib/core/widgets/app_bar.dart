@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
+import 'package:cafe_analog_app/features/login/data/authentication_token_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
