@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/features/tickets/models/purchasable_ticket_group.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/bloc/buy_tickets_cubit.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';

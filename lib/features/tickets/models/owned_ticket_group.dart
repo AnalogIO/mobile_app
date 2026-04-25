@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/features/tickets/models/drink.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:equatable/equatable.dart';
 
 // TODO(marfavi): consider consolidating PurchasableTicketGroup and

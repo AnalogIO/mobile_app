@@ -1,10 +1,6 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/features/tickets/models/owned_ticket_group.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/bloc/owned_tickets_cubit.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/depleted_ticket_card.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/no_tickets_placeholder.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/owned_ticket_card.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

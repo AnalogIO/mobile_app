@@ -1,5 +1,5 @@
 import 'package:cafe_analog_app/core/failures.dart';
-import 'package:cafe_analog_app/features/tickets/models/drink.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:fpdart/fpdart.dart';
 
 /// In-memory cache for drink info (called "menu items" in the API).

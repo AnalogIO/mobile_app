@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:cafe_analog_app/features/tickets/data/tickets_repository.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:equatable/equatable.dart';
 
 part 'use_ticket_state.dart';

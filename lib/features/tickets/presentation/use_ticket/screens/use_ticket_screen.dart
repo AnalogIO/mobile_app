@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/features/tickets/data/data.dart';
-import 'package:cafe_analog_app/features/tickets/models/models.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/use_ticket/use_ticket.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

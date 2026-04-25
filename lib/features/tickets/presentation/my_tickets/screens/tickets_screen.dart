@@ -1,8 +1,6 @@
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
-import 'package:cafe_analog_app/features/tickets/models/owned_ticket_group.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/bloc/owned_tickets_cubit.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/my_tickets_section.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

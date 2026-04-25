@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:cafe_analog_app/core/failures.dart';
-import 'package:cafe_analog_app/features/tickets/models/owned_ticket_group.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

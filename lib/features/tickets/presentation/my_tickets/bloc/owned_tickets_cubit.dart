@@ -1,8 +1,7 @@
 // owned_tickets_cubit.dart
 import 'dart:async';
 
-import 'package:cafe_analog_app/features/tickets/data/tickets_repository.dart';
-import 'package:cafe_analog_app/features/tickets/models/owned_ticket_group.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

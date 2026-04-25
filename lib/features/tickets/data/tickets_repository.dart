@@ -1,6 +1,5 @@
 import 'package:cafe_analog_app/core/failures.dart';
-import 'package:cafe_analog_app/features/tickets/data/data.dart';
-import 'package:cafe_analog_app/features/tickets/models/models.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:collection/collection.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -203,7 +202,9 @@ class TicketsRepository {
               ticketName: response.productName,
               ticketsLeft: response.ticketsLeft,
               eligibleDrinks: response.eligibleMenuItems
-                  .where((item) => item.active)
+                  // TODO(marfavi): why are we getting ineligible drinks from
+                  //  the API and having to filter them out client-side?
+                  // .where((item) => item.active)
                   .map((item) => Drink(id: item.id, name: item.name))
                   .toList(),
             ),

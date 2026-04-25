@@ -1,7 +1,4 @@
-import 'package:cafe_analog_app/features/tickets/models/models.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/bloc/buy_tickets_cubit.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/bloc/owned_tickets_cubit.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/ticket_card_base.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

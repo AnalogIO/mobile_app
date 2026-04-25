@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'package:cafe_analog_app/core/widgets/delayed_fade_in.dart';
-import 'package:cafe_analog_app/features/tickets/data/data.dart';
-import 'package:cafe_analog_app/features/tickets/models/models.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/use_ticket/bloc/use_ticket_cubit.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/use_ticket/widgets/use_ticket_card.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
