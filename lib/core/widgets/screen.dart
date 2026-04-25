@@ -9,6 +9,7 @@ class Screen extends StatelessWidget {
   Screen.listView({
     required this.name,
     required List<Widget> children,
+    this.forceShowBackButton = false,
     this.onRefresh,
     super.key,
   }) : _body = ListView(
@@ -19,11 +20,13 @@ class Screen extends StatelessWidget {
   const Screen.withBody({
     required this.name,
     required Widget body,
+    this.forceShowBackButton = false,
     super.key,
   }) : _body = body,
        onRefresh = null;
 
   final String name;
+  final bool forceShowBackButton;
 
   /// Optional callback for pull-to-refresh functionality.
   ///
@@ -41,6 +44,7 @@ class Screen extends StatelessWidget {
         onBrightnessChanged: (brightness) {
           AppBrightnessProvider.of(context).onBrightnessChanged(brightness);
         },
+        forceShowBackButton: forceShowBackButton,
       ),
       body: onRefresh != null
           ? RefreshIndicator(

@@ -35,4 +35,18 @@ class TicketsApi {
       ),
     );
   }
+
+  /// Initiate a purchase flow for a purchasable ticket group.
+  TaskEither<Failure, InitiatePurchaseResponse> initiateMobilePayPurchase({
+    required int ticketGroupId,
+  }) {
+    return _executor.run(
+      (api) => api.v2.purchasesPost(
+        body: InitiatePurchaseRequest(
+          productId: ticketGroupId,
+          paymentType: PaymentType.mobilepay.value,
+        ),
+      ),
+    );
+  }
 }

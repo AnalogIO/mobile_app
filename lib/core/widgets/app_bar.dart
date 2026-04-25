@@ -2,15 +2,18 @@ import 'package:cafe_analog_app/features/login/data/authentication_token_reposit
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class AnalogAppBar extends StatelessWidget implements PreferredSizeWidget {
   const AnalogAppBar({
     required this.title,
+    required this.forceShowBackButton,
     this.onBrightnessChanged,
     super.key,
   });
 
   final String title;
+  final bool forceShowBackButton;
   final void Function(Brightness)? onBrightnessChanged;
 
   @override
@@ -27,6 +30,11 @@ class AnalogAppBar extends StatelessWidget implements PreferredSizeWidget {
         fontSize: 25,
       ),
       centerTitle: false,
+      // Addresses a bug in go_router where the back button doesn't appear
+      // on some screens (https://github.com/flutter/flutter/issues/144687).
+      // TODO(marfavi): Create GitHub issue to track this and remove this
+      //  workaround if/when it's fixed.
+      leading: forceShowBackButton ? BackButton(onPressed: context.pop) : null,
       actions: [
         if (kDebugMode)
           IconButton(

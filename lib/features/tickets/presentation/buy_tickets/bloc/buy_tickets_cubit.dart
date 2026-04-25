@@ -16,15 +16,26 @@ class BuyTicketsCubit extends Cubit<BuyTicketsState> {
     if (state is BuyTicketsLoading || state is BuyTicketsLoaded) {
       return;
     }
-
     emit(BuyTicketsLoading());
-    final nextState = await _repository
+    return _repository
         .getPurchasableTickets()
         .match(
           (failure) => BuyTicketsFailure(reason: failure.reason),
-          (products) => BuyTicketsLoaded(products: products),
+          (ticketGroups) => BuyTicketsLoaded(ticketGroups: ticketGroups),
         )
+        .map(emit)
         .run();
-    emit(nextState);
+  }
+
+  /// Initiates purchase for the selected [ticketGroup].
+  ///
+  /// Returns null on success, otherwise a user-visible error reason.
+  Future<String?> buyTicketGroup(PurchasableTicketGroup ticketGroup) async {
+    throw UnimplementedError();
+    final result = await _repository
+        .buyTicketGroup(ticketGroupId: ticketGroup.id)
+        .run();
+
+    return result.match((failure) => failure.reason, (_) => null);
   }
 }

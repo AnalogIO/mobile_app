@@ -70,17 +70,17 @@ void main() {
         isA<OwnedTicketsLoaded>(),
         isA<OwnedTicketsLoaded>()
             .having(
-              (s) => s.ownedTickets.single.productId,
+              (s) => s.ownedGroups.single.productId,
               'depleted product id',
               1,
             )
             .having(
-              (s) => s.ownedTickets.single.ticketsLeft,
+              (s) => s.ownedGroups.single.ticketsLeft,
               'depleted tickets left',
               0,
             )
             .having(
-              (s) => s.ownedTickets.single.eligibleDrinks
+              (s) => s.ownedGroups.single.eligibleDrinks
                   .map((drink) => drink.id)
                   .toList(),
               'depleted ticket drink ids',
@@ -123,14 +123,14 @@ void main() {
       expect: () => [
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>().having(
-          (s) => s.ownedTickets.single.eligibleDrinks
+          (s) => s.ownedGroups.single.eligibleDrinks
               .map((drink) => drink.id)
               .toList(),
           'cached ticket drink ids',
           [101, 102],
         ),
         isA<OwnedTicketsLoaded>().having(
-          (s) => s.ownedTickets.single.eligibleDrinks
+          (s) => s.ownedGroups.single.eligibleDrinks
               .map((drink) => drink.id)
               .toList(),
           'fetched product drink ids',
@@ -167,7 +167,7 @@ void main() {
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>(),
         isA<OwnedTicketsLoaded>().having(
-          (s) => s.ownedTickets.single.eligibleDrinks
+          (s) => s.ownedGroups.single.eligibleDrinks
               .map((drink) => drink.id)
               .toList(),
           'new product drink ids',
@@ -208,7 +208,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedTickets: [
+        ownedGroups: [
           _ticket(
             productId: 1,
             name: 'T1',
@@ -228,7 +228,7 @@ void main() {
         isA<OwnedTicketsRefreshing>(),
         isA<OwnedTicketsLoaded>()
             .having(
-              (s) => s.ownedTickets
+              (s) => s.ownedGroups
                   .firstWhere((ticket) => ticket.productId == 2)
                   .eligibleDrinks
                   .map((drink) => drink.id)
@@ -237,7 +237,7 @@ void main() {
               [22, 23],
             )
             .having(
-              (s) => s.ownedTickets
+              (s) => s.ownedGroups
                   .firstWhere((ticket) => ticket.productId == 1)
                   .eligibleDrinks
                   .map((drink) => drink.id)
@@ -280,20 +280,19 @@ void main() {
       expect: () => [
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>().having(
-          (s) => s.ownedTickets.map((t) => t.productId).toList(),
+          (s) => s.ownedGroups.map((t) => t.productId).toList(),
           'cached productIds',
           [1, 2],
         ),
         isA<OwnedTicketsLoaded>()
             .having(
-              (s) => s.ownedTickets.map((t) => t.productId).toList(),
+              (s) => s.ownedGroups.map((t) => t.productId).toList(),
               'ordered productIds',
               [3, 1, 2],
             )
             .having(
-              (s) => s.ownedTickets
-                  .firstWhere((t) => t.productId == 1)
-                  .ticketsLeft,
+              (s) =>
+                  s.ownedGroups.firstWhere((t) => t.productId == 1).ticketsLeft,
               'ticket (id 1) with no tickets left',
               0,
             ),
@@ -319,7 +318,7 @@ void main() {
       expect: () => [
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>().having(
-          (s) => s.ownedTickets.map((t) => t.productId).toList(),
+          (s) => s.ownedGroups.map((t) => t.productId).toList(),
           'api productIds',
           [2, 1],
         ),
@@ -361,7 +360,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedTickets: [_ticket(productId: 1, name: 'T1', ticketsLeft: 1)],
+        ownedGroups: [_ticket(productId: 1, name: 'T1', ticketsLeft: 1)],
       ),
       act: (cubit) => cubit.getOwnedTickets(),
       expect: () => <OwnedTicketsState>[],
@@ -402,7 +401,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedTickets: [
+        ownedGroups: [
           _ticket(productId: 1, name: 'T1', ticketsLeft: 2),
           _ticket(productId: 2, name: 'T2', ticketsLeft: 1),
         ],
@@ -411,7 +410,7 @@ void main() {
       expect: () => [
         isA<OwnedTicketsRefreshing>(),
         isA<OwnedTicketsLoaded>().having(
-          (s) => s.ownedTickets.map((t) => t.productId).toList(),
+          (s) => s.ownedGroups.map((t) => t.productId).toList(),
           'ordered productIds',
           [3, 1, 2],
         ),
@@ -430,7 +429,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedTickets: [
+        ownedGroups: [
           _ticket(productId: 1, name: 'T1', ticketsLeft: 2),
         ],
       ),
@@ -447,7 +446,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsRefreshing(
-        ownedTickets: [_ticket(productId: 1, name: 'T1', ticketsLeft: 1)],
+        ownedGroups: [_ticket(productId: 1, name: 'T1', ticketsLeft: 1)],
       ),
       act: (cubit) => cubit.refreshOwnedTickets(),
       expect: () => <OwnedTicketsState>[],
@@ -485,7 +484,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedTickets: [
+        ownedGroups: [
           _ticket(productId: 1, name: 'T1', ticketsLeft: 1),
           _ticket(productId: 2, name: 'T2', ticketsLeft: 1),
           _ticket(productId: 3, name: 'T3', ticketsLeft: 1),
@@ -497,7 +496,7 @@ void main() {
       },
       expect: () => [
         isA<OwnedTicketsLoaded>().having(
-          (s) => s.ownedTickets.map((t) => t.productId).toList(),
+          (s) => s.ownedGroups.map((t) => t.productId).toList(),
           'reordered productIds',
           [2, 1, 3],
         ),
@@ -513,7 +512,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedTickets: [
+        ownedGroups: [
           _ticket(productId: 1, name: 'T1', ticketsLeft: 1),
           _ticket(productId: 2, name: 'T2', ticketsLeft: 1),
         ],
@@ -521,7 +520,7 @@ void main() {
       act: (cubit) => cubit.reorderTickets(0, 2),
       expect: () => [
         isA<OwnedTicketsLoaded>().having(
-          (s) => s.ownedTickets.map((t) => t.productId).toList(),
+          (s) => s.ownedGroups.map((t) => t.productId).toList(),
           'reordered productIds',
           [2, 1],
         ),
@@ -551,7 +550,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedTickets: [
+        ownedGroups: [
           _ticket(productId: 1, name: 'T1', ticketsLeft: 1),
           _ticket(productId: 2, name: 'T2', ticketsLeft: 1),
         ],
@@ -578,7 +577,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedTickets: [
+        ownedGroups: [
           _ticket(productId: 1, name: 'T1', ticketsLeft: 0),
           _ticket(productId: 2, name: 'T2', ticketsLeft: 1),
         ],
@@ -589,7 +588,7 @@ void main() {
       },
       expect: () => [
         isA<OwnedTicketsLoaded>().having(
-          (s) => s.ownedTickets.map((t) => t.productId).toList(),
+          (s) => s.ownedGroups.map((t) => t.productId).toList(),
           'remaining productIds',
           [2],
         ),
@@ -605,7 +604,7 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedTickets: [
+        ownedGroups: [
           _ticket(productId: 1, name: 'T1', ticketsLeft: 0),
           _ticket(productId: 2, name: 'T2', ticketsLeft: 1),
         ],

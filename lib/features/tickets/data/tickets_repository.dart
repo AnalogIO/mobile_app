@@ -49,6 +49,14 @@ class TicketsRepository {
     );
   }
 
+  /// Initiates a purchase flow for a ticket group by id.
+  TaskEither<Failure, Unit> buyTicketGroup({required int ticketGroupId}) {
+    throw UnimplementedError();
+    return _ticketsApi
+        .initiateMobilePayPurchase(ticketGroupId: ticketGroupId)
+        .map((_) => unit);
+  }
+
   /// Get the list of purchasable ticket groups.
   TaskEither<Failure, List<PurchasableTicketGroup>> getPurchasableTickets() {
     return _purchasableTicketsLocalStore.get().alt(
@@ -59,6 +67,7 @@ class TicketsRepository {
                 .where((response) => response.visible && !response.isPerk)
                 .map(
                   (response) => PurchasableTicketGroup(
+                    id: response.id,
                     title: response.name,
                     description: response.description,
                     numberOfTickets: response.numberOfTickets,

@@ -1,44 +1,35 @@
+import 'package:cafe_analog_app/features/tickets/models/models.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/bloc/buy_tickets_cubit.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/bloc/owned_tickets_cubit.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/ticket_card_base.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
 /// A card shown when the user has run out of tickets of a specific type.
 ///
 /// Displays a message prompting the user to buy more tickets or dismiss.
 /// Uses [TicketCardBase] with muted colors for a less prominent appearance.
 class DepletedTicketCard extends StatelessWidget {
-  const DepletedTicketCard({
-    required this.id,
-    required this.ticketName,
-    required this.onBuyMore,
-    required this.onDismiss,
-    super.key,
-  });
+  const DepletedTicketCard({required this.depletedGroup, super.key});
 
-  /// Unique identifier, used for Hero animation tag.
-  final int id;
-
-  /// The name of the ticket type that has run out.
-  final String ticketName;
-
-  /// Called when the user taps "Buy more".
-  final void Function(int productId) onBuyMore;
-
-  /// Called when the user taps "Dismiss".
-  final void Function(int productId) onDismiss;
+  final OwnedTicketGroup depletedGroup;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return TicketCardBase(
-      id: id,
+      id: depletedGroup.productId,
       title: Text(
-        "You've run out of $ticketName tickets",
+        "You've run out of ${depletedGroup.ticketName} tickets",
         style: Theme.of(context).textTheme.titleMedium,
       ),
       // choose background based on some rudimentary logic
-      backgroundImagePath: ticketName.toLowerCase().contains('filter')
+      backgroundImagePath:
+          depletedGroup.ticketName.toLowerCase().contains('filter')
           ? 'assets/images/beans_cropped.png'
           : 'assets/images/latteart_cropped.png',
       backgroundColor: colorScheme.surfaceContainerHighest,
@@ -51,7 +42,9 @@ class DepletedTicketCard extends StatelessWidget {
           spacing: 8,
           children: [
             TextButton(
-              onPressed: () => onDismiss(id),
+              onPressed: () => context
+                  .read<OwnedTicketsCubit>()
+                  .dismissDepletedTicket(depletedGroup.productId),
               style: TextButton.styleFrom(
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -60,18 +53,52 @@ class DepletedTicketCard extends StatelessWidget {
                 style: TextStyle(color: colorScheme.onSurfaceVariant),
               ),
             ),
-            FilledButton(
-              onPressed: () => onBuyMore(id),
+            _BuyMoreButton(
+              depletedTicketGroup: depletedGroup,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _BuyMoreButton extends StatelessWidget {
+  const _BuyMoreButton({required this.depletedTicketGroup});
+
+  final OwnedTicketGroup depletedTicketGroup;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return BlocBuilder<BuyTicketsCubit, BuyTicketsState>(
+      builder: (context, state) {
+        if (state is BuyTicketsLoaded) {
+          final purchasableGroup = state.ticketGroups.firstWhereOrNull(
+            (group) => group.id == depletedTicketGroup.productId,
+          );
+          // Show a "Buy more" button if the ticket group is
+          // currently available for purchase
+          if (purchasableGroup != null) {
+            return FilledButton(
+              onPressed: () => context.go(
+                '/tickets/view-purchasable/${purchasableGroup.id}',
+                extra: purchasableGroup,
+              ),
               style: FilledButton.styleFrom(
                 backgroundColor: colorScheme.secondary,
                 foregroundColor: colorScheme.onSecondary,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text('Buy more'),
-            ),
-          ],
-        ),
-      ],
+            );
+          }
+        }
+        // Show no button if the ticket group isn't currently purchasable or
+        // if the purchase data hasn't loaded yet
+        return const SizedBox.shrink();
+      },
     );
   }
 }

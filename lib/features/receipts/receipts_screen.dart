@@ -20,6 +20,7 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
   Widget build(BuildContext context) {
     // Mock products for demonstration
     const cappuccino = PurchasableTicketGroup(
+      id: 1,
       title: 'Cappuccino',
       description: 'Creamy cappuccino with foam',
       numberOfTickets: 5,
@@ -28,6 +29,7 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
     );
 
     const caffeLatte = PurchasableTicketGroup(
+      id: 2,
       title: 'Caffè Latte',
       description: 'Smooth latte with steamed milk',
       numberOfTickets: 10,

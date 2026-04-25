@@ -22,8 +22,8 @@ class TicketsScreen extends StatelessWidget {
             OwnedTicketsInitial() => const Scaffold(),
             OwnedTicketsLoading() => const _LoadingScreen(),
             OwnedTicketsFailure(:final reason) => _FailureScreen(reason),
-            OwnedTicketsLoaded(:final ownedTickets) => _SuccessScreen(
-              ownedTickets,
+            OwnedTicketsLoaded(:final ownedGroups) => _SuccessScreen(
+              ownedGroups,
             ),
           };
         },
@@ -33,9 +33,9 @@ class TicketsScreen extends StatelessWidget {
 }
 
 class _SuccessScreen extends StatelessWidget {
-  const _SuccessScreen(this.ownedTickets);
+  const _SuccessScreen(this.ownedGroups);
 
-  final List<OwnedTicketGroup> ownedTickets;
+  final List<OwnedTicketGroup> ownedGroups;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class _SuccessScreen extends StatelessWidget {
       name: 'Tickets',
       onRefresh: context.read<OwnedTicketsCubit>().refreshOwnedTickets,
       children: [
-        MyTicketsSection(ownedTickets: ownedTickets),
+        MyTicketsSection(ownedTicketGroups: ownedGroups),
         const _BuyDrinkTicketsTile(),
         const _RedeemCodeTile(),
       ],

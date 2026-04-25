@@ -12,16 +12,16 @@ final class OwnedTicketsInitial extends OwnedTicketsState {}
 final class OwnedTicketsLoading extends OwnedTicketsState {}
 
 final class OwnedTicketsLoaded extends OwnedTicketsState {
-  const OwnedTicketsLoaded({required this.ownedTickets});
+  const OwnedTicketsLoaded({required this.ownedGroups});
 
-  final List<OwnedTicketGroup> ownedTickets;
+  final List<OwnedTicketGroup> ownedGroups;
 
   @override
-  List<Object> get props => [ownedTickets];
+  List<Object> get props => [ownedGroups];
 }
 
 final class OwnedTicketsRefreshing extends OwnedTicketsLoaded {
-  const OwnedTicketsRefreshing({required super.ownedTickets});
+  const OwnedTicketsRefreshing({required super.ownedGroups});
 }
 
 final class OwnedTicketsFailure extends OwnedTicketsState {

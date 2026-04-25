@@ -54,7 +54,7 @@ class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
       emit(
         result.match(
           (failure) => OwnedTicketsFailure(reason: failure.reason),
-          (ownedTickets) => OwnedTicketsLoaded(ownedTickets: ownedTickets),
+          (ownedGroups) => OwnedTicketsLoaded(ownedGroups: ownedGroups),
         ),
       );
     }
@@ -69,14 +69,14 @@ class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
       case OwnedTicketsRefreshing():
         // Only allow one refresh at a time
         return Future.value();
-      case OwnedTicketsLoaded(:final ownedTickets):
-        emit(OwnedTicketsRefreshing(ownedTickets: ownedTickets));
+      case OwnedTicketsLoaded(:final ownedGroups):
+        emit(OwnedTicketsRefreshing(ownedGroups: ownedGroups));
         return _repository
-            .refreshOwnedTickets(preferredOrder: ownedTickets)
+            .refreshOwnedTickets(preferredOrder: ownedGroups)
             .match(
               (failure) => emit(OwnedTicketsFailure(reason: failure.reason)),
-              (refreshedOwnedTickets) => emit(
-                OwnedTicketsLoaded(ownedTickets: refreshedOwnedTickets),
+              (refreshedOwnedGroups) => emit(
+                OwnedTicketsLoaded(ownedGroups: refreshedOwnedGroups),
               ),
             )
             .run();
@@ -103,12 +103,12 @@ class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
     }
 
     final insertAtIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
-    final updatedTickets = List.of(state.ownedTickets);
+    final updatedTickets = List.of(state.ownedGroups);
     final ticket = updatedTickets.removeAt(oldIndex);
     updatedTickets.insert(insertAtIndex, ticket);
 
     // Optimistically emit the updated order to avoid UI jank...
-    emit(OwnedTicketsLoaded(ownedTickets: updatedTickets));
+    emit(OwnedTicketsLoaded(ownedGroups: updatedTickets));
 
     // ...then cache the tickets to persist the new preferred order.
     return _repository
@@ -131,11 +131,11 @@ class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
       return;
     }
 
-    final ticketToDismiss = state.ownedTickets
-        .where((ticket) => ticket.productId == productId && ticket.isDepleted)
+    final ticketGroupToDismiss = state.ownedGroups
+        .where((group) => group.productId == productId && group.isDepleted)
         .firstOrNull;
 
-    if (ticketToDismiss == null) {
+    if (ticketGroupToDismiss == null) {
       // No depleted ticket with the given product id was found, so do nothing
       emit(
         OwnedTicketsFailure(
@@ -145,15 +145,15 @@ class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
       return;
     }
 
-    final updatedTickets = state.ownedTickets
-        .where((ownedTicket) => ownedTicket != ticketToDismiss)
+    final updatedTicketGroups = state.ownedGroups
+        .where((ownedGroup) => ownedGroup != ticketGroupToDismiss)
         .toList();
 
     final cacheResult = await _repository
-        .saveOwnedTicketsOrder(updatedTickets)
+        .saveOwnedTicketsOrder(updatedTicketGroups)
         .match(
           (didNotCache) => OwnedTicketsFailure(reason: didNotCache.reason),
-          (_) => OwnedTicketsLoaded(ownedTickets: updatedTickets),
+          (_) => OwnedTicketsLoaded(ownedGroups: updatedTicketGroups),
         )
         .run();
 

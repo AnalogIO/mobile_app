@@ -12,12 +12,12 @@ final class BuyTicketsInitial extends BuyTicketsState {}
 final class BuyTicketsLoading extends BuyTicketsState {}
 
 final class BuyTicketsLoaded extends BuyTicketsState {
-  const BuyTicketsLoaded({required this.products});
+  const BuyTicketsLoaded({required this.ticketGroups});
 
-  final List<PurchasableTicketGroup> products;
+  final List<PurchasableTicketGroup> ticketGroups;
 
   @override
-  List<Object?> get props => [products];
+  List<Object?> get props => [ticketGroups];
 }
 
 final class BuyTicketsFailure extends BuyTicketsState {

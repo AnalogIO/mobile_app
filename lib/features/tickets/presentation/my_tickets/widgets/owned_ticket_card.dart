@@ -7,22 +7,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 class OwnedTicketCard extends StatelessWidget {
-  const OwnedTicketCard({required this.ticket, super.key});
+  const OwnedTicketCard({required this.ownedGroup, super.key});
 
-  final OwnedTicketGroup ticket;
+  final OwnedTicketGroup ownedGroup;
 
   @override
   Widget build(BuildContext context) {
-    final ticketsLeft = ticket.ticketsLeft;
+    final ticketsLeft = ownedGroup.ticketsLeft;
     const icon = Icons.coffee;
 
     return TicketCardBase(
-      id: ticket.productId,
-      title: Text(ticket.ticketName),
-      backgroundImagePath: ticket.backgroundImagePath,
+      id: ownedGroup.productId,
+      title: Text(ownedGroup.ticketName),
+      backgroundImagePath: ownedGroup.backgroundImagePath,
       onTap: () => UseTicketScreen.show(
         context: context,
-        ticket: ticket,
+        ticket: ownedGroup,
         onTicketUsedSuccessfully: () =>
             context.read<OwnedTicketsCubit>().refreshOwnedTickets(),
       ),

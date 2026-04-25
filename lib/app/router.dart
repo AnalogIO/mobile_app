@@ -14,8 +14,9 @@ import 'package:cafe_analog_app/features/settings/your_profile_screen.dart';
 import 'package:cafe_analog_app/features/statistics/view/stats_screen.dart';
 import 'package:cafe_analog_app/features/tickets/data/data.dart';
 import 'package:cafe_analog_app/features/tickets/models/purchasable_ticket_group.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/screens/buy_tickets_screen.dart';
-import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/screens/ticket_detail_screen.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/bloc/buy_tickets_cubit.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/screens/ticket_catalog_screen.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/screens/ticket_group_details_screen.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/screens/tickets_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +94,8 @@ class AnalogGoRouter {
             StatefulShellBranch(
               routes: [
                 ShellRoute(
-                  // provide TicketsRepository to all routes under /tickets
+                  // provide TicketsRepository and BuyTicketsCubit
+                  // to all routes under /tickets
                   builder: (context, state, child) {
                     return RepositoryProvider<TicketsRepository>(
                       create: (context) => TicketsRepository(
@@ -105,7 +107,16 @@ class AnalogGoRouter {
                         purchasableTicketsLocalStore:
                             PurchasableTicketsLocalStore(),
                       ),
-                      child: child,
+                      child: BlocProvider(
+                        create: (context) {
+                          final cubit = BuyTicketsCubit(
+                            repository: context.read(),
+                          );
+                          unawaited(cubit.loadProducts());
+                          return cubit;
+                        },
+                        child: child,
+                      ),
                     );
                   },
                   routes: [
@@ -113,24 +124,59 @@ class AnalogGoRouter {
                       path: '/tickets',
                       builder: (_, _) => const TicketsScreen(),
                       routes: [
-                        GoRoute(
-                          path: 'view-purchasable',
-                          builder: (_, _) => const BuyTicketsScreen(),
+                        ShellRoute(
+                          // provide BuyTickets to all routes under /tickets/view-purchasable
+                          builder: (context, state, child) {
+                            return BlocProvider(
+                              create: (context) {
+                                final cubit = BuyTicketsCubit(
+                                  repository: context.read(),
+                                );
+                                unawaited(cubit.loadProducts());
+                                return cubit;
+                              },
+                              child: child,
+                            );
+                          },
                           routes: [
                             GoRoute(
-                              path: ':productid',
-                              pageBuilder: (context, state) {
-                                // TODO(marfavi): Get product details from id
-                                //  instead of passing via extra
-                                //
-                                // cast state.extra to Product
-                                final product =
-                                    state.extra! as PurchasableTicketGroup;
-                                return MaterialPage(
-                                  fullscreenDialog: true,
-                                  child: TicketDetailScreen(product: product),
-                                );
-                              },
+                              path: 'view-purchasable',
+                              builder: (_, _) => const TicketCatalogScreen(),
+                              routes: [
+                                GoRoute(
+                                  path: ':productid',
+                                  pageBuilder: (context, state) {
+                                    final group = state.extra;
+                                    const error =
+                                        'No ticket group data found. '
+                                        'Please go back and select a ticket '
+                                        'group again.';
+
+                                    if (group is! PurchasableTicketGroup) {
+                                      return const MaterialPage(
+                                        child: Scaffold(
+                                          body: Padding(
+                                            padding: EdgeInsets.all(24),
+                                            child: Center(
+                                              child: Text(
+                                                error,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+
+                                    return MaterialPage(
+                                      // fullscreenDialog: true,
+                                      child: TicketGroupDetailsScreen(
+                                        ticketGroup: group,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         ),
