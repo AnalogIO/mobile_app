@@ -11,6 +11,12 @@ class OwnedTicketCard extends StatelessWidget {
 
   final OwnedTicketGroup ownedGroup;
 
+  String get backgroundImagePath {
+    return ownedGroup.ticketName.toLowerCase().contains('filter')
+        ? 'assets/images/beans_cropped.png'
+        : 'assets/images/latteart_cropped.png';
+  }
+
   @override
   Widget build(BuildContext context) {
     final ticketsLeft = ownedGroup.ticketsLeft;
@@ -19,7 +25,7 @@ class OwnedTicketCard extends StatelessWidget {
     return TicketCardBase(
       id: ownedGroup.productId,
       title: Text(ownedGroup.ticketName),
-      backgroundImagePath: ownedGroup.backgroundImagePath,
+      backgroundImagePath: backgroundImagePath,
       onTap: () => UseTicketScreen.show(
         context: context,
         ticket: ownedGroup,

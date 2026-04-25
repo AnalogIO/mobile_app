@@ -12,7 +12,6 @@ class OwnedTicketGroup extends Equatable {
     required this.productId,
     required this.ticketName,
     required this.ticketsLeft,
-    required this.backgroundImagePath,
     required this.eligibleDrinks,
   });
 
@@ -22,7 +21,6 @@ class OwnedTicketGroup extends Equatable {
       productId: json['productId'] as int,
       ticketName: json['ticketName'] as String,
       ticketsLeft: json['ticketsLeft'] as int,
-      backgroundImagePath: json['backgroundImagePath'] as String,
       eligibleDrinks: (json['eligibleDrinks'] as List<dynamic>)
           .map((e) => Drink.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -32,7 +30,6 @@ class OwnedTicketGroup extends Equatable {
   final int productId;
   final String ticketName;
   final int ticketsLeft;
-  final String backgroundImagePath;
   final List<Drink> eligibleDrinks;
 
   bool get isDepleted => ticketsLeft <= 0;
@@ -43,7 +40,6 @@ class OwnedTicketGroup extends Equatable {
     productId: productId,
     ticketName: ticketName,
     ticketsLeft: 0,
-    backgroundImagePath: backgroundImagePath,
     eligibleDrinks: const [],
   );
 
@@ -52,7 +48,6 @@ class OwnedTicketGroup extends Equatable {
     productId,
     ticketName,
     ticketsLeft,
-    backgroundImagePath,
     eligibleDrinks,
   ];
 
@@ -60,7 +55,6 @@ class OwnedTicketGroup extends Equatable {
     'productId': productId,
     'ticketName': ticketName,
     'ticketsLeft': ticketsLeft,
-    'backgroundImagePath': backgroundImagePath,
     'eligibleDrinks': eligibleDrinks.map((e) => e.toJson()).toList(),
   };
 }

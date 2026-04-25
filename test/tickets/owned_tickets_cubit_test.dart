@@ -26,7 +26,6 @@ OwnedTicketGroup _ticket({
     productId: productId,
     ticketName: name,
     ticketsLeft: ticketsLeft,
-    backgroundImagePath: 'assets/images/test.png',
     eligibleDrinks: eligibleDrinkIds
         .map((id) => Drink(id: id, name: 'Drink $id'))
         .toList(),

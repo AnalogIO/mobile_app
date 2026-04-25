@@ -17,6 +17,12 @@ class DepletedTicketCard extends StatelessWidget {
 
   final OwnedTicketGroup depletedGroup;
 
+  String get backgroundImagePath {
+    return depletedGroup.ticketName.toLowerCase().contains('filter')
+        ? 'assets/images/beans_cropped.png'
+        : 'assets/images/latteart_cropped.png';
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -28,10 +34,7 @@ class DepletedTicketCard extends StatelessWidget {
         style: Theme.of(context).textTheme.titleMedium,
       ),
       // choose background based on some rudimentary logic
-      backgroundImagePath:
-          depletedGroup.ticketName.toLowerCase().contains('filter')
-          ? 'assets/images/beans_cropped.png'
-          : 'assets/images/latteart_cropped.png',
+      backgroundImagePath: backgroundImagePath,
       backgroundColor: colorScheme.surfaceContainerHighest,
       foregroundColor: colorScheme.onSurfaceVariant,
       backgroundGraphicOpacity: 0.5,
@@ -82,7 +85,7 @@ class _BuyMoreButton extends StatelessWidget {
           // currently available for purchase
           if (purchasableGroup != null) {
             return FilledButton(
-              onPressed: () => context.go(
+              onPressed: () => context.push(
                 '/tickets/view-purchasable/${purchasableGroup.id}',
                 extra: purchasableGroup,
               ),

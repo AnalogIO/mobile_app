@@ -10,12 +10,10 @@ class UseTicketSelectDrinkScreen extends StatelessWidget {
   UseTicketSelectDrinkScreen({required OwnedTicketGroup ticket, super.key})
     : ticketId = ticket.productId,
       ticketName = ticket.ticketName,
-      backgroundImagePath = ticket.backgroundImagePath,
       eligibleDrinks = ticket.eligibleDrinks;
 
   final int ticketId;
   final String ticketName;
-  final String backgroundImagePath;
   final List<Drink> eligibleDrinks;
 
   void onTicketUsed(BuildContext context, Drink drink) {
@@ -50,7 +48,6 @@ class UseTicketSelectDrinkScreen extends StatelessWidget {
             child: UseTicketCard(
               ticketId: ticketId,
               ticketName: ticketName,
-              backgroundImagePath: backgroundImagePath,
               eligibleDrinks: eligibleDrinks,
               onTicketUsed: (drink) => onTicketUsed(context, drink),
             ),

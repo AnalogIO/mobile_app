@@ -16,7 +16,6 @@ class UseTicketCard extends StatefulWidget {
     required this.ticketId,
     required this.ticketName,
     required this.eligibleDrinks,
-    required this.backgroundImagePath,
     required this.onTicketUsed,
     super.key,
   });
@@ -24,7 +23,6 @@ class UseTicketCard extends StatefulWidget {
   final int ticketId;
   final String ticketName;
   final List<Drink> eligibleDrinks;
-  final String backgroundImagePath;
   final ValueChanged<Drink> onTicketUsed;
 
   @override
@@ -35,6 +33,13 @@ class _UseTicketCardState extends State<UseTicketCard> {
   bool _isSwiping = false;
   Drink? _selectedDrink;
 
+  String get backgroundImagePath {
+    // choose background based on some rudimentary logic
+    return widget.ticketName.toLowerCase().contains('filter')
+        ? 'assets/images/beans_cropped.png'
+        : 'assets/images/latteart_cropped.png';
+  }
+
   @override
   Widget build(BuildContext context) {
     // FIXME(marfavi): When title goes from 2 lines to 1 line (or vice versa),
@@ -44,7 +49,7 @@ class _UseTicketCardState extends State<UseTicketCard> {
     //  title/children separately.
     return TicketCardBase(
       id: widget.ticketId,
-      backgroundImagePath: widget.backgroundImagePath,
+      backgroundImagePath: backgroundImagePath,
       title: AnimatedFadeSwitcherSized(
         showSecond: _isSwiping,
         firstChild: Text(widget.ticketName),
