@@ -40,6 +40,7 @@ class MyTicketsSection extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Hold and drag to reorder your tickets'),
+                        duration: Duration(seconds: 2),
                       ),
                     );
                     unawaited(HapticFeedback.mediumImpact());
