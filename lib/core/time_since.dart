@@ -11,7 +11,7 @@ String timeSince(DateTime time, {DateTime? now}) {
   }
 
   // Just now, seconds ago, minutes ago, hours ago.
-  if (diff < const Duration(seconds: 2)) return 'Just now';
+  if (diff < const Duration(seconds: 1)) return 'Just now';
   if (diff < const Duration(minutes: 1)) {
     return '${_countWithUnit(diff.inSeconds, 'second')} ago';
   }

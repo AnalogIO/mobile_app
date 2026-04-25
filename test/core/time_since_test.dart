@@ -23,22 +23,22 @@ void main() {
       expect(result, 'Just now');
     });
 
-    test('returns just now for times under two seconds ago', () {
+    test('returns just now for times under a second ago', () {
       final result = timeSince(
-        anchor.subtract(const Duration(seconds: 1)),
+        anchor.subtract(const Duration(milliseconds: 999)),
         now: anchor,
       );
 
       expect(result, 'Just now');
     });
 
-    test('returns seconds for times from two seconds ago', () {
+    test('returns seconds for times from one second ago', () {
       final result = timeSince(
-        anchor.subtract(const Duration(seconds: 2)),
+        anchor.subtract(const Duration(seconds: 1)),
         now: anchor,
       );
 
-      expect(result, '2 seconds ago');
+      expect(result, '1 second ago');
     });
 
     test('uses singular minute/hour grammar', () {
