@@ -8,9 +8,12 @@
 - [ ] Consider json_serializable for data models - we have a lot of boilerplate code for parsing json responses from the backend, and this would help reduce that
 - [ ] Consider how Barista perks should be implemented - new navigation target or new section below My Tickets (like how it works in app v3)?
 - [ ] Add barrel files for whole feature (or remove existing ones)
+  - [X] use_ticket
+  - [X] my_tickets
+  - [X] buy_tickets
 - [ ] Add documentation for this feature
 - [X] Implement showing a DepletedTicketCard when last ticket has been used
-  - [ ] Show correct purchase page when user taps on "Get more tickets" button on DepletedTicketCard
+  - [X] Show correct purchase page when user taps on "Get more tickets" button on DepletedTicketCard
 
 - [X] Separate data sources away from repositories
 - [X] Move away from hydrated cubit and use some data source instead
