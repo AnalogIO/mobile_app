@@ -36,6 +36,15 @@ class TicketsApi {
     );
   }
 
+  /// Redeem a voucher code that will grant some tickets to the user.
+  TaskEither<Failure, SimplePurchaseResponse> redeemVoucher({
+    required String voucherCode,
+  }) {
+    return _executor.run(
+      (api) => api.v2.vouchersVoucherCodeRedeemPost(voucherCode: voucherCode),
+    );
+  }
+
   /// Initiate a purchase flow for a purchasable ticket group.
   TaskEither<Failure, InitiatePurchaseResponse> initiateMobilePayPurchase({
     required int ticketGroupId,

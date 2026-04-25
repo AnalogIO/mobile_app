@@ -17,6 +17,7 @@ import 'package:cafe_analog_app/features/tickets/models/purchasable_ticket_group
 import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/bloc/buy_tickets_cubit.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/screens/ticket_catalog_screen.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/buy_tickets/screens/ticket_group_details_screen.dart';
+import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/bloc/owned_tickets_cubit.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/screens/tickets_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -107,14 +108,27 @@ class AnalogGoRouter {
                         purchasableTicketsLocalStore:
                             PurchasableTicketsLocalStore(),
                       ),
-                      child: BlocProvider(
-                        create: (context) {
-                          final cubit = BuyTicketsCubit(
-                            repository: context.read(),
-                          );
-                          unawaited(cubit.loadProducts());
-                          return cubit;
-                        },
+                      child: MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (context) {
+                              final cubit = OwnedTicketsCubit(
+                                repository: context.read(),
+                              );
+                              unawaited(cubit.getOwnedTickets());
+                              return cubit;
+                            },
+                          ),
+                          BlocProvider(
+                            create: (context) {
+                              final cubit = BuyTicketsCubit(
+                                repository: context.read(),
+                              );
+                              unawaited(cubit.loadProducts());
+                              return cubit;
+                            },
+                          ),
+                        ],
                         child: child,
                       ),
                     );

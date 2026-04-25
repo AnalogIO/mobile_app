@@ -132,6 +132,22 @@ class TicketsRepository {
     return _ownedTicketsLocalStore.set(preferredOrder);
   }
 
+  /// Attempt to redeem a voucher code that grants tickets to the user.
+  TaskEither<Failure, OwnedTicketGroup> redeemVoucher({
+    required String voucherCode,
+  }) {
+    return _ticketsApi
+        .redeemVoucher(voucherCode: voucherCode)
+        .map(
+          (response) => OwnedTicketGroup(
+            productId: response.productId,
+            ticketName: response.productName,
+            ticketsLeft: response.numberOfTickets,
+            eligibleDrinks: const [],
+          ),
+        );
+  }
+
   TaskEither<Failure, List<OwnedTicketGroup>> _fetchAndPersistOwnedTickets({
     required List<OwnedTicketGroup>? preferredOrder,
   }) {
@@ -156,11 +172,6 @@ class TicketsRepository {
               productId: response.productId,
               ticketName: response.productName,
               ticketsLeft: response.ticketsLeft,
-              backgroundImagePath:
-                  // choose background based on some rudimentary logic
-                  response.productName.toLowerCase().contains('filter')
-                  ? 'assets/images/beans_cropped.png'
-                  : 'assets/images/latteart_cropped.png',
               eligibleDrinks: response.eligibleMenuItems
                   .where((item) => item.active)
                   .map((item) => Drink(id: item.id, name: item.name))

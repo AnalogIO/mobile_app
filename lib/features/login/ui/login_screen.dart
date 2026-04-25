@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   labelText: 'Your email',
                   submitText: 'Continue',
                   errorMessage: 'Enter a valid email',
-                  onSubmit: (email) async {
+                  onSubmit: (email, _) async {
                     await context.read<AuthCubit>().sendLoginLink(email: email);
                   },
                 ),

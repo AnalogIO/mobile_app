@@ -1,8 +1,5 @@
-import 'dart:async';
-
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
-import 'package:cafe_analog_app/features/tickets/data/tickets_repository.dart';
 import 'package:cafe_analog_app/features/tickets/models/owned_ticket_group.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/bloc/owned_tickets_cubit.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/my_tickets/widgets/my_tickets_section.dart';
@@ -15,19 +12,15 @@ class TicketsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _OwnedTicketsCubitProvider(
-      child: BlocBuilder<OwnedTicketsCubit, OwnedTicketsState>(
-        builder: (context, state) {
-          return switch (state) {
-            OwnedTicketsInitial() => const Scaffold(),
-            OwnedTicketsLoading() => const _LoadingScreen(),
-            OwnedTicketsFailure(:final reason) => _FailureScreen(reason),
-            OwnedTicketsLoaded(:final ownedGroups) => _SuccessScreen(
-              ownedGroups,
-            ),
-          };
-        },
-      ),
+    return BlocBuilder<OwnedTicketsCubit, OwnedTicketsState>(
+      builder: (context, state) {
+        return switch (state) {
+          OwnedTicketsInitial() => const Scaffold(),
+          OwnedTicketsLoading() => const _LoadingScreen(),
+          OwnedTicketsFailure(:final reason) => _FailureScreen(reason),
+          OwnedTicketsLoaded(:final ownedGroups) => _SuccessScreen(ownedGroups),
+        };
+      },
     );
   }
 }
@@ -73,26 +66,6 @@ class _FailureScreen extends StatelessWidget {
     return Screen.withBody(
       name: 'Tickets',
       body: Center(child: Text('Error loading tickets: $reason')),
-    );
-  }
-}
-
-class _OwnedTicketsCubitProvider extends StatelessWidget {
-  const _OwnedTicketsCubitProvider({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        final cubit = OwnedTicketsCubit(
-          repository: context.read<TicketsRepository>(),
-        );
-        unawaited(cubit.getOwnedTickets());
-        return cubit;
-      },
-      child: child,
     );
   }
 }
