@@ -16,6 +16,7 @@ class UseTicketCard extends StatefulWidget {
     required this.ticketId,
     required this.ticketName,
     required this.eligibleDrinks,
+    required this.initialSelectedDrink,
     required this.onTicketUsed,
     super.key,
   });
@@ -23,6 +24,7 @@ class UseTicketCard extends StatefulWidget {
   final int ticketId;
   final String ticketName;
   final List<Drink> eligibleDrinks;
+  final Drink? initialSelectedDrink;
   final ValueChanged<Drink> onTicketUsed;
 
   @override
@@ -30,8 +32,24 @@ class UseTicketCard extends StatefulWidget {
 }
 
 class _UseTicketCardState extends State<UseTicketCard> {
-  bool _isSwiping = false;
+  late bool _isSwiping;
   Drink? _selectedDrink;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDrink = widget.initialSelectedDrink;
+
+    // If there's only one eligible drink, select it and
+    // skip straight to the swipe state.
+    if (widget.eligibleDrinks.length == 1) {
+      _selectedDrink = widget.eligibleDrinks.first;
+      _isSwiping = true;
+      return;
+    }
+
+    _isSwiping = false;
+  }
 
   String get backgroundImagePath {
     // choose background based on some rudimentary logic
@@ -58,15 +76,11 @@ class _UseTicketCardState extends State<UseTicketCard> {
       children: [
         AnimatedFadeSwitcherSized(
           showSecond: _isSwiping,
-          firstChild: _SelectMenuItemContent(
-            menuItems: widget.eligibleDrinks.map((item) => item.name).toList(),
-            selectedMenuItem: _selectedDrink?.name,
-            onMenuItemSelected: (item) {
-              setState(
-                () => _selectedDrink = widget.eligibleDrinks.firstWhere(
-                  (drink) => drink.name == item,
-                ),
-              );
+          firstChild: _SelectDrinkContent(
+            drinks: widget.eligibleDrinks,
+            selectedDrink: _selectedDrink,
+            onDrinkSelected: (item) {
+              setState(() => _selectedDrink = item);
             },
             onNextPressed: _selectedDrink != null
                 ? () => setState(() => _isSwiping = true)

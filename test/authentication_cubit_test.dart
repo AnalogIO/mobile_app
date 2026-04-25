@@ -14,10 +14,12 @@ class _MockLoginRepository extends Mock implements LoginRepository {}
 void main() {
   late _MockAuthRepository authTokenRepository;
   late _MockLoginRepository loginRepository;
+  late int clearUserContextCalls;
 
   setUp(() {
     authTokenRepository = _MockAuthRepository();
     loginRepository = _MockLoginRepository();
+    clearUserContextCalls = 0;
   });
 
   group('AuthCubit', () {
@@ -33,6 +35,9 @@ void main() {
         return AuthCubit(
           authTokenRepository: authTokenRepository,
           loginRepository: loginRepository,
+          clearAuthenticatedUserContext: () async {
+            clearUserContextCalls += 1;
+          },
         );
       },
       act: (cubit) => cubit.start(),
@@ -55,6 +60,9 @@ void main() {
         return AuthCubit(
           authTokenRepository: authTokenRepository,
           loginRepository: loginRepository,
+          clearAuthenticatedUserContext: () async {
+            clearUserContextCalls += 1;
+          },
         );
       },
       act: (cubit) => cubit.start(),
@@ -88,6 +96,9 @@ void main() {
       build: () => AuthCubit(
         authTokenRepository: authTokenRepository,
         loginRepository: loginRepository,
+        clearAuthenticatedUserContext: () async {
+          clearUserContextCalls += 1;
+        },
       ),
       act: (cubit) => cubit.authenticateWithToken(magicLinkToken: 'TOKEN'),
       verify: (_) {
@@ -99,6 +110,7 @@ void main() {
             const AuthTokens(jwt: 'PROVIDED-JWT', refreshToken: 'REF'),
           ),
         ).called(1);
+        expect(clearUserContextCalls, 1);
       },
       expect: () => [
         isA<AuthLoading>(),
@@ -120,11 +132,15 @@ void main() {
         return AuthCubit(
           authTokenRepository: authTokenRepository,
           loginRepository: loginRepository,
+          clearAuthenticatedUserContext: () async {
+            clearUserContextCalls += 1;
+          },
         );
       },
       act: (cubit) => cubit.logOut(),
       verify: (_) {
         verify(() => authTokenRepository.clearTokens()).called(1);
+        expect(clearUserContextCalls, 1);
       },
       expect: () => [
         isA<AuthLoading>(),

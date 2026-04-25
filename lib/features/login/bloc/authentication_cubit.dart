@@ -4,6 +4,7 @@ import 'package:cafe_analog_app/features/login/data/login_repository.dart';
 import 'package:cafe_analog_app/features/login/ui/authentication_navigator.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 
 part 'authentication_state.dart';
 
@@ -16,17 +17,23 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit({
     required AuthTokenRepository authTokenRepository,
     required LoginRepository loginRepository,
+    required Future<void> Function() clearAuthenticatedUserContext,
   }) : _authRepository = authTokenRepository,
        _loginRepository = loginRepository,
+       _clearAuthenticatedUserContext = clearAuthenticatedUserContext,
        super(const AuthInitial());
 
   final AuthTokenRepository _authRepository;
   final LoginRepository _loginRepository;
 
+  /// A callback to clear any user-specific context (e.g. cached data)
+  /// on logout or login as a different user.
+  final Future<void> Function() _clearAuthenticatedUserContext;
+
   /// Check current authentication status and emit appropriate state.
   Future<void> start() async {
     emit(const AuthLoading());
-    final newState = await _authRepository
+    return _authRepository
         .getTokens()
         .match(
           (couldNotGetTokens) => AuthFailure(reason: couldNotGetTokens.reason),
@@ -35,58 +42,68 @@ class AuthCubit extends Cubit<AuthState> {
             (tokens) => AuthAuthenticated(tokens: tokens), // on some
           ),
         )
+        .map(emit)
         .run();
-    emit(newState);
   }
 
   /// Log the user out and clear stored tokens.
   Future<void> logOut() async {
     emit(const AuthLoading());
-    final newState = await _authRepository
+
+    return _authRepository
         .clearTokens()
         .match(
-          (couldNotClear) => AuthFailure(reason: couldNotClear.reason),
+          (couldNotClearTokens) =>
+              AuthFailure(reason: couldNotClearTokens.reason),
           (_) => const AuthUnauthenticated(),
         )
+        .map(emit)
+        .andThen(() => _clearUserContextTask)
         .run();
-    emit(newState);
   }
 
   /// The user has requested a login magic link to be sent.
   Future<void> sendLoginLink({required String email}) async {
     emit(const AuthLoading());
-    final newState = await _loginRepository
+    return _loginRepository
         .requestMagicLink(email)
         .match(
           (didNotSendLink) => AuthFailure(reason: didNotSendLink.reason),
           (_) => AuthEmailSent(email: email),
         )
+        .map(emit)
         .run();
-    emit(newState);
   }
 
   /// Authenticate the user with the token provided from the magic link.
   Future<void> authenticateWithToken({required String magicLinkToken}) async {
     emit(const AuthLoading());
 
-    // Exchange the magic link token for auth tokens.
-    final authenticateEither = await _loginRepository
+    return _loginRepository
         .authenticateWithMagicLinkToken(magicLinkToken)
-        .run();
-
-    // If authentication failed, emit failure.
-    // Otherwise save tokens and emit authenticated.
-    final newState = await authenticateEither.match(
-      (didNotAuth) async => AuthFailure(reason: didNotAuth.reason),
-      (tokens) async {
-        final saveEither = await _authRepository.saveTokens(tokens).run();
-        return saveEither.match(
-          (couldNotSave) => AuthFailure(reason: couldNotSave.reason),
+        // .chainFirst((_) => _clearUserContextTask)
+        .flatMap(_authRepository.saveTokens)
+        .match(
+          (failure) => AuthFailure(reason: failure.reason),
           (savedTokens) => AuthAuthenticated(tokens: savedTokens),
-        );
-      },
-    );
+        )
+        .map(emit)
+        .andThen(() => _clearUserContextTask)
+        .run();
+  }
 
-    emit(newState);
+  /// A task that attempts to clear user context via
+  /// the supplied [_clearAuthenticatedUserContext] callback.
+  ///
+  /// It silently catches and ignores any errors as it is a low-priority cleanup
+  /// operation that should not interfere with the main auth flow.
+  Task<void> get _clearUserContextTask {
+    return Task<void>(() async {
+      try {
+        await _clearAuthenticatedUserContext();
+      } finally {
+        // Don't fail if the cleanup throws an error.
+      }
+    });
   }
 }

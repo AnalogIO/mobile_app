@@ -1,17 +1,17 @@
 part of 'use_ticket_card.dart';
 
-/// Content shown when the user is selecting a menu item.
-class _SelectMenuItemContent extends StatelessWidget {
-  const _SelectMenuItemContent({
-    required this.menuItems,
-    required this.selectedMenuItem,
-    required this.onMenuItemSelected,
+/// Content shown when the user is selecting a drink.
+class _SelectDrinkContent extends StatelessWidget {
+  const _SelectDrinkContent({
+    required this.drinks,
+    required this.selectedDrink,
+    required this.onDrinkSelected,
     required this.onNextPressed,
   });
 
-  final List<String> menuItems;
-  final String? selectedMenuItem;
-  final ValueChanged<String?> onMenuItemSelected;
+  final List<Drink> drinks;
+  final Drink? selectedDrink;
+  final ValueChanged<Drink?> onDrinkSelected;
   final VoidCallback? onNextPressed;
 
   @override
@@ -32,21 +32,22 @@ class _SelectMenuItemContent extends StatelessWidget {
           spacing: 16,
           children: [
             Expanded(
-              child: DropdownMenu<String>(
+              child: DropdownMenu<Drink>(
                 expandedInsets: EdgeInsets.zero,
                 enableSearch: false,
                 hintText: 'Select drink',
-                initialSelection: selectedMenuItem,
+                initialSelection: selectedDrink,
                 inputDecorationTheme: InputDecorationTheme(
                   filled: true,
                   fillColor: colorScheme.surfaceContainerHighest,
                 ),
-                dropdownMenuEntries: menuItems
+                dropdownMenuEntries: drinks
                     .map(
-                      (item) => DropdownMenuEntry(value: item, label: item),
+                      (item) =>
+                          DropdownMenuEntry(value: item, label: item.name),
                     )
                     .toList(),
-                onSelected: onMenuItemSelected,
+                onSelected: onDrinkSelected,
               ),
             ),
             CircularNextButton(onPressed: onNextPressed),

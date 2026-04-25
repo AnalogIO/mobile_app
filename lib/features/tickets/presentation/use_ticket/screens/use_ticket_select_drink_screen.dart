@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cafe_analog_app/core/widgets/delayed_fade_in.dart';
+import 'package:cafe_analog_app/features/tickets/data/data.dart';
 import 'package:cafe_analog_app/features/tickets/models/models.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/use_ticket/bloc/use_ticket_cubit.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/use_ticket/widgets/use_ticket_card.dart';
@@ -27,6 +28,13 @@ class UseTicketSelectDrinkScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final initialSelectedDrink = context
+        .read<TicketsRepository>()
+        .getRememberedDrinkSelection(
+          ticketGroupId: ticketId,
+          eligibleDrinks: eligibleDrinks,
+        );
+
     return SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -49,6 +57,7 @@ class UseTicketSelectDrinkScreen extends StatelessWidget {
               ticketId: ticketId,
               ticketName: ticketName,
               eligibleDrinks: eligibleDrinks,
+              initialSelectedDrink: initialSelectedDrink,
               onTicketUsed: (drink) => onTicketUsed(context, drink),
             ),
           ),

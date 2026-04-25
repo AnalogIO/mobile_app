@@ -107,6 +107,10 @@ class AnalogGoRouter {
                         drinksLocalStore: DrinksLocalStore(),
                         purchasableTicketsLocalStore:
                             PurchasableTicketsLocalStore(),
+                        rememberedTicketDrinkLocalStore:
+                            RememberedTicketDrinkLocalStore(
+                              store: context.read(),
+                            ),
                       ),
                       child: MultiBlocProvider(
                         providers: [

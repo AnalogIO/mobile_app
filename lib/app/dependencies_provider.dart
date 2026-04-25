@@ -5,6 +5,7 @@ import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
 import 'package:cafe_analog_app/features/login/data/auth_token_store.dart';
 import 'package:cafe_analog_app/features/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/features/login/data/login_repository.dart';
+import 'package:cafe_analog_app/features/tickets/data/data.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +72,11 @@ class DependenciesProvider extends StatelessWidget {
               final authCubit = AuthCubit(
                 authTokenRepository: context.read(),
                 loginRepository: context.read(),
+                clearAuthenticatedUserContext: () async {
+                  await RememberedTicketDrinkLocalStore(
+                    store: localStorage,
+                  ).clear().run();
+                },
               );
               unawaited(authCubit.start());
               context.read<AuthCubitHandle>().bind(authCubit);

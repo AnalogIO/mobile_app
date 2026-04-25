@@ -10,15 +10,18 @@ class TicketsRepository {
     required OwnedTicketsLocalStore ownedTicketsLocalStore,
     required DrinksLocalStore drinksLocalStore,
     required PurchasableTicketsLocalStore purchasableTicketsLocalStore,
+    required RememberedTicketDrinkLocalStore rememberedTicketDrinkLocalStore,
   }) : _ticketsApi = ticketsApi,
        _ownedTicketsLocalStore = ownedTicketsLocalStore,
        _drinksLocalStore = drinksLocalStore,
-       _purchasableTicketsLocalStore = purchasableTicketsLocalStore;
+       _purchasableTicketsLocalStore = purchasableTicketsLocalStore,
+       _rememberedTicketDrinkLocalStore = rememberedTicketDrinkLocalStore;
 
   final TicketsApi _ticketsApi;
   final OwnedTicketsLocalStore _ownedTicketsLocalStore;
   final DrinksLocalStore _drinksLocalStore;
   final PurchasableTicketsLocalStore _purchasableTicketsLocalStore;
+  final RememberedTicketDrinkLocalStore _rememberedTicketDrinkLocalStore;
 
   /// Spend a ticket with the given [ticketId]
   /// on a drink with the given [drinkId].
@@ -28,6 +31,11 @@ class TicketsRepository {
   }) {
     return _ticketsApi
         .useTicket(ticketId: ticketId, drinkId: drinkId)
+        .flatMap(
+          (response) => _rememberedTicketDrinkLocalStore
+              .setLastSelectedDrinkId(ticketGroupId: ticketId, drinkId: drinkId)
+              .map((_) => response),
+        )
         .map(
           (response) => SpentTicketInfo(
             // menuItemName can be null for backwards compatibility reasons
@@ -36,6 +44,28 @@ class TicketsRepository {
             usedAt: response.dateUsed,
           ),
         );
+  }
+
+  /// Returns the remembered drink for [ticketGroupId] if it's still eligible.
+  Drink? getRememberedDrinkSelection({
+    required int ticketGroupId,
+    required List<Drink> eligibleDrinks,
+  }) {
+    final rememberedDrinkId = _rememberedTicketDrinkLocalStore
+        .getLastSelectedDrinkId(ticketGroupId: ticketGroupId);
+
+    if (rememberedDrinkId == null) {
+      return null;
+    }
+
+    return eligibleDrinks.firstWhereOrNull(
+      (drink) => drink.id == rememberedDrinkId,
+    );
+  }
+
+  /// Clears remembered drink selections for all ticket products.
+  TaskEither<Failure, Unit> clearRememberedDrinkSelections() {
+    return _rememberedTicketDrinkLocalStore.clear();
   }
 
   /// Get all drinks available for the user.
