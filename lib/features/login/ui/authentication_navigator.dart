@@ -1,4 +1,5 @@
 import 'package:cafe_analog_app/core/loading_overlay.dart';
+import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,21 +20,16 @@ class AuthNavigator extends StatefulWidget {
 }
 
 class _AuthNavigatorState extends State<AuthNavigator> {
-  var _overlayVisible = false;
+  void Function(BuildContext context)? _dismissLoadingOverlay;
 
-  void _showOverlay() {
-    if (!_overlayVisible) {
-      _overlayVisible = true;
-      showLoadingOverlay(context);
-    }
+  void _showLoadingOverlay() {
+    // Only show the loading overlay if it's not already shown
+    setState(() => _dismissLoadingOverlay ??= showLoadingOverlay(context));
   }
 
-  void _hideOverlay() {
-    if (_overlayVisible &&
-        Navigator.of(context, rootNavigator: true).canPop()) {
-      Navigator.of(context, rootNavigator: true).pop();
-      _overlayVisible = false;
-    }
+  void _hideLoadingOverlay() {
+    _dismissLoadingOverlay?.call(context);
+    setState(() => _dismissLoadingOverlay = null);
   }
 
   @override
@@ -42,9 +38,9 @@ class _AuthNavigatorState extends State<AuthNavigator> {
       listener: (context, state) {
         // Manage loading overlay reactively
         if (state is AuthLoading) {
-          _showOverlay();
+          _showLoadingOverlay();
         } else {
-          _hideOverlay();
+          _hideLoadingOverlay();
         }
 
         switch (state) {
@@ -56,10 +52,9 @@ class _AuthNavigatorState extends State<AuthNavigator> {
             context.go('/login');
           case AuthFailure():
             context.go('/login');
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Authentication failed: ${state.reason}'),
-              ),
+            showSnackBar(
+              context: context,
+              message: 'Authentication failed: ${state.reason}',
             );
           case AuthLoading() || AuthInitial():
             // Do nothing

@@ -5,7 +5,7 @@ import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
 import 'package:cafe_analog_app/features/login/data/auth_token_store.dart';
 import 'package:cafe_analog_app/features/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/features/login/data/login_repository.dart';
-import 'package:cafe_analog_app/features/tickets/data/data.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
@@ -60,13 +60,29 @@ class DependenciesProvider extends StatelessWidget {
           ),
         ),
 
-        // Auth/login repositories
+        // Login repository
         RepositoryProvider(
           create: (context) => LoginRepository(executor: context.read()),
+        ),
+
+        // Tickets repository
+        RepositoryProvider(
+          create: (context) => TicketsRepository(
+            ticketsApi: TicketsApi(executor: context.read()),
+            ownedTicketsLocalStore: OwnedTicketsLocalStore(
+              store: context.read(),
+            ),
+            drinksLocalStore: DrinksLocalStore(),
+            purchasableTicketsLocalStore: PurchasableTicketsLocalStore(),
+            rememberedTicketDrinkLocalStore: RememberedTicketDrinkLocalStore(
+              store: context.read(),
+            ),
+          ),
         ),
       ],
       child: MultiBlocProvider(
         providers: [
+          // Authentication cubit
           BlocProvider(
             create: (context) {
               final authCubit = AuthCubit(
@@ -82,6 +98,10 @@ class DependenciesProvider extends StatelessWidget {
               context.read<AuthCubitHandle>().bind(authCubit);
               return authCubit;
             },
+          ),
+          // Purchase flow cubit
+          BlocProvider(
+            create: (context) => PurchaseFlowCubit(repository: context.read()),
           ),
         ],
         child: child,

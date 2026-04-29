@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,11 +34,9 @@ class MyTicketsSection extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   onReorderStart: (_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Hold and drag to reorder your tickets'),
-                        duration: Duration(seconds: 2),
-                      ),
+                    showSnackBar(
+                      context: context,
+                      message: 'Hold and drag to reorder your tickets',
                     );
                     unawaited(HapticFeedback.mediumImpact());
                   },

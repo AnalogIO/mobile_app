@@ -28,7 +28,7 @@ android {
     kotlinOptions { jvmTarget = JavaVersion.VERSION_11.toString() }
 
     defaultConfig {
-        applicationId = "dk.cafeanalog.cafe_analog_app"
+        applicationId = "overridden by productFlavors"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -57,13 +57,15 @@ android {
     productFlavors {
         create("production") {
             dimension = "default"
-            applicationIdSuffix = ""
+            applicationId = "dk.analog.digitalclipcard"
             manifestPlaceholders["appName"] = "Analog"
+            manifestPlaceholders["deepLinkScheme"] = "analogcoffeecard"
         }
         create("development") {
             dimension = "default"
-            applicationIdSuffix = ".dev"
+            applicationId = "dk.analogio.analog.dev"
             manifestPlaceholders["appName"] = "[DEV] Analog"
+            manifestPlaceholders["deepLinkScheme"] = "analogcoffeecard-dev"
         }
     }
 

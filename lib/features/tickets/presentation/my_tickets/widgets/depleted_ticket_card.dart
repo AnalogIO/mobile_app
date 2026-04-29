@@ -15,6 +15,7 @@ class DepletedTicketCard extends StatelessWidget {
   final OwnedTicketGroup depletedGroup;
 
   String get backgroundImagePath {
+    // choose background based on some rudimentary logic
     return depletedGroup.ticketName.toLowerCase().contains('filter')
         ? 'assets/images/beans_cropped.png'
         : 'assets/images/latteart_cropped.png';
@@ -30,7 +31,6 @@ class DepletedTicketCard extends StatelessWidget {
         "You've run out of ${depletedGroup.ticketName} tickets",
         style: Theme.of(context).textTheme.titleMedium,
       ),
-      // choose background based on some rudimentary logic
       backgroundImagePath: backgroundImagePath,
       backgroundColor: colorScheme.surfaceContainerHighest,
       foregroundColor: colorScheme.onSurfaceVariant,
@@ -72,9 +72,9 @@ class _BuyMoreButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return BlocBuilder<BuyTicketsCubit, BuyTicketsState>(
+    return BlocBuilder<TicketCatalogCubit, TicketCatalogState>(
       builder: (context, state) {
-        if (state is BuyTicketsLoaded) {
+        if (state is TicketCatalogLoaded) {
           final purchasableGroup = state.ticketGroups.firstWhereOrNull(
             (group) => group.id == depletedTicketGroup.productId,
           );

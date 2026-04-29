@@ -12,25 +12,23 @@ class TicketCatalogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BuyTicketsCubit, BuyTicketsState>(
+    return BlocBuilder<TicketCatalogCubit, TicketCatalogState>(
       builder: (context, state) {
         return switch (state) {
-          BuyTicketsInitial() || BuyTicketsLoading() => const Screen.withBody(
+          TicketCatalogInitial() ||
+          LoadingTicketCatalog() => const Screen.withBody(
             name: 'Buy tickets',
-            forceShowBackButton: true,
             body: Center(
               child: AnalogCircularProgressIndicator(spinnerColor: .dark),
             ),
           ),
-          BuyTicketsFailure(:final reason) => Screen.withBody(
+          TicketCatalogLoadFailure(:final reason) => Screen.withBody(
             name: 'Buy tickets',
-            forceShowBackButton: true,
             body: Center(child: Text('Failed to load products: $reason')),
             // FIXME: Add retry button
           ),
-          BuyTicketsLoaded(:final ticketGroups) => Screen.listView(
+          TicketCatalogLoaded(:final ticketGroups) => Screen.listView(
             name: 'Buy tickets',
-            forceShowBackButton: true,
             children: ticketGroups.map((ticketGroup) {
               return ListTile(
                 title: Text(ticketGroup.title),

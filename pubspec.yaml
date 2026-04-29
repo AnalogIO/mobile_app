@@ -26,6 +26,8 @@ dependencies:
   flutter_secure_storage: ^10.0.0
   collection: ^1.19.1
   shared_preferences: ^2.5.4
+  url_launcher: ^6.3.2
+  confetti: ^0.8.0
 
 dev_dependencies:
   bloc_test: ^10.0.0

@@ -58,4 +58,13 @@ class TicketsApi {
       ),
     );
   }
+
+  /// Verify the status of a purchase flow for a ticket group.
+  TaskEither<Failure, SinglePurchaseResponse> verifyPurchase({
+    required int orderId,
+  }) {
+    return _executor.run(
+      (api) => api.v2.purchasesIdGet(id: orderId),
+    );
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:cafe_analog_app/core/failures.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
+import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:collection/collection.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -78,12 +79,104 @@ class TicketsRepository {
     );
   }
 
-  /// Initiates a purchase flow for a ticket group by id.
-  TaskEither<Failure, Unit> buyTicketGroup({required int ticketGroupId}) {
-    throw UnimplementedError();
+  /// Initiate a purchase flow for a ticket group by id.
+  TaskEither<PurchaseInitiationFailure, InitiatedMobilePayPayment>
+  initiatePurchase({
+    required int ticketGroupId,
+  }) {
     return _ticketsApi
         .initiateMobilePayPurchase(ticketGroupId: ticketGroupId)
-        .map((_) => unit);
+        // map Left type from Failure to PurchaseInitiationFailure
+        .mapLeft((failure) => PurchaseInitiationFailure(failure.reason))
+        .map(
+          (response) => InitiatedMobilePayPayment(
+            orderId: response.id,
+            mobilePayRedirectUri: Uri.parse(
+              MobilePayPaymentDetails.fromJson(
+                response.paymentDetails as Map<String, dynamic>,
+              ).mobilePayAppRedirectUri,
+            ),
+          ),
+        );
+  }
+
+  /// Verify the status of a purchase flow for a ticket group.
+  ///
+  /// Returns a `Some` with the successful purchase info if the purchase is
+  /// completed, otherwise `None`.
+  TaskEither<PurchaseVerificationFailure, SuccessfulPurchase> verifyPurchase({
+    required int orderId,
+  }) {
+    return _ticketsApi
+        .verifyPurchase(orderId: orderId)
+        // If purchase is still pending, wait for a second and check again.
+        // It's a band-aid fix to give time for the backend to update the status
+        // (especially happens on cancelled purchases)
+        .flatMap((response) {
+          final purchaseStatus = purchaseStatusFromJson(
+            response.purchaseStatus,
+          );
+          if (purchaseStatus == PurchaseStatus.pendingpayment) {
+            return _ticketsApi
+                .verifyPurchase(orderId: orderId)
+                .delay(const Duration(seconds: 1));
+          } else {
+            return TaskEither.right(response);
+          }
+        })
+        // map Left type from Failure to PurchaseVerificationFailure
+        .mapLeft<PurchaseVerificationFailure>(
+          (failure) => PurchaseUnexpectedFailure(failure.reason),
+        )
+        .flatMap(
+          (response) {
+            return TaskEither(() async {
+              final purchaseStatus = purchaseStatusFromJson(
+                response.purchaseStatus,
+              );
+
+              if (purchaseStatus == PurchaseStatus.cancelled) {
+                return const Left(PurchaseCancelledByUser());
+              }
+              if (purchaseStatus == PurchaseStatus.pendingpayment) {
+                return const Left(PurchasePending());
+              }
+              if (purchaseStatus != PurchaseStatus.completed) {
+                return const Left(PurchaseUnexpectedFailure());
+              }
+
+              // the response doesn't include info about the purchased ticket
+              // group other than its id, so we need to get the ticket group
+              // details from the list of purchasable tickets.
+              final successfulPurchase = await _purchasableTicketsLocalStore
+                  .get()
+                  .map(
+                    (groups) => groups.firstWhereOrNull(
+                      (group) => group.id == response.productId,
+                    ),
+                  )
+                  .getOrElse((_) => null)
+                  .map((purchasedTicketGroup) {
+                    if (purchasedTicketGroup != null) {
+                      return SuccessfulPurchase(
+                        ticketName: purchasedTicketGroup.title,
+                        amountOfTickets: purchasedTicketGroup.numberOfTickets,
+                      );
+                    } else {
+                      // this should never happen, but if it does, we can still
+                      // proceed with showing a generic success message
+                      return const SuccessfulPurchase(
+                        ticketName: 'Some tickets',
+                        amountOfTickets: 0,
+                      );
+                    }
+                  })
+                  .run();
+
+              return Right(successfulPurchase);
+            });
+          },
+        );
   }
 
   /// Get the list of purchasable ticket groups.

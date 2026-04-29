@@ -1,0 +1,4 @@
+- [ ] Deep linking to redeem voucher via URL/deep link
+  - [ ] Consider how to handle deep linking to redeem voucher when user is not logged in - should we show login screen first and then redirect to redeem voucher screen after successful login?
+- [ ] Add QR code scanning to redeem voucher screen
+- [X] Add confetti on voucher redemption

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cafe_analog_app/core/dialog.dart';
+import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/core/widgets/section_title.dart';
 import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
@@ -37,8 +39,9 @@ class SettingsScreen extends StatelessWidget {
           trailing: const Icon(Icons.copy, size: 20),
           onTap: () {
             unawaited(Clipboard.setData(const ClipboardData(text: '1234')));
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('User ID copied to clipboard')),
+            showSnackBar(
+              context: context,
+              message: 'User ID copied to clipboard',
             );
           },
         ),
@@ -92,25 +95,20 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _onLogOutTap(BuildContext context) async {
-    final confirm = await showDialog<bool>(
+    final confirm = await showAnalogDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          'Log out',
-          style: TextStyle(fontWeight: .bold),
+      title: 'Log out',
+      content: 'Are you sure you want to log out?',
+      actions: [
+        TextButton(
+          onPressed: () => context.pop(false),
+          child: const Text('Cancel'),
         ),
-        content: const Text('Are you sure you want to log out?'),
-        actions: [
-          TextButton(
-            onPressed: () => context.pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => context.pop(true),
-            child: const Text('Log out'),
-          ),
-        ],
-      ),
+        TextButton(
+          onPressed: () => context.pop(true),
+          child: const Text('Log out'),
+        ),
+      ],
     );
     if (confirm != true) return;
     if (!context.mounted) return;

@@ -12,6 +12,10 @@ abstract class Failure extends Equatable {
   List<Object?> get props => [reason];
 }
 
+class PlatformFailure extends Failure {
+  const PlatformFailure(super.reason);
+}
+
 class LocalStorageFailure extends Failure {
   const LocalStorageFailure(super.reason);
 }

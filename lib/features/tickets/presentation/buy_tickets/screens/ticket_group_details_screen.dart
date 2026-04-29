@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 
 /// Screen that shows details about a [PurchasableTicketGroup], including a
 /// button to purchase it.
@@ -30,86 +27,42 @@ class _TicketGroupDetailsContent extends StatelessWidget {
 
   final PurchasableTicketGroup ticketGroup;
 
-  Future<void> _onBuyPressed(BuildContext context) async {
-    final errorReason = await context.read<BuyTicketsCubit>().buyTicketGroup(
-      ticketGroup,
-    );
-
-    if (!context.mounted) return;
-
-    final messenger = ScaffoldMessenger.of(context);
-    if (errorReason == null) {
-      messenger.showSnackBar(
-        const SnackBar(content: Text('Purchase flow started.')),
-      );
-      return;
-    }
-
-    messenger.showSnackBar(
-      SnackBar(content: Text('Could not start purchase: $errorReason')),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    final eligibleDrinksText = ticketGroup.eligibleDrinks
-        .map((drink) => drink.name)
-        .join(', ');
-
-    final buyButtonLabel =
-        'Buy ${ticketGroup.numberOfTickets} tickets '
-        'for ${ticketGroup.priceDKK} kr';
-
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
         _TicketGroupHeader(title: ticketGroup.title),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  ticketGroup.description,
-                  style: textTheme.bodyLarge,
-                ),
-                if (ticketGroup.eligibleDrinks.isNotEmpty) ...[
-                  const Gap(24),
-                  Text(
-                    'This ticket can be spent on the following drinks:\n'
-                    '$eligibleDrinksText',
-                    style: textTheme.bodyMedium,
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
+        _TicketGroupDetails(ticketGroup: ticketGroup),
         _PurchaseButtonSection(
-          label: buyButtonLabel,
-          onPressed: () => unawaited(_onBuyPressed(context)),
+          ticketGroup: ticketGroup,
+          onPressed: () =>
+              context.read<PurchaseFlowCubit>().initiatePurchase(ticketGroup),
         ),
       ],
     );
   }
 }
 
+/// The large header with the background image for
+/// the ticket group details screen.
 class _TicketGroupHeader extends StatelessWidget {
   const _TicketGroupHeader({required this.title});
 
   final String title;
+
+  String get backgroundImagePath {
+    // choose background based on some rudimentary logic
+    return title.toLowerCase().contains('filter')
+        ? 'assets/images/beans_cropped.png'
+        : 'assets/images/latteart_cropped.png';
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return SliverAppBar.large(
-      // Addresses a bug in go_router where the back button doesn't appear
-      // on some screens (https://github.com/flutter/flutter/issues/144687).
-      leading: BackButton(onPressed: context.pop),
       expandedHeight: 220,
       collapsedHeight: 150,
       flexibleSpace: FlexibleSpaceBar(
@@ -119,10 +72,7 @@ class _TicketGroupHeader extends StatelessWidget {
             colorScheme.secondary.withAlpha(15),
             BlendMode.srcIn,
           ),
-          child: Image.asset(
-            'assets/images/latteart_cropped.png',
-            fit: BoxFit.cover,
-          ),
+          child: Image.asset(backgroundImagePath, fit: BoxFit.cover),
         ),
         titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
         // FittedBox and Padding prevents overflow when title is too long
@@ -147,10 +97,52 @@ class _TicketGroupHeader extends StatelessWidget {
   }
 }
 
-class _PurchaseButtonSection extends StatelessWidget {
-  const _PurchaseButtonSection({required this.label, required this.onPressed});
+class _TicketGroupDetails extends StatelessWidget {
+  const _TicketGroupDetails({required this.ticketGroup});
 
-  final String label;
+  final PurchasableTicketGroup ticketGroup;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    final eligibleDrinksText = ticketGroup.eligibleDrinks
+        .map((drink) => drink.name)
+        .join(', ');
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              ticketGroup.description,
+              style: textTheme.bodyLarge,
+            ),
+            if (ticketGroup.eligibleDrinks.isNotEmpty) ...[
+              const Gap(24),
+              Text(
+                'This ticket can be spent on the following drinks:\n'
+                '$eligibleDrinksText',
+                style: textTheme.bodyMedium,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The purchase button, which is fixed at the bottom of the screen.
+class _PurchaseButtonSection extends StatelessWidget {
+  const _PurchaseButtonSection({
+    required this.ticketGroup,
+    required this.onPressed,
+  });
+
+  final PurchasableTicketGroup ticketGroup;
   final VoidCallback onPressed;
 
   @override
@@ -172,7 +164,10 @@ class _PurchaseButtonSection extends StatelessWidget {
                 backgroundColor: colorScheme.secondary,
                 foregroundColor: colorScheme.onSecondary,
               ),
-              child: Text(label),
+              child: Text(
+                'Buy ${ticketGroup.numberOfTickets} tickets '
+                'for ${ticketGroup.priceDKK} kr',
+              ),
             ),
           ),
         ],

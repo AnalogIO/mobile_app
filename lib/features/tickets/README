@@ -1,12 +1,14 @@
 # TODO for tickets feature
 
 ## purchase related
-- [ ] Pay with MobilePay
+- [X] Pay with MobilePay
+  - [ ] On Android, configure settings to allow launching MobilePay app
 - [ ] Floating purchase status indicator below app bar - avoid double-purchase mistakes - clearly comminicate if a purchase is stil pending or has truly been cancelled
 
 ## Other
 - [ ] Consider json_serializable for data models - we have a lot of boilerplate code for parsing json responses from the backend, and this would help reduce that
 - [ ] Consider how Barista perks should be implemented - new navigation target or new section below My Tickets (like how it works in app v3)?
+- [X] Add confetti on voucher redemption
 - [X] Add barrel files for whole feature (or remove existing ones)
   - [X] use_ticket
   - [X] my_tickets
