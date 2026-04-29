@@ -168,10 +168,22 @@ class AnalogGoRouter {
                           },
                         ),
                         GoRoute(
-                          path: 'redeem_voucher',
+                          path: 'redeem-voucher',
                           pageBuilder: (context, state) => const MaterialPage(
                             child: RedeemVoucherScreen(),
                           ),
+                        ),
+                        GoRoute(
+                          path: 'redeem-voucher/:initialVoucherCode',
+                          pageBuilder: (context, state) {
+                            final voucherCode =
+                                state.pathParameters['initialVoucherCode']!;
+                            return MaterialPage(
+                              child: RedeemVoucherDeepLinkFlow(
+                                voucherCode: voucherCode,
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

@@ -91,7 +91,7 @@ class _RedeemCodeTile extends StatelessWidget {
       leading: const Icon(Icons.card_giftcard),
       title: const Text('Redeem a code'),
       trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.push('/tickets/redeem_voucher'),
+      onTap: () => context.push('/tickets/redeem-voucher'),
     );
   }
 }
