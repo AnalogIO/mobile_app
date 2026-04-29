@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
 import 'package:cafe_analog_app/app/router.dart';
 import 'package:cafe_analog_app/core/failures.dart';
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
 import 'package:cafe_analog_app/features/login/data/authentication_tokens.dart';
 import 'package:cafe_analog_app/features/login/ui/authentication_navigator.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:chopper/chopper.dart' show Response;
 import 'package:flutter/material.dart';
@@ -25,12 +27,18 @@ class _MockExecutor extends Mock implements NetworkRequestExecutor {
       TaskEither.left(const ConnectionFailure());
 }
 
+class _MockTicketsRepository extends Mock implements TicketsRepository {}
+
+class _MockPurchaseFlowCubit extends Mock implements PurchaseFlowCubit {}
+
 class _MockSharedPreferencesWithCache extends Mock
     implements SharedPreferencesWithCache {}
 
 void main() {
   late _MockAuthCubit mockAuthCubit;
   late _MockExecutor mockExecutor;
+  late _MockTicketsRepository mockTicketsRepository;
+  late _MockPurchaseFlowCubit mockPurchaseFlowCubit;
   late _MockSharedPreferencesWithCache mockLocalStorage;
   late final goRouter = AnalogGoRouter.instance.goRouter;
 
@@ -41,7 +49,32 @@ void main() {
   setUp(() {
     mockAuthCubit = _MockAuthCubit();
     mockExecutor = _MockExecutor();
+    mockTicketsRepository = _MockTicketsRepository();
+    mockPurchaseFlowCubit = _MockPurchaseFlowCubit();
     mockLocalStorage = _MockSharedPreferencesWithCache();
+
+    when(() => mockTicketsRepository.getOwnedTickets()).thenAnswer(
+      (_) => Stream.value(const Right(<OwnedTicketGroup>[])),
+    );
+    when(() => mockTicketsRepository.getPurchasableTickets()).thenAnswer(
+      (_) => TaskEither.right(<PurchasableTicketGroup>[]),
+    );
+    when(
+      () => mockTicketsRepository.refreshOwnedTickets(
+        preferredOrder: any(named: 'preferredOrder'),
+      ),
+    ).thenAnswer((_) => TaskEither.right(<OwnedTicketGroup>[]));
+    when(
+      () => mockTicketsRepository.saveOwnedTicketsOrder(
+        any<List<OwnedTicketGroup>>(),
+      ),
+    ).thenAnswer((_) => TaskEither.right(unit));
+
+    whenListen(
+      mockPurchaseFlowCubit,
+      const Stream<PurchaseFlowState>.empty(),
+      initialState: const PurchaseFlowIdle(),
+    );
   });
 
   tearDown(() {
@@ -54,17 +87,24 @@ void main() {
   Widget buildApp({required GoRouter router}) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider(create: (_) => PendingLoginRedirectStore()),
         RepositoryProvider<NetworkRequestExecutor>.value(value: mockExecutor),
+        RepositoryProvider<TicketsRepository>.value(
+          value: mockTicketsRepository,
+        ),
         RepositoryProvider<SharedPreferencesWithCache>.value(
           value: mockLocalStorage,
         ),
       ],
       child: BlocProvider<AuthCubit>.value(
         value: mockAuthCubit,
-        child: MaterialApp.router(
-          routerConfig: router,
-          builder: (context, child) =>
-              Scaffold(body: child ?? const SizedBox()),
+        child: BlocProvider<PurchaseFlowCubit>.value(
+          value: mockPurchaseFlowCubit,
+          child: MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) =>
+                Scaffold(body: child ?? const SizedBox()),
+          ),
         ),
       ),
     );
@@ -96,6 +136,42 @@ void main() {
 
     await tester.pump(const Duration(seconds: 1));
   });
+
+  testWidgets(
+    'resumes redeem voucher deep link after successful login',
+    (tester) async {
+      final ctl = StreamController<AuthState>();
+      when(() => mockAuthCubit.state).thenReturn(const AuthUnauthenticated());
+      whenListen(
+        mockAuthCubit,
+        ctl.stream,
+        initialState: const AuthUnauthenticated(),
+      );
+
+      await tester.pumpWidget(buildApp(router: goRouter));
+
+      goRouter.go('/tickets/redeem-voucher/OMM-QPY7EQUQ');
+      await pumpNavigation(tester);
+
+      expect(find.text('Please log in to continue.'), findsOneWidget);
+
+      ctl.add(
+        const AuthAuthenticated(
+          tokens: AuthTokens(jwt: 'j', refreshToken: 'r'),
+        ),
+      );
+      await pumpNavigation(tester);
+
+      expect(find.text('Redeem voucher?'), findsOneWidget);
+      expect(
+        find.text('Confirm to redeem voucher with code "OMM-QPY7EQUQ"'),
+        findsOneWidget,
+      );
+
+      await ctl.close();
+      await tester.pump(const Duration(seconds: 1));
+    },
+  );
 
   testWidgets(
     'blocks navigation to /login when already logged in and in main area',

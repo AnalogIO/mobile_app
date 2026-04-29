@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
 import 'package:cafe_analog_app/features/login/bloc/auth_cubit_handle.dart';
 import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
 import 'package:cafe_analog_app/features/login/data/auth_token_store.dart';
@@ -34,6 +35,7 @@ class DependenciesProvider extends StatelessWidget {
         RepositoryProvider(create: (_) => const FlutterSecureStorage()),
         RepositoryProvider(create: (_) => AuthTokenStore()),
         RepositoryProvider(create: (_) => AuthCubitHandle()),
+        RepositoryProvider(create: (_) => PendingLoginRedirectStore()),
         RepositoryProvider(
           create: (context) => AuthTokenRepository(
             secureStorage: context.read(),

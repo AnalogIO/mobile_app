@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cafe_analog_app/app/navigation_scaffolds.dart';
+import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
 import 'package:cafe_analog_app/app/splash_screen.dart';
 import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
@@ -269,6 +270,8 @@ class AnalogGoRouter {
         !goingToLoginFlow &&
         !goingToAuthenticate &&
         !isStartingApp) {
+      context.read<PendingLoginRedirectStore>().pendingRedirect = state.uri
+          .toString();
       _logRouteDebug(
         'redirect apply',
         'from=${state.uri} to=/login reason=not_logged_in',
@@ -349,6 +352,8 @@ class AnalogGoRouter {
     // If the user is not logged in and trying to go to the main app area,
     // block the navigation and show a snackbar.
     if (!isLoggedIn && !goingToLoginFlow && !isStartingApp) {
+      context.read<PendingLoginRedirectStore>().pendingRedirect = nextState.uri
+          .toString();
       _logRouteDebug(
         'onEnter block',
         'toUri=${nextState.uri} to=$nextLoc reason=not_logged_in',

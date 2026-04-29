@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
 import 'package:cafe_analog_app/core/loading_overlay.dart';
 import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
@@ -45,7 +46,10 @@ class _AuthNavigatorState extends State<AuthNavigator> {
 
         switch (state) {
           case AuthAuthenticated():
-            context.go('/tickets');
+            final redirect = context
+                .read<PendingLoginRedirectStore>()
+                .pendingRedirect;
+            context.go(redirect ?? '/tickets');
           case AuthEmailSent():
             context.go('/login/email-sent?email=${state.email}');
           case AuthUnauthenticated():

@@ -1,5 +1,6 @@
 - [X] Deep linking to redeem voucher via URL/deep link
-  - [ ] Consider how to handle deep linking to redeem voucher when user is not logged in - should we show login screen first and then redirect to redeem voucher screen after successful login?
+  - [X] Consider how to handle deep linking to redeem voucher when user is not logged in - should we show login screen first and then redirect to redeem voucher screen after successful login?
+    - all deep links are now saved in PendingLoginRedirectStore if user is not logged in, and after successful login user is redirected to the saved deep link
 - [X] Add confetti on voucher redemption
 - [/] Add QR code scanning to redeem voucher screen
   - wontfix
