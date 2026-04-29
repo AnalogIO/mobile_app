@@ -12,8 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
-  flutter_localizations:
-    sdk: flutter
   go_router: ^17.1.0
   intl: ^0.20.2
   chopper: ^8.0.3 # swagger generator
@@ -43,7 +41,6 @@ dev_dependencies:
   http: ^1.6.0
 
 flutter:
-  generate: true
   uses-material-design: true
 
   assets:
