@@ -1,4 +1,4 @@
-import 'package:cafe_analog_app/features/receipts/swipe_receipt.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -21,7 +21,7 @@ class UseTicketSuccessScreen extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: SwipeReceipt(
+          child: SwipedTicketReceipt(
             productName: ticketName,
             drinkName: drinkName,
             time: usedAt,

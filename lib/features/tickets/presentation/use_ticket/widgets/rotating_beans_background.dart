@@ -3,8 +3,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-class SwipeReceiptBeansBackground extends StatelessWidget {
-  const SwipeReceiptBeansBackground({super.key});
+/// A decorative background with rotating beans used by [SwipedTicketReceipt].
+class RotatingBeansBackground extends StatelessWidget {
+  const RotatingBeansBackground({super.key});
 
   @override
   Widget build(BuildContext context) {

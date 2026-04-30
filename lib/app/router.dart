@@ -9,7 +9,7 @@ import 'package:cafe_analog_app/features/login/ui/authentication_navigator.dart'
 import 'package:cafe_analog_app/features/login/ui/email_sent_screen.dart';
 import 'package:cafe_analog_app/features/login/ui/login_screen.dart';
 import 'package:cafe_analog_app/features/login/ui/verify_magic_link_screen.dart';
-import 'package:cafe_analog_app/features/receipts/receipts_screen.dart';
+import 'package:cafe_analog_app/features/receipts/presentation/screens/receipts_screen.dart';
 import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher.dart';
 import 'package:cafe_analog_app/features/settings/settings_screen.dart';
 import 'package:cafe_analog_app/features/settings/your_profile_screen.dart';

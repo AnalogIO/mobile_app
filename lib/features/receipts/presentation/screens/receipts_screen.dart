@@ -1,6 +1,6 @@
 import 'package:cafe_analog_app/core/widgets/choice_chips.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
-import 'package:cafe_analog_app/features/receipts/receipts_list_entry.dart';
+import 'package:cafe_analog_app/features/receipts/presentation/widgets/receipts_list_entry.dart';
 import 'package:cafe_analog_app/features/tickets/models/drink.dart';
 import 'package:cafe_analog_app/features/tickets/models/purchasable_ticket_group.dart';
 import 'package:flutter/material.dart';
