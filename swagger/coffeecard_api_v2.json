@@ -1315,6 +1315,63 @@
         ]
       }
     },
+    "/api/v2/receipts": {
+      "get": {
+        "tags": [
+          "Receipt"
+        ],
+        "summary": "Retrieve all receipts for the authenticated user\nThis includes all purchases, swiped tickets, and used vouchers",
+        "operationId": "Receipt_GetReceipts",
+        "parameters": [
+          {
+            "name": "Type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ReceiptType"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "BatchSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "ContinuationToken",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All users receipts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/tickets": {
       "get": {
         "tags": [
@@ -2985,6 +3042,179 @@
             ]
           }
         }
+      },
+      "ReceiptResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "receipts",
+          "continuationToken"
+        ],
+        "properties": {
+          "receipts": {
+            "type": "array",
+            "description": "The list of receipts for the user.",
+            "items": {
+              "$ref": "#/components/schemas/ReceiptBase"
+            }
+          },
+          "continuationToken": {
+            "type": "string",
+            "description": "Used as the \"from\" parameter in the next request to get the next batch of receipts.\nIs set to the date and time of the oldest receipt in the current batch.",
+            "minLength": 1
+          }
+        }
+      },
+      "ReceiptBase": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "Type",
+          "mapping": {
+            "Purchase": "#/components/schemas/PurchaseReceipt",
+            "Voucher": "#/components/schemas/VoucherReceipt",
+            "UsedTicket": "#/components/schemas/UsedTicketReceipt"
+          }
+        },
+        "description": "Shared properties for all receipt types.",
+        "x-abstract": true,
+        "additionalProperties": false,
+        "required": [
+          "productName",
+          "Type"
+        ],
+        "properties": {
+          "productName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "Type": {
+            "type": "string"
+          }
+        }
+      },
+      "PurchaseReceipt": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ReceiptBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "quantity",
+              "status",
+              "orderDate",
+              "price",
+              "orderId"
+            ],
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "The amount of tickets issued by the purchase.",
+                "format": "int32"
+              },
+              "status": {
+                "description": "The status of the purchase.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PurchaseStatus"
+                  }
+                ]
+              },
+              "orderDate": {
+                "type": "string",
+                "description": "The date and time when the order was placed.",
+                "format": "date-time",
+                "minLength": 1
+              },
+              "price": {
+                "type": "integer",
+                "description": "The total price of the purchase in kr.",
+                "format": "int32"
+              },
+              "orderId": {
+                "type": "string",
+                "description": "The unique identifier of the order associated with the purchase.",
+                "format": "guid",
+                "minLength": 1
+              }
+            }
+          }
+        ]
+      },
+      "VoucherReceipt": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ReceiptBase"
+          },
+          {
+            "type": "object",
+            "description": "Represents of tickets issued by a voucher.",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "redeemDate",
+              "quantity"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "The code of the voucher.",
+                "minLength": 1
+              },
+              "redeemDate": {
+                "type": "string",
+                "format": "date-time",
+                "minLength": 1
+              },
+              "quantity": {
+                "type": "integer",
+                "description": "The amount of tickets issued by the purchase.",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "UsedTicketReceipt": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ReceiptBase"
+          },
+          {
+            "type": "object",
+            "description": "Represents a receipt for a ticket being used by a swipe",
+            "additionalProperties": false,
+            "required": [
+              "swipeDate"
+            ],
+            "properties": {
+              "swipeDate": {
+                "type": "string",
+                "description": "The date and time when the swipe was made.",
+                "format": "date-time",
+                "minLength": 1
+              }
+            }
+          }
+        ]
+      },
+      "ReceiptType": {
+        "type": "string",
+        "description": "The types of receipts that can be requested. Multiple types can be combined.",
+        "x-enumFlags": true,
+        "x-enumNames": [
+          "Purchase",
+          "Voucher",
+          "UsedTicket",
+          "All"
+        ],
+        "enum": [
+          "Purchase",
+          "Voucher",
+          "UsedTicket",
+          "All"
+        ]
       },
       "TicketResponse": {
         "type": "object",
