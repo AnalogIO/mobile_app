@@ -19,6 +19,7 @@ class RedeemVoucherScreen extends StatelessWidget {
       name: 'Redeem voucher',
       body: AnalogForm(
         labelText: 'Voucher code',
+        hintText: 'A valid code will add tickets to your account.',
         submitText: 'Redeem',
         errorMessage: 'Please enter a voucher code',
         initialValue: initialVoucherCode,
