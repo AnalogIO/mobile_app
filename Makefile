@@ -39,10 +39,10 @@ upgrade-deps: ## Upgrade all dependencies to latest versions
 	flutter pub upgrade --major-versions
 
 generate: ## Run build_runner to generate code
-	dart run build_runner build --delete-conflicting-outputs
+	dart run build_runner build
 
 gen: ## Alias for generate
-	dart run build_runner build --delete-conflicting-outputs
+	dart run build_runner build
 
 clean: ## Clean build artifacts and reset dependencies
 	dart run build_runner clean
