@@ -5,9 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'ticket_catalog_state.dart';
 
 class TicketCatalogCubit extends Cubit<TicketCatalogState> {
-  TicketCatalogCubit({required TicketsRepository repository})
-    : _repository = repository,
-      super(const TicketCatalogInitial());
+  TicketCatalogCubit({required this._repository})
+    : super(const TicketCatalogInitial());
 
   final TicketsRepository _repository;
 

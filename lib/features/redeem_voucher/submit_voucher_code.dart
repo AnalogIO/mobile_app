@@ -15,6 +15,16 @@ Future<void> redeemVoucher({
   final result = await context
       .read<TicketsRepository>()
       .redeemVoucher(voucherCode: voucherCode)
+      // FIXME: Remove the following mock result
+      .pure(
+        const OwnedTicketGroup(
+          productId: 0,
+          ticketName: 'ticketName',
+          ticketsLeft: 0,
+          eligibleDrinks: [],
+        ),
+      )
+      .delay(const Duration(seconds: 1))
       .run();
 
   if (context.mounted) {

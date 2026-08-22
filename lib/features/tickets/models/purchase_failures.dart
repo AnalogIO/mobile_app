@@ -31,7 +31,7 @@ final class PurchaseUnexpectedFailure extends PurchaseVerificationFailure {
   const PurchaseUnexpectedFailure([String? reason])
     : super(
         reason ??
-        'Purchase could not be verified for an unexpected reason. '
-        'Double-check with MobilePay that the purchase went through.',
+            'Purchase could not be verified for an unexpected reason. '
+                'Double-check with MobilePay that the purchase went through.',
       );
 }

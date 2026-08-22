@@ -6,8 +6,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OwnedTicketsLocalStore {
-  const OwnedTicketsLocalStore({required SharedPreferencesWithCache store})
-    : _store = store;
+  const OwnedTicketsLocalStore({required this._store});
 
   final SharedPreferencesWithCache _store;
 

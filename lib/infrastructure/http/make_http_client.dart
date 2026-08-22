@@ -3,6 +3,7 @@ import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// const String _baseUrl = 'http://192.168.0.141:5080';
 const String _baseUrl = 'https://core.dev.analogio.dk';
 
 /// Creates and configures the [ChopperClient]s used for network requests.

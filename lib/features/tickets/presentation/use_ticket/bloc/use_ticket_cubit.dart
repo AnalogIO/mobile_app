@@ -5,9 +5,7 @@ import 'package:equatable/equatable.dart';
 part 'use_ticket_state.dart';
 
 class UseTicketCubit extends Cubit<UseTicketState> {
-  UseTicketCubit({required TicketsRepository repository})
-    : _repository = repository,
-      super(UseTicketInitial());
+  UseTicketCubit({required this._repository}) : super(UseTicketInitial());
 
   final TicketsRepository _repository;
 

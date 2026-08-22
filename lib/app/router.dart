@@ -13,7 +13,7 @@ import 'package:cafe_analog_app/features/receipts/presentation/screens/receipts_
 import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher.dart';
 import 'package:cafe_analog_app/features/settings/settings_screen.dart';
 import 'package:cafe_analog_app/features/settings/your_profile_screen.dart';
-import 'package:cafe_analog_app/features/statistics/view/stats_screen.dart';
+import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

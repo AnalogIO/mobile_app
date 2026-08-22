@@ -1,6 +1,6 @@
-import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 
 /// A decorative background with rotating beans used by [SwipedTicketReceipt].
@@ -61,7 +61,7 @@ class _RotatingBeansDecorationState extends State<_RotatingBeansDecoration>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: _rotationDuration);
-    unawaited(_controller.repeat());
+    _controller.repeat();
   }
 
   @override

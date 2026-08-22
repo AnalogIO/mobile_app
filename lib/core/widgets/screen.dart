@@ -18,10 +18,9 @@ class Screen extends StatelessWidget {
   /// Creates a Screen with a custom body widget.
   const Screen.withBody({
     required this.name,
-    required Widget body,
+    required this._body,
     super.key,
-  }) : _body = body,
-       onRefresh = null;
+  }) : onRefresh = null;
 
   final String name;
 

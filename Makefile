@@ -6,7 +6,7 @@ else
 	SED_INPLACE := sed -i -E
 endif
 
-.PHONY: help upgrade generate clean get swagger coverage fix
+.PHONY: help upgrade-flutter upgrade-deps generate gen clean get swagger coverage fix
 
 .DEFAULT_GOAL := help
 
@@ -39,6 +39,9 @@ upgrade-deps: ## Upgrade all dependencies to latest versions
 	flutter pub upgrade --major-versions
 
 generate: ## Run build_runner to generate code
+	dart run build_runner build --delete-conflicting-outputs
+
+gen: ## Alias for generate
 	dart run build_runner build --delete-conflicting-outputs
 
 clean: ## Clean build artifacts and reset dependencies

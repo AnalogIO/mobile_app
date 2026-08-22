@@ -6,16 +6,12 @@ import 'package:fpdart/fpdart.dart';
 
 class TicketsRepository {
   const TicketsRepository({
-    required TicketsApi ticketsApi,
-    required OwnedTicketsLocalStore ownedTicketsLocalStore,
-    required DrinksLocalStore drinksLocalStore,
-    required PurchasableTicketsLocalStore purchasableTicketsLocalStore,
-    required RememberedTicketDrinkLocalStore rememberedTicketDrinkLocalStore,
-  }) : _ticketsApi = ticketsApi,
-       _ownedTicketsLocalStore = ownedTicketsLocalStore,
-       _drinksLocalStore = drinksLocalStore,
-       _purchasableTicketsLocalStore = purchasableTicketsLocalStore,
-       _rememberedTicketDrinkLocalStore = rememberedTicketDrinkLocalStore;
+    required this._ticketsApi,
+    required this._ownedTicketsLocalStore,
+    required this._drinksLocalStore,
+    required this._purchasableTicketsLocalStore,
+    required this._rememberedTicketDrinkLocalStore,
+  });
 
   final TicketsApi _ticketsApi;
   final OwnedTicketsLocalStore _ownedTicketsLocalStore;

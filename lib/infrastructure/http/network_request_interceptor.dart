@@ -7,8 +7,8 @@ import 'package:chopper/chopper.dart';
 /// to outgoing HTTP requests if a token is available in the [AuthTokenStore].
 class NetworkRequestInterceptor implements Interceptor {
   NetworkRequestInterceptor({
-    required AuthTokenStore authTokenStore,
-  }) : _authTokenStore = authTokenStore;
+    required this._authTokenStore,
+  });
 
   final AuthTokenStore _authTokenStore;
 

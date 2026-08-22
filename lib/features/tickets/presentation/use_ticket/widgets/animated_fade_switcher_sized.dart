@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 /// A widget that fades between two children while maintaining
@@ -57,9 +55,9 @@ class _AnimatedFadeSwitcherSizedState extends State<AnimatedFadeSwitcherSized>
     super.didUpdateWidget(oldWidget);
     if (widget.showSecond != oldWidget.showSecond) {
       if (widget.showSecond) {
-        unawaited(_controller.forward());
+        _controller.forward();
       } else {
-        unawaited(_controller.reverse());
+        _controller.reverse();
       }
     }
   }

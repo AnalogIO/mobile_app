@@ -16,11 +16,9 @@ part 'authentication_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit({
     required AuthTokenRepository authTokenRepository,
-    required LoginRepository loginRepository,
-    required Future<void> Function() clearAuthenticatedUserContext,
+    required this._loginRepository,
+    required this._clearAuthenticatedUserContext,
   }) : _authRepository = authTokenRepository,
-       _loginRepository = loginRepository,
-       _clearAuthenticatedUserContext = clearAuthenticatedUserContext,
        super(const AuthInitial());
 
   final AuthTokenRepository _authRepository;

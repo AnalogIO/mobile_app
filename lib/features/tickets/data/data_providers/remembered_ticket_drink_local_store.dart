@@ -7,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Persists the most recently selected drink per ticket group.
 class RememberedTicketDrinkLocalStore {
   const RememberedTicketDrinkLocalStore({
-    required SharedPreferencesWithCache store,
-  }) : _store = store;
+    required this._store,
+  });
 
   final SharedPreferencesWithCache _store;
 

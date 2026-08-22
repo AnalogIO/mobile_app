@@ -3,8 +3,7 @@ import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:fpdart/fpdart.dart';
 
 class TicketsApi {
-  const TicketsApi({required NetworkRequestExecutor executor})
-    : _executor = executor;
+  const TicketsApi({required this._executor});
 
   final NetworkRequestExecutor _executor;
 

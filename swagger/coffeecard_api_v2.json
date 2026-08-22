@@ -3186,13 +3186,19 @@
             "description": "Represents a receipt for a ticket being used by a swipe",
             "additionalProperties": false,
             "required": [
-              "swipeDate"
+              "swipeDate",
+              "menuItemName"
             ],
             "properties": {
               "swipeDate": {
                 "type": "string",
                 "description": "The date and time when the swipe was made.",
                 "format": "date-time",
+                "minLength": 1
+              },
+              "menuItemName": {
+                "type": "string",
+                "description": "The name of the menu item that was redeemed with the ticket.",
                 "minLength": 1
               }
             }

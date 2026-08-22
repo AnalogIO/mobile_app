@@ -9,12 +9,10 @@ import 'package:chopper/chopper.dart';
 
 class TokenRefreshAuthenticator extends Authenticator {
   TokenRefreshAuthenticator({
-    required AuthTokenRepository authTokenRepository,
-    required CoffeecardApiV2 tokenRefreshApi,
-    required AuthCubitHandle authCubitHandle,
-  }) : _authTokenRepository = authTokenRepository,
-       _tokenRefreshApi = tokenRefreshApi,
-       _authCubitHandle = authCubitHandle;
+    required this._authTokenRepository,
+    required this._tokenRefreshApi,
+    required this._authCubitHandle,
+  });
 
   /// This header is added to requests that have already been retried after a
   /// token refresh. Prevents infinite retry loops in case the new token is also
@@ -78,7 +76,7 @@ class TokenRefreshAuthenticator extends Authenticator {
       if (existingTokens == null) {
         log('Token refresh aborted: no tokens found in storage.');
         completer.complete(null);
-        return completer.future;
+        return await completer.future;
       }
 
       final refreshResponse = await _tokenRefreshApi.accountAuthPost(
@@ -92,7 +90,7 @@ class TokenRefreshAuthenticator extends Authenticator {
           '${refreshResponse.statusCode}.',
         );
         completer.complete(null);
-        return completer.future;
+        return await completer.future;
       }
 
       final newTokens = AuthTokens(
@@ -111,7 +109,7 @@ class TokenRefreshAuthenticator extends Authenticator {
         log('Token refresh succeeded but saving new tokens failed.');
       }
       completer.complete(savedTokens);
-      return completer.future;
+      return await completer.future;
     } on Exception catch (e) {
       log('Token refresh failed with exception: $e.');
       completer.complete(null);

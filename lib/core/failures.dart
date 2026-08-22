@@ -12,8 +12,8 @@ abstract class Failure extends Equatable {
   List<Object?> get props => [reason];
 }
 
-class PlatformFailure extends Failure {
-  const PlatformFailure(super.reason);
+class UnexpectedFailure extends Failure {
+  const UnexpectedFailure(super.reason);
 }
 
 class LocalStorageFailure extends Failure {

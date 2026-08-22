@@ -5,8 +5,7 @@ import 'package:fpdart/fpdart.dart';
 
 /// Handles data operations related to user login.
 class LoginRepository {
-  const LoginRepository({required NetworkRequestExecutor executor})
-    : _executor = executor;
+  const LoginRepository({required this._executor});
 
   final NetworkRequestExecutor _executor;
 

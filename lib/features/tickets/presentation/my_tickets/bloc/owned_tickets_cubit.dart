@@ -16,9 +16,7 @@ part 'owned_tickets_state.dart';
 /// preferred order of their tickets, and therefore always preserves this order
 /// when fetching fresh tickets from the API.
 class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
-  OwnedTicketsCubit({required TicketsRepository repository})
-    : _repository = repository,
-      super(OwnedTicketsInitial());
+  OwnedTicketsCubit({required this._repository}) : super(OwnedTicketsInitial());
 
   final TicketsRepository _repository;
 

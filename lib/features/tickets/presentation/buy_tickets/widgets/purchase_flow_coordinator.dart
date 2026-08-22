@@ -106,7 +106,7 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
         }
         return unit;
       },
-      (error, _) => PlatformFailure(error.toString()),
+      (error, _) => UnexpectedFailure(error.toString()),
     );
   }
 }
