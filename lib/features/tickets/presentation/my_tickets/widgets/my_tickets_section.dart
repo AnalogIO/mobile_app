@@ -40,7 +40,9 @@ class MyTicketsSection extends StatelessWidget {
                     );
                     unawaited(HapticFeedback.mediumImpact());
                   },
-                  onReorder: context.read<OwnedTicketsCubit>().reorderTickets,
+                  onReorderItem: context
+                      .read<OwnedTicketsCubit>()
+                      .reorderTickets,
                   // By default the ProxyDecorator adds a drop shadow to the
                   // item being dragged, which we don't want because it exposes
                   // the card's rounded corners and bottom padding poorly

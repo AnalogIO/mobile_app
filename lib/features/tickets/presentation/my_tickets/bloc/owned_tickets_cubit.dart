@@ -90,8 +90,6 @@ class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
   /// Moves a ticket from [oldIndex] to [newIndex] in the user's owned tickets,
   /// then caches the updated tickets list.
   ///
-  /// Accounts for the framework behaviour where `newIndex` is adjusted when
-  /// moving downwards.
   Future<void> reorderTickets(int oldIndex, int newIndex) async {
     final state = this.state;
     // Cannot reorder tickets when tickets are not loaded
@@ -99,10 +97,9 @@ class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
       return;
     }
 
-    final insertAtIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
     final updatedTickets = List.of(state.ownedGroups);
     final ticket = updatedTickets.removeAt(oldIndex);
-    updatedTickets.insert(insertAtIndex, ticket);
+    updatedTickets.insert(newIndex, ticket);
 
     // Optimistically emit the updated order to avoid UI jank...
     emit(OwnedTicketsLoaded(ownedGroups: updatedTickets));
