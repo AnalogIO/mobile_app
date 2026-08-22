@@ -6,6 +6,7 @@ import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
 import 'package:cafe_analog_app/features/login/data/auth_token_store.dart';
 import 'package:cafe_analog_app/features/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/features/login/data/login_repository.dart';
+import 'package:cafe_analog_app/features/receipts/receipts.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
@@ -90,6 +91,13 @@ class DependenciesProvider extends StatelessWidget {
             quickStatsApi: QuickStatsApi(executor: context.read()),
           ),
         ),
+
+        // Receipts repository
+        RepositoryProvider(
+          create: (context) => ReceiptsRepository(
+            receiptsApi: ReceiptsApi(executor: context.read()),
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -124,6 +132,12 @@ class DependenciesProvider extends StatelessWidget {
             create: (context) =>
                 QuickStatsCubit(repository: context.read())
                   ..loadQuickStats().ignore(),
+          ),
+          // Receipts cubit
+          BlocProvider(
+            create: (context) =>
+                ReceiptsCubit(repository: context.read())
+                  ..getReceipts().ignore(),
           ),
         ],
         child: child,

@@ -1,16 +1,8 @@
 import 'package:cafe_analog_app/core/failures.dart';
 import 'package:cafe_analog_app/features/receipts/data/data_providers/data_providers.dart';
 import 'package:cafe_analog_app/features/receipts/models/models.dart';
-import 'package:cafe_analog_app/infrastructure/http/http.dart';
+import 'package:cafe_analog_app/infrastructure/http/http.dart' as api;
 import 'package:fpdart/fpdart.dart';
-
-// TODO(marfavi): Move to models
-enum GetReceiptsType {
-  all,
-  ticketSwipes,
-  purchases,
-  vouchers,
-}
 
 class ReceiptsRepository {
   const ReceiptsRepository({required this._receiptsApi});
@@ -33,16 +25,26 @@ class ReceiptsRepository {
     // String? continuationToken,
   }) {
     final receiptType = switch (type) {
-      GetReceiptsType.ticketSwipes => ReceiptType.usedticket,
-      GetReceiptsType.purchases => ReceiptType.purchase,
-      GetReceiptsType.vouchers => ReceiptType.voucher,
-      GetReceiptsType.all => ReceiptType.all,
+      GetReceiptsType.ticketSwipes => api.ReceiptType.usedticket,
+      GetReceiptsType.purchases => api.ReceiptType.purchase,
+      GetReceiptsType.vouchers => api.ReceiptType.voucher,
+      GetReceiptsType.all => api.ReceiptType.all,
     };
 
     return _receiptsApi.fetchReceiptsRaw(receiptType: receiptType).map((raw) {
       final receiptsList = (raw['receipts'] as List<dynamic>?) ?? <dynamic>[];
       final receipts = receiptsList
-          .map((e) => receiptFromJson(e as Map<String, dynamic>))
+          .map((e) => e as Map<String, dynamic>)
+          .where((json) {
+            if (json['Type'] != 'Purchase') {
+              return true;
+            }
+
+            final status = api.PurchaseReceipt.fromJson(json).status;
+            return api.purchaseStatusFromJson(status) ==
+                api.PurchaseStatus.completed;
+          })
+          .map(receiptFromJson)
           .toList();
       return receipts;
     });

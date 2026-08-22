@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/features/receipts/receipts.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ class OwnedTicketCard extends StatelessWidget {
         ticket: ownedGroup,
         onTicketUsedSuccessfully: () => Future.wait([
           context.read<OwnedTicketsCubit>().refreshOwnedTickets(),
+          context.read<ReceiptsCubit>().refreshReceipts(),
           context.read<QuickStatsCubit>().loadQuickStats(),
           context.read<LeaderboardCubit>().loadLeaderboard(),
         ]),

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/core/widgets/choice_chips.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
@@ -13,38 +11,36 @@ class ReceiptsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ReceiptsCubitProvider(
-      child: BlocBuilder<ReceiptsCubit, ReceiptsState>(
-        builder: (context, state) {
-          return switch (state) {
-            ReceiptsLoading() => const Screen.withBody(
-              name: 'Receipts',
-              body: Center(
+    return BlocBuilder<ReceiptsCubit, ReceiptsState>(
+      builder: (context, state) {
+        return switch (state) {
+          ReceiptsLoading() => const Screen.withBody(
+            name: 'Receipts',
+            body: Center(
+              child: AnalogCircularProgressIndicator(spinnerColor: .dark),
+            ),
+          ),
+          ReceiptsFailure(:final reason) => Screen.listView(
+            name: 'Receipts',
+            children: [
+              const Gap(16),
+              Center(child: Text('Error loading receipts: $reason')),
+            ],
+          ),
+          ReceiptsLoaded(:final receipts) => _ReceiptsContent(
+            receipts: receipts,
+          ),
+          ReceiptsInitial() || ReceiptsRefreshing() => Screen.listView(
+            name: 'Receipts',
+            children: const [
+              Gap(16),
+              Center(
                 child: AnalogCircularProgressIndicator(spinnerColor: .dark),
               ),
-            ),
-            ReceiptsFailure(:final reason) => Screen.listView(
-              name: 'Receipts',
-              children: [
-                const Gap(16),
-                Center(child: Text('Error loading receipts: $reason')),
-              ],
-            ),
-            ReceiptsLoaded(:final receipts) => _ReceiptsContent(
-              receipts: receipts,
-            ),
-            ReceiptsInitial() || ReceiptsRefreshing() => Screen.listView(
-              name: 'Receipts',
-              children: const [
-                Gap(16),
-                Center(
-                  child: AnalogCircularProgressIndicator(spinnerColor: .dark),
-                ),
-              ],
-            ),
-          };
-        },
-      ),
+            ],
+          ),
+        };
+      },
     );
   }
 }
@@ -93,29 +89,6 @@ class _ReceiptsContentState extends State<_ReceiptsContent> {
         ),
         const Gap(16),
       ],
-    );
-  }
-}
-
-class _ReceiptsCubitProvider extends StatelessWidget {
-  const _ReceiptsCubitProvider({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => ReceiptsRepository(
-        receiptsApi: ReceiptsApi(executor: context.read()),
-      ),
-      child: BlocProvider(
-        create: (context) {
-          final cubit = ReceiptsCubit(repository: context.read());
-          unawaited(cubit.getReceipts());
-          return cubit;
-        },
-        child: child,
-      ),
     );
   }
 }

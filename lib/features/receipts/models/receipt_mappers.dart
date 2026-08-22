@@ -10,10 +10,11 @@ Receipt receiptFromJson(Map<String, dynamic> json) {
   switch (type) {
     case 'Purchase':
       final purchase = api.PurchaseReceipt.fromJson(json);
+      final status = api.purchaseStatusFromJson(purchase.status);
       return PurchaseReceipt(
         ticketName: purchase.productName,
         numberOfTickets: purchase.quantity,
-        status: purchase.status.toString().split('.').last,
+        status: status.value ?? status.name,
         orderDate: purchase.orderDate,
         priceDKK: purchase.price,
         orderId: purchase.orderId,
