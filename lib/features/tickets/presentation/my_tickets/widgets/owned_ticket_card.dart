@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,8 +27,11 @@ class OwnedTicketCard extends StatelessWidget {
       onTap: () => UseTicketScreen.show(
         context: context,
         ticket: ownedGroup,
-        onTicketUsedSuccessfully: () =>
-            context.read<OwnedTicketsCubit>().refreshOwnedTickets(),
+        onTicketUsedSuccessfully: () => Future.wait([
+          context.read<OwnedTicketsCubit>().refreshOwnedTickets(),
+          context.read<QuickStatsCubit>().loadQuickStats(),
+          context.read<LeaderboardCubit>().loadLeaderboard(),
+        ]),
       ),
       children: [
         const Gap(48),

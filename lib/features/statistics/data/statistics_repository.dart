@@ -61,7 +61,48 @@ class StatisticsRepository {
         );
   }
 
-  // /// Fetches quick statistics for the current user.
-  // FIXME: Implement get quick stats method
-  // TaskEither<Failure, QuickStats>
+  /// Fetches the quick stats.
+  TaskEither<Failure, QuickStats> getQuickStats() {
+    return _quickStatsApi.fetchQuickStats().flatMap((statDtos) {
+      int? allTimeDrinksConsumed;
+      int? todayDrinksConsumed;
+      (int count, String drinkName)? allTimeFavouriteDrink;
+      int? weekDrinksConsumed;
+
+      for (final dto in statDtos) {
+        switch (api.quickStatTypeFromJson(dto.key)) {
+          case api.QuickStatType.totaldrinks:
+            allTimeDrinksConsumed = dto.value;
+          case api.QuickStatType.drinkstoday:
+            todayDrinksConsumed = dto.value;
+          case api.QuickStatType.favouritedrink:
+            allTimeFavouriteDrink = (dto.value, dto.supportingText ?? '');
+          case api.QuickStatType.drinksthisweek:
+            weekDrinksConsumed = dto.value;
+          case api.QuickStatType.swaggerGeneratedUnknown:
+            return TaskEither.left(
+              const UnexpectedFailure('Received an unknown quick statistic'),
+            );
+        }
+      }
+
+      if (allTimeDrinksConsumed == null ||
+          todayDrinksConsumed == null ||
+          allTimeFavouriteDrink == null ||
+          weekDrinksConsumed == null) {
+        return TaskEither.left(
+          const UnexpectedFailure('Received incomplete quick statistics'),
+        );
+      }
+
+      return TaskEither.right(
+        QuickStats(
+          allTimeDrinksConsumed: allTimeDrinksConsumed,
+          todayDrinksConsumedITU: todayDrinksConsumed,
+          allTimeFavouriteDrink: allTimeFavouriteDrink,
+          weekDrinksConsumed: weekDrinksConsumed,
+        ),
+      );
+    });
+  }
 }

@@ -1372,6 +1372,48 @@
         ]
       }
     },
+    "/api/v2/statistics/quick": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "Get some quick stats about the user and general drink consumption at ITU.",
+        "operationId": "Statistics_GetQuickStats",
+        "responses": {
+          "200": {
+            "description": "Quick stats",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuickStatResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/tickets": {
       "get": {
         "tags": [
@@ -3220,6 +3262,63 @@
           "Voucher",
           "UsedTicket",
           "All"
+        ]
+      },
+      "QuickStatResponse": {
+        "type": "object",
+        "description": "A small stat card used by the quick statistics endpoint.",
+        "example": {
+          "key": "FavouriteDrink",
+          "title": "Your favourite drink",
+          "value": "128",
+          "supportingText": "Filter Coffee"
+        },
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "title",
+          "value"
+        ],
+        "properties": {
+          "key": {
+            "description": "Stable stat identifier.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuickStatType"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Card title.",
+            "minLength": 1
+          },
+          "value": {
+            "type": "integer",
+            "description": "Main value shown in the card.",
+            "format": "int32"
+          },
+          "supportingText": {
+            "type": "string",
+            "description": "Smaller supporting text shown below the main value.",
+            "nullable": true
+          }
+        }
+      },
+      "QuickStatType": {
+        "type": "string",
+        "description": "The type of quick stat.",
+        "x-enumNames": [
+          "TotalDrinks",
+          "DrinksToday",
+          "FavouriteDrink",
+          "DrinksThisWeek"
+        ],
+        "enum": [
+          "TotalDrinks",
+          "DrinksToday",
+          "FavouriteDrink",
+          "DrinksThisWeek"
         ]
       },
       "TicketResponse": {

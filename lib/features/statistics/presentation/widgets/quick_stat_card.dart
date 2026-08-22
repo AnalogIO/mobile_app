@@ -5,13 +5,13 @@ class QuickStatCard extends StatelessWidget {
   const QuickStatCard({
     required this.description,
     required this.number,
+    this.extraText,
     super.key,
-    this.ordinalSuffix,
   });
 
   final String description;
   final int number;
-  final String? ordinalSuffix;
+  final String? extraText;
 
   @override
   Widget build(BuildContext context) {
@@ -31,25 +31,25 @@ class QuickStatCard extends StatelessWidget {
             style: theme.textTheme.bodyLarge?.copyWith(fontSize: 14),
           ),
           const Gap(24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(
-                number.toString(),
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w800,
-                ),
+          if (extraText != null)
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                extraText!,
+                textAlign: TextAlign.right,
+                style: theme.textTheme.titleMedium,
               ),
-              if (ordinalSuffix != null) const SizedBox(width: 1),
-              if (ordinalSuffix != null)
-                Text(
-                  ordinalSuffix!,
-                  style: theme.textTheme.bodyLarge?.copyWith(fontSize: 18),
-                ),
-            ],
+            ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              number.toString(),
+              textAlign: TextAlign.right,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontSize: 32,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
         ],
       ),

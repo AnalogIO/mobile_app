@@ -120,7 +120,11 @@ class DependenciesProvider extends StatelessWidget {
                 LeaderboardCubit(repository: context.read())
                   ..loadLeaderboard().ignore(),
           ),
-          // FIXME: Add cubit for quick stats
+          BlocProvider(
+            create: (context) =>
+                QuickStatsCubit(repository: context.read())
+                  ..loadQuickStats().ignore(),
+          ),
         ],
         child: child,
       ),
