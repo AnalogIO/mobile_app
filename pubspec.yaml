@@ -31,7 +31,7 @@ dev_dependencies:
   bloc_test: ^10.0.0
   flutter_test:
     sdk: flutter
-  mocktail: ^1.0.4
+  mocktail: ^1.0.5
   very_good_analysis: ^10.1.0
   build_runner: ^2.11.0 # swagger generator
   chopper_generator: ^8.6.0 # swagger generator
