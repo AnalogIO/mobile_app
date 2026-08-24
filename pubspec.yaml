@@ -16,7 +16,7 @@ dependencies:
     sdk: flutter
   go_router: ^17.1.0
   intl: ^0.20.2
-  chopper: ^8.0.3 # swagger generator
+  chopper: ^8.7.0 # swagger generator
   json_annotation: ^4.9.0 # swagger generator
   fpdart: ^1.1.1
   logger: ^2.6.2
