@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
+import 'package:cafe_analog_app/features/login/presentation/bloc/authentication_cubit.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

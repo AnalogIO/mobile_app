@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/core/widgets/failure_message.dart';
 import 'package:cafe_analog_app/core/widgets/section_title.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class _LeaderboardListEntries extends StatelessWidget {
     return BlocBuilder<LeaderboardCubit, LeaderboardState>(
       builder: (context, state) {
         return switch (state) {
+          LeaderboardInitial() ||
           LeaderboardLoading() => const LeaderboardLoadingPlaceholder(),
           LeaderboardLoaded(:final leaderboard) => Column(
             children: leaderboard
@@ -34,9 +36,9 @@ class _LeaderboardListEntries extends StatelessWidget {
                 .append(const Gap(16))
                 .toList(),
           ),
-          LeaderboardError() => const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text('Failed to load leaderboard data'),
+          LeaderboardFailure(:final reason) => FailureMessage(
+            message: 'Failed to load leaderboard: $reason',
+            onRetry: () => context.read<LeaderboardCubit>().loadLeaderboard(),
           ),
         };
       },

@@ -41,7 +41,7 @@ void main() {
 
   group('OwnedTicketsCubit', () {
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'getOwnedTickets: when cached ticket is missing from api, emits it as '
+      'loadOwnedTickets: when cached ticket is missing from api, emits it as '
       'depleted with zero tickets and empty eligibleDrinkIds',
       build: () {
         final cachedTickets = [
@@ -63,7 +63,7 @@ void main() {
 
         return OwnedTicketsCubit(repository: repository);
       },
-      act: (cubit) => cubit.getOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => [
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>(),
@@ -89,7 +89,7 @@ void main() {
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'getOwnedTickets: when same cached ticket and api ticket have different '
+      'loadOwnedTickets: when same cached ticket and api ticket have different '
       'eligibleDrinkIds, prefers api values for non-depleted tickets',
       build: () {
         final cachedTickets = [
@@ -118,7 +118,7 @@ void main() {
 
         return OwnedTicketsCubit(repository: repository);
       },
-      act: (cubit) => cubit.getOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => [
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>().having(
@@ -139,7 +139,7 @@ void main() {
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'getOwnedTickets: assigns fetched eligibleDrinkIds to brand-new tickets '
+      'loadOwnedTickets: assigns fetched eligibleDrinkIds to brand-new tickets '
       'introduced by api',
       build: () {
         final cachedTickets = <OwnedTicketGroup>[];
@@ -161,7 +161,7 @@ void main() {
 
         return OwnedTicketsCubit(repository: repository);
       },
-      act: (cubit) => cubit.getOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => [
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>(),
@@ -176,7 +176,7 @@ void main() {
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'refreshOwnedTickets: replaces eligibleDrinkIds with fetched values and '
+      'loadOwnedTickets: replaces eligibleDrinkIds with fetched values and '
       'empties ids for tickets that become depleted',
       build: () {
         final refreshedTickets = [
@@ -222,7 +222,7 @@ void main() {
           ),
         ],
       ),
-      act: (cubit) => cubit.refreshOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => [
         isA<OwnedTicketsRefreshing>(),
         isA<OwnedTicketsLoaded>()
@@ -248,7 +248,7 @@ void main() {
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'emits [Loading, Loaded(cache), Loaded(ordered)] when getOwnedTickets '
+      'emits [Loading, Loaded(cache), Loaded(ordered)] when loadOwnedTickets '
       'succeeds with cached order and depleted tickets',
       build: () {
         final cachedTickets = [
@@ -275,7 +275,7 @@ void main() {
 
         return OwnedTicketsCubit(repository: repository);
       },
-      act: (cubit) => cubit.getOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => [
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>().having(
@@ -313,7 +313,7 @@ void main() {
 
         return OwnedTicketsCubit(repository: repository);
       },
-      act: (cubit) => cubit.getOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => [
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>().having(
@@ -341,7 +341,7 @@ void main() {
 
         return OwnedTicketsCubit(repository: repository);
       },
-      act: (cubit) => cubit.getOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => [
         isA<OwnedTicketsLoading>(),
         isA<OwnedTicketsLoaded>(),
@@ -354,31 +354,39 @@ void main() {
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'throws AssertionError when getOwnedTickets called while loaded',
+      'recovers from failure state when loadOwnedTickets is called',
       build: () {
+        final fetchedTickets = [
+          _ticket(productId: 1, name: 'T1', ticketsLeft: 2),
+        ];
+
+        when(() => repository.getOwnedTickets()).thenAnswer(
+          (_) => _ownedTicketsLoadResults([Right(fetchedTickets)]),
+        );
+
         return OwnedTicketsCubit(repository: repository);
       },
-      seed: () => OwnedTicketsLoaded(
-        ownedGroups: [_ticket(productId: 1, name: 'T1', ticketsLeft: 1)],
-      ),
-      act: (cubit) => cubit.getOwnedTickets(),
-      expect: () => <OwnedTicketsState>[],
-      errors: () => [isA<AssertionError>()],
+      seed: () => const OwnedTicketsFailure(reason: 'Some previous failure'),
+      act: (cubit) => cubit.loadOwnedTickets(),
+      expect: () => [
+        isA<OwnedTicketsLoading>(),
+        isA<OwnedTicketsLoaded>(),
+      ],
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'throws AssertionError when getOwnedTickets called while loading',
+      'does nothing when loadOwnedTickets called while loading',
       build: () {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: OwnedTicketsLoading.new,
-      act: (cubit) => cubit.getOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => <OwnedTicketsState>[],
-      errors: () => [isA<AssertionError>()],
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'emits [Refreshing, Loaded(ordered)] when refresh succeeds',
+      'emits [Refreshing, Loaded(ordered)] when loadOwnedTickets refreshes '
+      'successfully',
       build: () {
         final refreshedTickets = [
           _ticket(productId: 3, name: 'T3', ticketsLeft: 1),
@@ -405,7 +413,7 @@ void main() {
           _ticket(productId: 2, name: 'T2', ticketsLeft: 1),
         ],
       ),
-      act: (cubit) => cubit.refreshOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => [
         isA<OwnedTicketsRefreshing>(),
         isA<OwnedTicketsLoaded>().having(
@@ -432,7 +440,7 @@ void main() {
           _ticket(productId: 1, name: 'T1', ticketsLeft: 2),
         ],
       ),
-      act: (cubit) => cubit.refreshOwnedTickets(),
+      act: (cubit) => cubit.loadOwnedTickets(),
       expect: () => [
         isA<OwnedTicketsRefreshing>(),
         isA<OwnedTicketsFailure>(),
@@ -440,26 +448,49 @@ void main() {
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'emits nothing when refresh called while refreshing',
+      'emits [Loaded] when loadOwnedTickets called while refreshing',
       build: () {
+        when(
+          () => repository.refreshOwnedTickets(
+            preferredOrder: any(named: 'preferredOrder'),
+          ),
+        ).thenReturn(
+          TaskEither.right([_ticket(productId: 1, name: 'T1', ticketsLeft: 1)]),
+        );
+
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsRefreshing(
         ownedGroups: [_ticket(productId: 1, name: 'T1', ticketsLeft: 1)],
       ),
-      act: (cubit) => cubit.refreshOwnedTickets(),
-      expect: () => <OwnedTicketsState>[],
+      act: (cubit) => cubit.loadOwnedTickets(),
+      expect: () => [
+        isA<OwnedTicketsLoaded>(),
+      ],
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
-      'throws AssertionError when refresh called before load',
+      'loads tickets when called from initial state',
       build: () {
+        final fetchedTickets = [
+          _ticket(productId: 2, name: 'T2', ticketsLeft: 4),
+        ];
+
+        when(() => repository.getOwnedTickets()).thenAnswer(
+          (_) => _ownedTicketsLoadResults([Right(fetchedTickets)]),
+        );
+
         return OwnedTicketsCubit(repository: repository);
       },
-      seed: OwnedTicketsInitial.new,
-      act: (cubit) => cubit.refreshOwnedTickets(),
-      expect: () => <OwnedTicketsState>[],
-      errors: () => [isA<AssertionError>()],
+      act: (cubit) => cubit.loadOwnedTickets(),
+      expect: () => [
+        isA<OwnedTicketsLoading>(),
+        isA<OwnedTicketsLoaded>().having(
+          (s) => s.ownedGroups.map((t) => t.productId).toList(),
+          'api productIds',
+          [2],
+        ),
+      ],
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
@@ -489,7 +520,7 @@ void main() {
           _ticket(productId: 3, name: 'T3', ticketsLeft: 1),
         ],
       ),
-      act: (cubit) => cubit.reorderTickets(0, 2),
+      act: (cubit) => cubit.reorderTickets(0, 1),
       verify: (_) {
         verify(() => repository.saveOwnedTicketsOrder(any())).called(1);
       },
@@ -516,7 +547,7 @@ void main() {
           _ticket(productId: 2, name: 'T2', ticketsLeft: 1),
         ],
       ),
-      act: (cubit) => cubit.reorderTickets(0, 2),
+      act: (cubit) => cubit.reorderTickets(0, 1),
       expect: () => [
         isA<OwnedTicketsLoaded>().having(
           (s) => s.ownedGroups.map((t) => t.productId).toList(),

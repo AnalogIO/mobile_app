@@ -10,15 +10,27 @@ class TicketCatalogCubit extends Cubit<TicketCatalogState> {
 
   final TicketsRepository _repository;
 
+  /// Loads the purchasable ticket groups.
+  ///
+  /// Behaves as both an initial load and a refresh: if products are already
+  /// loaded, they are kept on screen while fresh data is fetched.
   Future<void> loadProducts() async {
-    if (state is LoadingTicketCatalog || state is TicketCatalogLoaded) {
+    final currentState = state;
+    if (currentState is TicketCatalogLoading ||
+        currentState is TicketCatalogRefreshing) {
       return;
     }
-    emit(const LoadingTicketCatalog());
+
+    if (currentState is TicketCatalogLoaded) {
+      emit(TicketCatalogRefreshing(ticketGroups: currentState.ticketGroups));
+    } else {
+      emit(const TicketCatalogLoading());
+    }
+
     return _repository
         .getPurchasableTickets()
         .match(
-          (failure) => TicketCatalogLoadFailure(reason: failure.reason),
+          (failure) => TicketCatalogFailure(reason: failure.reason),
           (ticketGroups) => TicketCatalogLoaded(ticketGroups: ticketGroups),
         )
         .map(emit)

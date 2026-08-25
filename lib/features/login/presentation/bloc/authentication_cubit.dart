@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/features/login/data/authentication_token_repository.dart';
-import 'package:cafe_analog_app/features/login/data/authentication_tokens.dart';
 import 'package:cafe_analog_app/features/login/data/login_repository.dart';
-import 'package:cafe_analog_app/features/login/ui/authentication_navigator.dart';
+import 'package:cafe_analog_app/features/login/models/authentication_tokens.dart';
+import 'package:cafe_analog_app/features/login/presentation/widgets/authentication_navigator.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';

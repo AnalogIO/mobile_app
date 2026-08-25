@@ -4,15 +4,15 @@ import 'package:cafe_analog_app/core/dialog.dart';
 import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/core/widgets/section_title.dart';
-import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
+import 'package:cafe_analog_app/features/login/presentation/bloc/authentication_cubit.dart';
+import 'package:cafe_analog_app/features/settings/presentation/widgets/profile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
-part 'profile_card.dart';
-
+// FIXME(marfavi): Load user profile data from backend
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -21,7 +21,7 @@ class SettingsScreen extends StatelessWidget {
     return Screen.listView(
       name: 'Settings',
       children: [
-        const _ProfileCard(
+        const ProfileCard(
           name: 'Monir',
           occupation: 'BSWU',
         ),

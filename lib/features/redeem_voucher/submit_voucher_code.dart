@@ -47,7 +47,7 @@ void _showRedeemedVoucherDialog({
   final ticketName = redeemedTicketGroup.ticketName;
   final numberOfTickets = redeemedTicketGroup.ticketsLeft;
 
-  final _ = context.read<OwnedTicketsCubit>().refreshOwnedTickets();
+  final _ = context.read<OwnedTicketsCubit>().loadOwnedTickets();
   final _ = showDialog<void>(
     context: context,
     builder: (context) {

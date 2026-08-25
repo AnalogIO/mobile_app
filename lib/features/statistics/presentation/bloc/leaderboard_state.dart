@@ -8,6 +8,10 @@ sealed class LeaderboardState extends Equatable {
   List<Object?> get props => [filter];
 }
 
+final class LeaderboardInitial extends LeaderboardState {
+  const LeaderboardInitial({required super.filter});
+}
+
 final class LeaderboardLoading extends LeaderboardState {
   const LeaderboardLoading({required super.filter});
 }
@@ -20,10 +24,14 @@ final class LeaderboardLoaded extends LeaderboardState {
   List<Object?> get props => [filter, leaderboard];
 }
 
-final class LeaderboardError extends LeaderboardState {
-  const LeaderboardError(this.errorMessage, {required super.filter});
-  final String errorMessage;
+final class LeaderboardRefreshing extends LeaderboardLoaded {
+  const LeaderboardRefreshing(super.leaderboard, {required super.filter});
+}
+
+final class LeaderboardFailure extends LeaderboardState {
+  const LeaderboardFailure(this.reason, {required super.filter});
+  final String reason;
 
   @override
-  List<Object?> get props => [filter, errorMessage];
+  List<Object?> get props => [filter, reason];
 }

@@ -1,5 +1,6 @@
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/core/widgets/choice_chips.dart';
+import 'package:cafe_analog_app/core/widgets/failure_message.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/features/receipts/receipts.dart';
 import 'package:flutter/material.dart';
@@ -11,36 +12,30 @@ class ReceiptsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ReceiptsCubit, ReceiptsState>(
-      builder: (context, state) {
-        return switch (state) {
-          ReceiptsLoading() => const Screen.withBody(
-            name: 'Receipts',
-            body: Center(
-              child: AnalogCircularProgressIndicator(spinnerColor: .dark),
-            ),
-          ),
-          ReceiptsFailure(:final reason) => Screen.listView(
-            name: 'Receipts',
-            children: [
-              const Gap(16),
-              Center(child: Text('Error loading receipts: $reason')),
-            ],
-          ),
-          ReceiptsLoaded(:final receipts) => _ReceiptsContent(
-            receipts: receipts,
-          ),
-          ReceiptsInitial() || ReceiptsRefreshing() => Screen.listView(
-            name: 'Receipts',
-            children: const [
-              Gap(16),
-              Center(
-                child: AnalogCircularProgressIndicator(spinnerColor: .dark),
+    return Screen.listView(
+      name: 'Receipts',
+      onRefresh: () => context.read<ReceiptsCubit>().refreshReceipts(),
+      children: [
+        BlocBuilder<ReceiptsCubit, ReceiptsState>(
+          builder: (context, state) {
+            return switch (state) {
+              ReceiptsInitial() || ReceiptsLoading() => const Padding(
+                padding: .all(32),
+                child: Center(
+                  child: AnalogCircularProgressIndicator(spinnerColor: .dark),
+                ),
               ),
-            ],
-          ),
-        };
-      },
+              ReceiptsFailure(:final reason) => FailureMessage(
+                message: 'Failed to load receipts: $reason',
+                onRetry: () => context.read<ReceiptsCubit>().refreshReceipts(),
+              ),
+              ReceiptsLoaded(:final receipts) => _ReceiptsContent(
+                receipts: receipts,
+              ),
+            };
+          },
+        ),
+      ],
     );
   }
 }
@@ -71,9 +66,7 @@ class _ReceiptsContentState extends State<_ReceiptsContent> {
       _ => widget.receipts, // Show all
     };
 
-    return Screen.listView(
-      name: 'Receipts',
-      onRefresh: context.read<ReceiptsCubit>().refreshReceipts,
+    return Column(
       children: [
         AnalogChoiceChips(
           labels: const ['Show all', 'Ticket swipes', 'Purchases', 'Vouchers'],

@@ -1,5 +1,5 @@
 import 'package:cafe_analog_app/core/failures.dart';
-import 'package:cafe_analog_app/features/login/data/authentication_tokens.dart';
+import 'package:cafe_analog_app/features/login/models/authentication_tokens.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:fpdart/fpdart.dart';
 

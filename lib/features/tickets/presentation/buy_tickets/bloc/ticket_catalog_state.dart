@@ -2,20 +2,17 @@ part of 'ticket_catalog_cubit.dart';
 
 sealed class TicketCatalogState extends Equatable {
   const TicketCatalogState();
+
+  @override
+  List<Object?> get props => [];
 }
 
 final class TicketCatalogInitial extends TicketCatalogState {
   const TicketCatalogInitial();
-
-  @override
-  List<Object?> get props => [];
 }
 
-final class LoadingTicketCatalog extends TicketCatalogState {
-  const LoadingTicketCatalog();
-
-  @override
-  List<Object?> get props => [];
+final class TicketCatalogLoading extends TicketCatalogState {
+  const TicketCatalogLoading();
 }
 
 final class TicketCatalogLoaded extends TicketCatalogState {
@@ -27,8 +24,12 @@ final class TicketCatalogLoaded extends TicketCatalogState {
   List<Object?> get props => [ticketGroups];
 }
 
-final class TicketCatalogLoadFailure extends TicketCatalogState {
-  const TicketCatalogLoadFailure({required this.reason});
+final class TicketCatalogRefreshing extends TicketCatalogLoaded {
+  const TicketCatalogRefreshing({required super.ticketGroups});
+}
+
+final class TicketCatalogFailure extends TicketCatalogState {
+  const TicketCatalogFailure({required this.reason});
 
   final String reason;
 

@@ -1,8 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/features/login/data/authentication_token_repository.dart';
-import 'package:cafe_analog_app/features/login/data/authentication_tokens.dart';
-import 'package:cafe_analog_app/features/login/data/login_repository.dart';
+import 'package:cafe_analog_app/features/login/login.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';

@@ -1,4 +1,5 @@
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
+import 'package:cafe_analog_app/core/widgets/failure_message.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,9 +19,9 @@ class QuickStatsSection extends StatelessWidget {
               child: AnalogCircularProgressIndicator(spinnerColor: .dark),
             ),
           ),
-          QuickStatsFailure(:final reason) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-            child: Center(child: Text('Failed to load quick stats: $reason')),
+          QuickStatsFailure(:final reason) => FailureMessage(
+            message: 'Failed to load quick stats: $reason',
+            onRetry: () => context.read<QuickStatsCubit>().loadQuickStats(),
           ),
           QuickStatsLoaded(:final quickStats) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

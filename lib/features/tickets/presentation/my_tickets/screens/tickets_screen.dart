@@ -1,97 +1,45 @@
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
+import 'package:cafe_analog_app/core/widgets/failure_message.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class TicketsScreen extends StatelessWidget {
   const TicketsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OwnedTicketsCubit, OwnedTicketsState>(
-      builder: (context, state) {
-        return switch (state) {
-          OwnedTicketsInitial() => const Scaffold(),
-          OwnedTicketsLoading() => const _LoadingScreen(),
-          OwnedTicketsFailure(:final reason) => _FailureScreen(reason),
-          OwnedTicketsLoaded(:final ownedGroups) => _SuccessScreen(ownedGroups),
-        };
-      },
-    );
-  }
-}
-
-class _SuccessScreen extends StatelessWidget {
-  const _SuccessScreen(this.ownedGroups);
-
-  final List<OwnedTicketGroup> ownedGroups;
-
-  @override
-  Widget build(BuildContext context) {
     return Screen.listView(
       name: 'Tickets',
-      onRefresh: context.read<OwnedTicketsCubit>().refreshOwnedTickets,
+      onRefresh: () => context.read<OwnedTicketsCubit>().loadOwnedTickets(),
       children: [
-        MyTicketsSection(ownedTicketGroups: ownedGroups),
-        const _BuyDrinkTicketsTile(),
-        const _RedeemCodeTile(),
+        BlocBuilder<OwnedTicketsCubit, OwnedTicketsState>(
+          builder: (context, state) {
+            return switch (state) {
+              OwnedTicketsInitial() => const SizedBox.shrink(),
+              OwnedTicketsLoading() => const Padding(
+                padding: .all(32),
+                child: Center(
+                  child: AnalogCircularProgressIndicator(spinnerColor: .dark),
+                ),
+              ),
+              OwnedTicketsFailure(:final reason) => FailureMessage(
+                message: 'Failed to load tickets: $reason',
+                onRetry: () =>
+                    context.read<OwnedTicketsCubit>().loadOwnedTickets(),
+              ),
+              OwnedTicketsLoaded(:final ownedGroups) => Column(
+                children: [
+                  MyTicketsSection(ownedTicketGroups: ownedGroups),
+                  const BuyDrinkTicketsTile(),
+                  const RedeemCodeTile(),
+                ],
+              ),
+            };
+          },
+        ),
       ],
-    );
-  }
-}
-
-class _LoadingScreen extends StatelessWidget {
-  const _LoadingScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Screen.withBody(
-      name: 'Tickets',
-      body: Center(child: AnalogCircularProgressIndicator(spinnerColor: .dark)),
-    );
-  }
-}
-
-class _FailureScreen extends StatelessWidget {
-  const _FailureScreen(this.reason);
-
-  final String reason;
-
-  @override
-  Widget build(BuildContext context) {
-    return Screen.withBody(
-      name: 'Tickets',
-      body: Center(child: Text('Error loading tickets: $reason')),
-    );
-  }
-}
-
-class _BuyDrinkTicketsTile extends StatelessWidget {
-  const _BuyDrinkTicketsTile();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.local_cafe),
-      title: const Text('Buy drink tickets'),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.push('/tickets/view-purchasable'),
-    );
-  }
-}
-
-class _RedeemCodeTile extends StatelessWidget {
-  const _RedeemCodeTile();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.card_giftcard),
-      title: const Text('Redeem a code'),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.push('/tickets/redeem-voucher'),
     );
   }
 }

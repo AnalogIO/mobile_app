@@ -1,6 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:flutter/material.dart';
 
+// FIXME(marfavi): Load user profile data from backend
 class YourProfileScreen extends StatelessWidget {
   const YourProfileScreen({super.key});
 

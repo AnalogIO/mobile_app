@@ -1,9 +1,11 @@
-part of 'settings_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class _ProfileCard extends StatelessWidget {
-  const _ProfileCard({
+class ProfileCard extends StatelessWidget {
+  const ProfileCard({
     required this.name,
     required this.occupation,
+    super.key,
   });
 
   final String name;
@@ -23,7 +25,7 @@ class _ProfileCard extends StatelessWidget {
           backgroundColor: colorScheme.surfaceContainerLow,
           child: Icon(Icons.person, color: colorScheme.onSurfaceVariant),
         ),
-        title: Text(name, style: const TextStyle(fontWeight: .bold)),
+        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(occupation),
         trailing: const Text('Edit profile'),
         onTap: () => context.go('/settings/your-profile'),

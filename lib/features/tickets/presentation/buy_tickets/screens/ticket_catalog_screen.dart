@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
+import 'package:cafe_analog_app/core/widgets/failure_message.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter/material.dart';
@@ -12,45 +13,49 @@ class TicketCatalogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TicketCatalogCubit, TicketCatalogState>(
-      builder: (context, state) {
-        return switch (state) {
-          TicketCatalogInitial() ||
-          LoadingTicketCatalog() => const Screen.withBody(
-            name: 'Buy tickets',
-            body: Center(
-              child: AnalogCircularProgressIndicator(spinnerColor: .dark),
-            ),
-          ),
-          TicketCatalogLoadFailure(:final reason) => Screen.withBody(
-            name: 'Buy tickets',
-            body: Center(child: Text('Failed to load products: $reason')),
-            // FIXME: Add retry button
-          ),
-          TicketCatalogLoaded(:final ticketGroups) => Screen.listView(
-            name: 'Buy tickets',
-            children: ticketGroups.map((ticketGroup) {
-              return ListTile(
-                title: Text(ticketGroup.title),
-                subtitle: Text(
-                  '${ticketGroup.numberOfTickets} tickets'
-                  ' • ${ticketGroup.priceDKK} kr',
+    return Screen.listView(
+      name: 'Buy tickets',
+      onRefresh: () => context.read<TicketCatalogCubit>().loadProducts(),
+      children: [
+        BlocBuilder<TicketCatalogCubit, TicketCatalogState>(
+          builder: (context, state) {
+            return switch (state) {
+              TicketCatalogInitial() || TicketCatalogLoading() => const Padding(
+                padding: .all(32),
+                child: Center(
+                  child: AnalogCircularProgressIndicator(spinnerColor: .dark),
                 ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  final id = ticketGroup.id;
-                  unawaited(
-                    context.push(
-                      '/tickets/view-purchasable/$id',
-                      extra: ticketGroup,
+              ),
+              TicketCatalogFailure(:final reason) => FailureMessage(
+                message: 'Failed to load products: $reason',
+                onRetry: () =>
+                    context.read<TicketCatalogCubit>().loadProducts(),
+              ),
+              TicketCatalogLoaded(:final ticketGroups) => Column(
+                children: ticketGroups.map((ticketGroup) {
+                  return ListTile(
+                    title: Text(ticketGroup.title),
+                    subtitle: Text(
+                      '${ticketGroup.numberOfTickets} tickets'
+                      ' • ${ticketGroup.priceDKK} kr',
                     ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      final id = ticketGroup.id;
+                      unawaited(
+                        context.push(
+                          '/tickets/view-purchasable/$id',
+                          extra: ticketGroup,
+                        ),
+                      );
+                    },
                   );
-                },
-              );
-            }).toList(),
-          ),
-        };
-      },
+                }).toList(),
+              ),
+            };
+          },
+        ),
+      ],
     );
   }
 }

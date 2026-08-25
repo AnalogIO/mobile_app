@@ -4,17 +4,13 @@ import 'package:cafe_analog_app/app/navigation_scaffolds.dart';
 import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
 import 'package:cafe_analog_app/app/splash_screen.dart';
 import 'package:cafe_analog_app/core/snackbar.dart';
-import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/features/login/ui/authentication_navigator.dart';
-import 'package:cafe_analog_app/features/login/ui/email_sent_screen.dart';
-import 'package:cafe_analog_app/features/login/ui/login_screen.dart';
-import 'package:cafe_analog_app/features/login/ui/verify_magic_link_screen.dart';
-import 'package:cafe_analog_app/features/receipts/presentation/screens/receipts_screen.dart';
+import 'package:cafe_analog_app/features/login/login.dart';
+import 'package:cafe_analog_app/features/receipts/receipts.dart';
 import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher.dart';
-import 'package:cafe_analog_app/features/settings/settings_screen.dart';
-import 'package:cafe_analog_app/features/settings/your_profile_screen.dart';
+import 'package:cafe_analog_app/features/settings/settings.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -96,7 +92,7 @@ class AnalogGoRouter {
                             final cubit = OwnedTicketsCubit(
                               repository: context.read(),
                             );
-                            unawaited(cubit.getOwnedTickets());
+                            unawaited(cubit.loadOwnedTickets());
                             return cubit;
                           },
                         ),

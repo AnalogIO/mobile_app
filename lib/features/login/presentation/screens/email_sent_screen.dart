@@ -1,11 +1,14 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/features/login/bloc/authentication_cubit.dart';
+import 'package:cafe_analog_app/features/login/presentation/bloc/authentication_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
+// FIXME: Instead of countdown ticking every 1s, store the timestamp of the last
+//  email sent and calculate the remaining cooldown time based on that every 1s.
+//  This way, if the user navigates away and comes back, the time is correct.
 class EmailSentScreen extends StatefulWidget {
   const EmailSentScreen({required this.email, super.key});
 

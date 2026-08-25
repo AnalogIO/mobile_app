@@ -45,7 +45,7 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
             // This state is also emitted after a completed or failed purchase,
             // so we navigate back and refresh the owned tickets.
             context.go('/tickets/');
-            final _ = context.read<OwnedTicketsCubit>().refreshOwnedTickets();
+            final _ = context.read<OwnedTicketsCubit>().loadOwnedTickets();
           case PurchaseInitiating():
             _showOverlay();
           case PurchaseInitiated(:final initiatedPurchase):

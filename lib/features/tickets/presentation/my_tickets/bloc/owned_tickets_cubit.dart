@@ -1,6 +1,4 @@
 // owned_tickets_cubit.dart
-import 'dart:async';
-
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
@@ -20,70 +18,64 @@ class OwnedTicketsCubit extends Cubit<OwnedTicketsState> {
 
   final TicketsRepository _repository;
 
-  /// Gets owned tickets when they are not already loaded.
+  /// Whether a fetch is currently in flight.
   ///
-  /// Does nothing if tickets are already loaded;
-  /// in that case, use [refreshOwnedTickets] to fetch fresh tickets.
-  Future<void> getOwnedTickets() async {
-    final state = this.state;
+  /// The state-based guards in [loadOwnedTickets] cannot prevent overlapping
+  /// fetches on their own: the initial load emits [OwnedTicketsLoaded] (from
+  /// cache) before the API fetch completes, at which point the state no longer
+  /// indicates that a fetch is in progress. This flag guards against starting
+  /// a second fetch in that window.
+  bool _isFetching = false;
 
-    // If tickets are already loaded, do nothing
-    if (state is OwnedTicketsLoaded) {
-      assert(
-        false,
-        'getOwnedTickets should not be called when tickets are already '
-        'loaded; use refreshOwnedTickets instead',
-      );
-      return Future.value();
-    }
-
-    // If we are already loading, don't start another load
-    if (state is OwnedTicketsLoading) {
-      assert(
-        false,
-        'getOwnedTickets should not be called when tickets are already loading',
-      );
-      return Future.value();
-    }
-
-    emit(OwnedTicketsLoading());
-    await for (final result in _repository.getOwnedTickets()) {
-      emit(
-        result.match(
-          (failure) => OwnedTicketsFailure(reason: failure.reason),
-          (ownedGroups) => OwnedTicketsLoaded(ownedGroups: ownedGroups),
-        ),
-      );
-    }
-  }
-
-  /// Refreshes owned tickets when they are already loaded.
+  /// Loads the user's owned tickets.
   ///
-  /// Does nothing if tickets are not already loaded;
-  /// in that case, use [getOwnedTickets] to fetch tickets.
-  Future<void> refreshOwnedTickets() {
-    switch (state) {
-      case OwnedTicketsRefreshing():
-        // Only allow one refresh at a time
-        return Future.value();
-      case OwnedTicketsLoaded(:final ownedGroups):
-        emit(OwnedTicketsRefreshing(ownedGroups: ownedGroups));
-        return _repository
-            .refreshOwnedTickets(preferredOrder: ownedGroups)
-            .match(
-              (failure) => emit(OwnedTicketsFailure(reason: failure.reason)),
-              (refreshedOwnedGroups) => emit(
-                OwnedTicketsLoaded(ownedGroups: refreshedOwnedGroups),
-              ),
-            )
+  /// Behaves as both an initial load and a refresh: if tickets are already
+  /// loaded, the current order is preserved and the state becomes
+  /// [OwnedTicketsRefreshing] while fresh tickets are fetched. Otherwise,
+  /// cached tickets are shown first (if any), followed by fresh tickets from
+  /// the API.
+  ///
+  /// Does nothing if a fetch is already in flight.
+  Future<void> loadOwnedTickets() async {
+    if (_isFetching) {
+      return;
+    }
+
+    final currentState = state;
+    if (currentState is OwnedTicketsLoading) {
+      return;
+    }
+
+    _isFetching = true;
+
+    // Use a try/finally to ensure the _isFetching flag is reset even if an
+    // unexpected exception occurs (realistically won't happen, but better
+    // safe than stuck).
+    try {
+      if (currentState is OwnedTicketsLoaded) {
+        emit(OwnedTicketsRefreshing(ownedGroups: currentState.ownedGroups));
+        final result = await _repository
+            .refreshOwnedTickets(preferredOrder: currentState.ownedGroups)
             .run();
-      case _:
-        assert(
-          false,
-          'refreshOwnedTickets should not be called when tickets are not '
-          'already loaded; use getOwnedTickets instead',
+        emit(
+          result.match(
+            (failure) => OwnedTicketsFailure(reason: failure.reason),
+            (ownedGroups) => OwnedTicketsLoaded(ownedGroups: ownedGroups),
+          ),
         );
-        return Future.value();
+      } else {
+        emit(OwnedTicketsLoading());
+        await for (final result in _repository.getOwnedTickets()) {
+          emit(
+            result.match(
+              (failure) => OwnedTicketsFailure(reason: failure.reason),
+              (ownedGroups) => OwnedTicketsLoaded(ownedGroups: ownedGroups),
+            ),
+          );
+        }
+      }
+    } finally {
+      _isFetching = false;
     }
   }
 
