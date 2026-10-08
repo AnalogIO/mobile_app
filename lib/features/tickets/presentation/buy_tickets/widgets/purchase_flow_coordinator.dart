@@ -63,19 +63,26 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
                 );
               case InitiatedNexiPayment(:final paymentUrl):
                 unawaited(
-                  _openNexiPayment(paymentUrl)
-                      .mapLeft(
-                        (failure) => _showDialog(
-                          title: 'Could not open Nexi payment',
-                          content: failure.reason,
-                        ),
-                      )
-                      .run(),
+                  _openNexiPayment(paymentUrl).match(
+                    (failure) {
+                      _hideOverlay();
+                      return _showDialog(
+                        title: 'Could not open Nexi payment',
+                        content: failure.reason,
+                      );
+                    },
+                    // We aren't told if the user closes the payment page
+                    // without paying, so don't block the app while it is
+                    // open.
+                    (_) => _hideOverlay(),
+                  ).run(),
                 );
             }
           case PurchaseVerifying(:final initiatedPurchase):
             if (initiatedPurchase is InitiatedNexiPayment) {
               unawaited(closeInAppWebView());
+              // The overlay was hidden while the payment page was open
+              _showOverlay();
             }
           case PurchaseCompleted(:final successfulPurchase):
             _hideOverlay();
