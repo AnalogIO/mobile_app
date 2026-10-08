@@ -81,7 +81,10 @@ class TicketsRepository {
     required int ticketGroupId,
   }) {
     return _ticketsApi
-        .initiateMobilePayPurchase(ticketGroupId: ticketGroupId)
+        .initiatePurchase(
+          ticketGroupId: ticketGroupId,
+          paymentType: PaymentType.mobilepay,
+        )
         // map Left type from Failure to PurchaseInitiationFailure
         .mapLeft((failure) => PurchaseInitiationFailure(failure.reason))
         .map(
