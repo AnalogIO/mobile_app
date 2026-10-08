@@ -102,23 +102,7 @@ class TicketsRepository {
   TaskEither<PurchaseVerificationFailure, SuccessfulPurchase> verifyPurchase({
     required int orderId,
   }) {
-    return _ticketsApi
-        .verifyPurchase(orderId: orderId)
-        // If purchase is still pending, wait for a second and check again.
-        // It's a band-aid fix to give time for the backend to update the status
-        // (especially happens on cancelled purchases)
-        .flatMap((response) {
-          final purchaseStatus = purchaseStatusFromJson(
-            response.purchaseStatus,
-          );
-          if (purchaseStatus == PurchaseStatus.pendingpayment) {
-            return _ticketsApi
-                .verifyPurchase(orderId: orderId)
-                .delay(const Duration(seconds: 1));
-          } else {
-            return TaskEither.right(response);
-          }
-        })
+    return _fetchPurchaseUntilSettled(orderId: orderId)
         // map Left type from Failure to PurchaseVerificationFailure
         .mapLeft<PurchaseVerificationFailure>(
           (failure) => PurchaseUnexpectedFailure(failure.reason),
@@ -172,6 +156,37 @@ class TicketsRepository {
             });
           },
         );
+  }
+
+  /// How many times [_fetchPurchaseUntilSettled] fetches a pending purchase.
+  static const _purchaseVerificationAttempts = 10;
+
+  /// How long [_fetchPurchaseUntilSettled] waits between attempts.
+  static const _purchaseVerificationRetryDelay = Duration(seconds: 1);
+
+  /// Fetches the purchase with the given [orderId], fetching it again while
+  /// the backend still reports it as pending.
+  ///
+  /// The backend only updates the status when the payment provider notifies
+  /// it (by webhook), which can happen after the user has returned to the app.
+  /// Gives up after [attemptsLeft] attempts and returns the pending purchase.
+  TaskEither<Failure, SinglePurchaseResponse> _fetchPurchaseUntilSettled({
+    required int orderId,
+    int attemptsLeft = _purchaseVerificationAttempts,
+  }) {
+    return _ticketsApi.verifyPurchase(orderId: orderId).flatMap((response) {
+      final isPending =
+          purchaseStatusFromJson(response.purchaseStatus) ==
+          PurchaseStatus.pendingpayment;
+      if (!isPending || attemptsLeft <= 1) {
+        return TaskEither.right(response);
+      }
+
+      return _fetchPurchaseUntilSettled(
+        orderId: orderId,
+        attemptsLeft: attemptsLeft - 1,
+      ).delay(_purchaseVerificationRetryDelay);
+    });
   }
 
   /// Get the list of purchasable ticket groups.

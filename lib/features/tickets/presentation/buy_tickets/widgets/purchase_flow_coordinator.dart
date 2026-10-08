@@ -27,6 +27,15 @@ class PurchaseFlowCoordinator extends StatefulWidget {
 class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
   void Function(BuildContext context)? _dismissLoadingOverlay;
 
+  /// Reloads the owned tickets after a purchase that was still pending.
+  Timer? _pendingPurchaseReloadTimer;
+
+  @override
+  void dispose() {
+    _pendingPurchaseReloadTimer?.cancel();
+    super.dispose();
+  }
+
   void _showOverlay() {
     setState(() => _dismissLoadingOverlay ??= showLoadingOverlay(context));
   }
@@ -99,6 +108,16 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
               // wrong; just show a snackbar
               return showSnackBar(context: context, message: failure.reason);
             }
+            if (failure is PurchasePending) {
+              // not a failure: the payment may just not be confirmed yet, so
+              // reload the tickets again once it has had more time
+              _reloadOwnedTicketsLater();
+              final _ = _showDialog(
+                title: 'Payment processing',
+                content: failure.reason,
+              );
+              return;
+            }
             // for other failure types, show a dialog with the failure reason
             final _ = _showDialog(
               title: 'Purchase failed',
@@ -112,6 +131,14 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
 
   Future<void> _showDialog({required String title, required String content}) {
     return showAnalogDialog(context: context, title: title, content: content);
+  }
+
+  void _reloadOwnedTicketsLater() {
+    _pendingPurchaseReloadTimer?.cancel();
+    _pendingPurchaseReloadTimer = Timer(const Duration(seconds: 15), () {
+      if (!mounted) return;
+      final _ = context.read<OwnedTicketsCubit>().loadOwnedTickets();
+    });
   }
 
   TaskEither<Failure, Unit> _launchMobilePay(Uri mobilePayRedirectUri) {
