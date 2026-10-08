@@ -16,14 +16,14 @@ final class PurchaseCancelledByUser extends PurchaseVerificationFailure {
   const PurchaseCancelledByUser() : super('You cancelled the purchase.');
 }
 
-// shouldn't happen since we only verify purchases after mobilepay redirects
-// back to the app, but we want to be safe and handle this case as well
+/// The payment provider hasn't confirmed the payment to the backend yet, even
+/// after waiting a while. This is not necessarily a failure: the purchase is
+/// completed (and the tickets issued) once the confirmation arrives.
 final class PurchasePending extends PurchaseVerificationFailure {
   const PurchasePending()
     : super(
-        'Purchase is still pending. '
-        'If you just completed the purchase, '
-        'refresh the Tickets page after a few moments. ',
+        "We haven't received confirmation of your payment yet. "
+        'If you completed the payment, your tickets will appear shortly.',
       );
 }
 

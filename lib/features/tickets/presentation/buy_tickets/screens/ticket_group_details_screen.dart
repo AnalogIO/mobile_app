@@ -36,8 +36,9 @@ class _TicketGroupDetailsContent extends StatelessWidget {
         _TicketGroupDetails(ticketGroup: ticketGroup),
         _PurchaseButtonSection(
           ticketGroup: ticketGroup,
-          onPressed: () =>
-              context.read<PurchaseFlowCubit>().initiatePurchase(ticketGroup),
+          onPurchase: (paymentMethod) => context
+              .read<PurchaseFlowCubit>()
+              .initiatePurchase(ticketGroup, paymentMethod: paymentMethod),
         ),
       ],
     );
@@ -139,11 +140,11 @@ class _TicketGroupDetails extends StatelessWidget {
 class _PurchaseButtonSection extends StatelessWidget {
   const _PurchaseButtonSection({
     required this.ticketGroup,
-    required this.onPressed,
+    required this.onPurchase,
   });
 
   final PurchasableTicketGroup ticketGroup;
-  final VoidCallback onPressed;
+  final ValueChanged<PaymentMethod> onPurchase;
 
   @override
   Widget build(BuildContext context) {
@@ -158,16 +159,26 @@ class _PurchaseButtonSection extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: FilledButton(
-              onPressed: onPressed,
-              style: FilledButton.styleFrom(
-                backgroundColor: colorScheme.secondary,
-                foregroundColor: colorScheme.onSecondary,
-              ),
-              child: Text(
-                'Buy ${ticketGroup.numberOfTickets} tickets '
-                'for ${ticketGroup.priceDKK} kr',
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FilledButton(
+                  onPressed: () => onPurchase(PaymentMethod.mobilePay),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: colorScheme.secondary,
+                    foregroundColor: colorScheme.onSecondary,
+                  ),
+                  child: Text(
+                    'Buy ${ticketGroup.numberOfTickets} tickets '
+                    'for ${ticketGroup.priceDKK} kr with MobilePay',
+                  ),
+                ),
+                const Gap(8),
+                OutlinedButton(
+                  onPressed: () => onPurchase(PaymentMethod.nexi),
+                  child: const Text('Pay with card or wallet'),
+                ),
+              ],
             ),
           ),
         ],

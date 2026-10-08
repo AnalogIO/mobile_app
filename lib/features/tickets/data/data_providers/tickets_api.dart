@@ -45,14 +45,15 @@ class TicketsApi {
   }
 
   /// Initiate a purchase flow for a purchasable ticket group.
-  TaskEither<Failure, InitiatePurchaseResponse> initiateMobilePayPurchase({
+  TaskEither<Failure, InitiatePurchaseResponse> initiatePurchase({
     required int ticketGroupId,
+    required PaymentType paymentType,
   }) {
     return _executor.run(
       (api) => api.v2.purchasesPost(
         body: InitiatePurchaseRequest(
           productId: ticketGroupId,
-          paymentType: PaymentType.mobilepay.value,
+          paymentType: paymentType.value,
         ),
       ),
     );

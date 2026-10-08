@@ -76,24 +76,23 @@ class TicketsRepository {
   }
 
   /// Initiate a purchase flow for a ticket group by id.
-  TaskEither<PurchaseInitiationFailure, InitiatedMobilePayPayment>
-  initiatePurchase({
+  TaskEither<PurchaseInitiationFailure, InitiatedPayment> initiatePurchase({
     required int ticketGroupId,
+    required PaymentMethod paymentMethod,
   }) {
+    final paymentType = switch (paymentMethod) {
+      PaymentMethod.mobilePay => PaymentType.mobilepay,
+      PaymentMethod.nexi => PaymentType.nexi,
+    };
+
     return _ticketsApi
-        .initiateMobilePayPurchase(ticketGroupId: ticketGroupId)
+        .initiatePurchase(
+          ticketGroupId: ticketGroupId,
+          paymentType: paymentType,
+        )
         // map Left type from Failure to PurchaseInitiationFailure
         .mapLeft((failure) => PurchaseInitiationFailure(failure.reason))
-        .map(
-          (response) => InitiatedMobilePayPayment(
-            orderId: response.id,
-            mobilePayRedirectUri: Uri.parse(
-              MobilePayPaymentDetails.fromJson(
-                response.paymentDetails as Map<String, dynamic>,
-              ).mobilePayAppRedirectUri,
-            ),
-          ),
-        );
+        .map((response) => _toInitiatedPayment(response, paymentMethod));
   }
 
   /// Verify the status of a purchase flow for a ticket group.
@@ -103,23 +102,7 @@ class TicketsRepository {
   TaskEither<PurchaseVerificationFailure, SuccessfulPurchase> verifyPurchase({
     required int orderId,
   }) {
-    return _ticketsApi
-        .verifyPurchase(orderId: orderId)
-        // If purchase is still pending, wait for a second and check again.
-        // It's a band-aid fix to give time for the backend to update the status
-        // (especially happens on cancelled purchases)
-        .flatMap((response) {
-          final purchaseStatus = purchaseStatusFromJson(
-            response.purchaseStatus,
-          );
-          if (purchaseStatus == PurchaseStatus.pendingpayment) {
-            return _ticketsApi
-                .verifyPurchase(orderId: orderId)
-                .delay(const Duration(seconds: 1));
-          } else {
-            return TaskEither.right(response);
-          }
-        })
+    return _fetchPurchaseUntilSettled(orderId: orderId)
         // map Left type from Failure to PurchaseVerificationFailure
         .mapLeft<PurchaseVerificationFailure>(
           (failure) => PurchaseUnexpectedFailure(failure.reason),
@@ -173,6 +156,37 @@ class TicketsRepository {
             });
           },
         );
+  }
+
+  /// How many times [_fetchPurchaseUntilSettled] fetches a pending purchase.
+  static const _purchaseVerificationAttempts = 10;
+
+  /// How long [_fetchPurchaseUntilSettled] waits between attempts.
+  static const _purchaseVerificationRetryDelay = Duration(seconds: 1);
+
+  /// Fetches the purchase with the given [orderId], fetching it again while
+  /// the backend still reports it as pending.
+  ///
+  /// The backend only updates the status when the payment provider notifies
+  /// it (by webhook), which can happen after the user has returned to the app.
+  /// Gives up after [attemptsLeft] attempts and returns the pending purchase.
+  TaskEither<Failure, SinglePurchaseResponse> _fetchPurchaseUntilSettled({
+    required int orderId,
+    int attemptsLeft = _purchaseVerificationAttempts,
+  }) {
+    return _ticketsApi.verifyPurchase(orderId: orderId).flatMap((response) {
+      final isPending =
+          purchaseStatusFromJson(response.purchaseStatus) ==
+          PurchaseStatus.pendingpayment;
+      if (!isPending || attemptsLeft <= 1) {
+        return TaskEither.right(response);
+      }
+
+      return _fetchPurchaseUntilSettled(
+        orderId: orderId,
+        attemptsLeft: attemptsLeft - 1,
+      ).delay(_purchaseVerificationRetryDelay);
+    });
   }
 
   /// Get the list of purchasable ticket groups.
@@ -329,5 +343,28 @@ class TicketsRepository {
     return allTickets.sortedBy(
       (ticket) => preferredOrderByProductId[ticket.productId] ?? -1,
     );
+  }
+
+  static InitiatedPayment _toInitiatedPayment(
+    InitiatePurchaseResponse response,
+    PaymentMethod paymentMethod,
+  ) {
+    final paymentDetails = response.paymentDetails as Map<String, dynamic>;
+
+    return switch (paymentMethod) {
+      PaymentMethod.mobilePay => InitiatedMobilePayPayment(
+        orderId: response.id,
+        mobilePayRedirectUri: Uri.parse(
+          MobilePayPaymentDetails.fromJson(paymentDetails)
+              .mobilePayAppRedirectUri,
+        ),
+      ),
+      PaymentMethod.nexi => InitiatedNexiPayment(
+        orderId: response.id,
+        paymentUrl: Uri.parse(
+          NexiPaymentDetails.fromJson(paymentDetails).paymentUrl,
+        ),
+      ),
+    };
   }
 }
