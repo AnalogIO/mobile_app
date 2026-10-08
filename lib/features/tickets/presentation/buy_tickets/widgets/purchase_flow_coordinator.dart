@@ -73,10 +73,10 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
                       .run(),
                 );
             }
-          case PurchaseVerifying():
-            // probably don't need to do anything here, but could show a
-            // different loading indicator if desired
-            break;
+          case PurchaseVerifying(:final initiatedPurchase):
+            if (initiatedPurchase is InitiatedNexiPayment) {
+              unawaited(closeInAppWebView());
+            }
           case PurchaseCompleted(:final successfulPurchase):
             _hideOverlay();
             showSuccessSnackBar(
