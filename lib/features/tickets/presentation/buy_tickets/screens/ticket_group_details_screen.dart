@@ -36,8 +36,10 @@ class _TicketGroupDetailsContent extends StatelessWidget {
         _TicketGroupDetails(ticketGroup: ticketGroup),
         _PurchaseButtonSection(
           ticketGroup: ticketGroup,
-          onPressed: () =>
-              context.read<PurchaseFlowCubit>().initiatePurchase(ticketGroup),
+          onPressed: () => context.read<PurchaseFlowCubit>().initiatePurchase(
+            ticketGroup,
+            paymentMethod: PaymentMethod.mobilePay,
+          ),
         ),
       ],
     );

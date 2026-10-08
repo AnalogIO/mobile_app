@@ -78,24 +78,21 @@ class TicketsRepository {
   /// Initiate a purchase flow for a ticket group by id.
   TaskEither<PurchaseInitiationFailure, InitiatedPayment> initiatePurchase({
     required int ticketGroupId,
+    required PaymentMethod paymentMethod,
   }) {
+    final paymentType = switch (paymentMethod) {
+      PaymentMethod.mobilePay => PaymentType.mobilepay,
+      PaymentMethod.nexi => PaymentType.nexi,
+    };
+
     return _ticketsApi
         .initiatePurchase(
           ticketGroupId: ticketGroupId,
-          paymentType: PaymentType.mobilepay,
+          paymentType: paymentType,
         )
         // map Left type from Failure to PurchaseInitiationFailure
         .mapLeft((failure) => PurchaseInitiationFailure(failure.reason))
-        .map(
-          (response) => InitiatedMobilePayPayment(
-            orderId: response.id,
-            mobilePayRedirectUri: Uri.parse(
-              MobilePayPaymentDetails.fromJson(
-                response.paymentDetails as Map<String, dynamic>,
-              ).mobilePayAppRedirectUri,
-            ),
-          ),
-        );
+        .map((response) => _toInitiatedPayment(response, paymentMethod));
   }
 
   /// Verify the status of a purchase flow for a ticket group.
@@ -331,5 +328,28 @@ class TicketsRepository {
     return allTickets.sortedBy(
       (ticket) => preferredOrderByProductId[ticket.productId] ?? -1,
     );
+  }
+
+  static InitiatedPayment _toInitiatedPayment(
+    InitiatePurchaseResponse response,
+    PaymentMethod paymentMethod,
+  ) {
+    final paymentDetails = response.paymentDetails as Map<String, dynamic>;
+
+    return switch (paymentMethod) {
+      PaymentMethod.mobilePay => InitiatedMobilePayPayment(
+        orderId: response.id,
+        mobilePayRedirectUri: Uri.parse(
+          MobilePayPaymentDetails.fromJson(paymentDetails)
+              .mobilePayAppRedirectUri,
+        ),
+      ),
+      PaymentMethod.nexi => InitiatedNexiPayment(
+        orderId: response.id,
+        paymentUrl: Uri.parse(
+          NexiPaymentDetails.fromJson(paymentDetails).paymentUrl,
+        ),
+      ),
+    };
   }
 }
