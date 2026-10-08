@@ -1725,6 +1725,50 @@
           }
         ]
       }
+    },
+    "/api/v2/NexiWebhook/webhook": {
+      "post": {
+        "tags": [
+          "NexiWebhook"
+        ],
+        "operationId": "NexiWebhook_ReceiveNotification",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "x-originalName": "authToken",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "notification",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NexiNotification"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2885,7 +2929,8 @@
           "propertyName": "discriminator",
           "mapping": {
             "MobilePayPaymentDetails": "#/components/schemas/MobilePayPaymentDetails",
-            "FreePurchasePaymentDetails": "#/components/schemas/FreePurchasePaymentDetails"
+            "FreePurchasePaymentDetails": "#/components/schemas/FreePurchasePaymentDetails",
+            "NexiPaymentDetails": "#/components/schemas/NexiPaymentDetails"
           }
         },
         "description": "Payment details",
@@ -2922,11 +2967,13 @@
         "description": "PaymentType represents the type of Payment which is used to fulfill a purchase",
         "x-enumNames": [
           "MobilePay",
-          "FreePurchase"
+          "FreePurchase",
+          "Nexi"
         ],
         "enum": [
           "MobilePay",
-          "FreePurchase"
+          "FreePurchase",
+          "Nexi"
         ]
       },
       "MobilePayPaymentDetails": {
@@ -2949,6 +2996,9 @@
               "paymentId"
             ],
             "properties": {
+              "paymentType": {
+                "$ref": "#/components/schemas/PaymentType"
+              },
               "mobilePayAppRedirectUri": {
                 "type": "string",
                 "description": "App deeplink for a MobilePay payment",
@@ -2977,7 +3027,42 @@
               "paymentType": "FreeProduct",
               "orderId": "f5cb3e0f-3b9b-4f50-8c4f-a7450f300a5c"
             },
-            "additionalProperties": false
+            "additionalProperties": false,
+            "properties": {
+              "paymentType": {
+                "$ref": "#/components/schemas/PaymentType"
+              }
+            }
+          }
+        ]
+      },
+      "NexiPaymentDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaymentDetails"
+          },
+          {
+            "type": "object",
+            "description": "MobilePay Payment details",
+            "example": {
+              "paymentType": "MobilePay",
+              "orderId": "f5cb3e0f-3b9b-4f50-8c4f-a7450f300a5c",
+              "mobilePayAppRedirectUri": "mobilepay://merchant_payments?payment_id=186d2b31-ff25-4414-9fd1-bfe9807fa8b7",
+              "paymentId": "186d2b31-ff25-4414-9fd1-bfe9807fa8b7"
+            },
+            "additionalProperties": false,
+            "required": [
+              "paymentUrl"
+            ],
+            "properties": {
+              "paymentUrl": {
+                "type": "string",
+                "minLength": 1
+              },
+              "paymentType": {
+                "$ref": "#/components/schemas/PaymentType"
+              }
+            }
           }
         ]
       },
@@ -3637,6 +3722,42 @@
                 "$ref": "#/components/schemas/UserGroup"
               }
             ]
+          }
+        }
+      },
+      "NexiNotification": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "event": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "merchantId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "merchantNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Details"
+          }
+        }
+      },
+      "Details": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "paymentId": {
+            "type": "string"
           }
         }
       }
