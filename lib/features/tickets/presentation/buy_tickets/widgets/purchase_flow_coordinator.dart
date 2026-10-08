@@ -61,6 +61,17 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
                       )
                       .run(),
                 );
+              case InitiatedNexiPayment(:final paymentUrl):
+                unawaited(
+                  _openNexiPayment(paymentUrl)
+                      .mapLeft(
+                        (failure) => _showDialog(
+                          title: 'Could not open Nexi payment',
+                          content: failure.reason,
+                        ),
+                      )
+                      .run(),
+                );
             }
           case PurchaseVerifying():
             // probably don't need to do anything here, but could show a
@@ -106,6 +117,25 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
         );
         if (!didLaunch) {
           throw Exception('Failed to launch MobilePay');
+        }
+        return unit;
+      },
+      (error, _) => UnexpectedFailure(error.toString()),
+    );
+  }
+
+  /// Opens Nexi's hosted payment page in an in-app browser (Custom Tabs on
+  /// Android, SFSafariViewController on iOS), where Apple Pay and Google Pay
+  /// work, unlike in a WebView.
+  TaskEither<Failure, Unit> _openNexiPayment(Uri paymentUrl) {
+    return TaskEither.tryCatch(
+      () async {
+        final didLaunch = await launchUrl(
+          paymentUrl,
+          mode: LaunchMode.inAppBrowserView,
+        );
+        if (!didLaunch) {
+          throw Exception('Failed to open the payment page');
         }
         return unit;
       },

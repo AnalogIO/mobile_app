@@ -17,3 +17,15 @@ final class InitiatedMobilePayPayment extends InitiatedPayment {
   @override
   List<Object?> get props => [orderId, mobilePayRedirectUri];
 }
+
+final class InitiatedNexiPayment extends InitiatedPayment {
+  const InitiatedNexiPayment({
+    required super.orderId,
+    required this.paymentUrl,
+  });
+
+  final Uri paymentUrl;
+
+  @override
+  List<Object?> get props => [orderId, paymentUrl];
+}
