@@ -22,22 +22,22 @@ final class PurchaseInitiating extends PurchaseFlowState {
 }
 
 /// The purchase request was successful and the server responded with the
-/// initiated purchase containing the MobilePay redirect URI.
+/// initiated purchase containing the purchase information.
 final class PurchaseInitiated extends PurchaseFlowState {
   const PurchaseInitiated({required this.initiatedPurchase});
 
-  final InitiatedMobilePayPayment initiatedPurchase;
+  final InitiatedPayment initiatedPurchase;
 
   @override
   List<Object?> get props => [initiatedPurchase];
 }
 
 /// The app is verifying the purchase status with the server after the user has
-/// completed the payment in MobilePay and returned to the app.
+/// completed the payment and returned to the app.
 final class PurchaseVerifying extends PurchaseFlowState {
   const PurchaseVerifying({required this.initiatedPurchase});
 
-  final InitiatedMobilePayPayment initiatedPurchase;
+  final InitiatedPayment initiatedPurchase;
 
   @override
   List<Object?> get props => [initiatedPurchase];

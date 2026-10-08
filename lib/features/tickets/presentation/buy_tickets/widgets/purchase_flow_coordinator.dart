@@ -49,16 +49,19 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
           case PurchaseInitiating():
             _showOverlay();
           case PurchaseInitiated(:final initiatedPurchase):
-            unawaited(
-              _launchMobilePay(initiatedPurchase.mobilePayRedirectUri)
-                  .mapLeft(
-                    (failure) => _showDialog(
-                      title: 'Could not launch MobilePay',
-                      content: failure.reason,
-                    ),
-                  )
-                  .run(),
-            );
+            switch (initiatedPurchase) {
+              case InitiatedMobilePayPayment(:final mobilePayRedirectUri):
+                unawaited(
+                  _launchMobilePay(mobilePayRedirectUri)
+                      .mapLeft(
+                        (failure) => _showDialog(
+                          title: 'Could not launch MobilePay',
+                          content: failure.reason,
+                        ),
+                      )
+                      .run(),
+                );
+            }
           case PurchaseVerifying():
             // probably don't need to do anything here, but could show a
             // different loading indicator if desired

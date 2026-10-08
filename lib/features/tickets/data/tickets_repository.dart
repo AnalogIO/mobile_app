@@ -76,8 +76,7 @@ class TicketsRepository {
   }
 
   /// Initiate a purchase flow for a ticket group by id.
-  TaskEither<PurchaseInitiationFailure, InitiatedMobilePayPayment>
-  initiatePurchase({
+  TaskEither<PurchaseInitiationFailure, InitiatedPayment> initiatePurchase({
     required int ticketGroupId,
   }) {
     return _ticketsApi
