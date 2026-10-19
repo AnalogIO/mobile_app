@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class LeaderboardUserEntry extends Equatable {
-  const LeaderboardUserEntry({
+  const new({
     required this.userId,
     required this.name,
     required this.rank,

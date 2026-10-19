@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UseTicketSelectDrinkScreen extends StatelessWidget {
-  UseTicketSelectDrinkScreen({required OwnedTicketGroup ticket, super.key})
+  new({required OwnedTicketGroup ticket, super.key})
     : ticketId = ticket.productId,
       ticketName = ticket.ticketName,
       eligibleDrinks = ticket.eligibleDrinks;
@@ -44,9 +44,8 @@ class UseTicketSelectDrinkScreen extends StatelessWidget {
                   'Confirm use of ticket. '
                   'Tap outside this card to cancel.',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.white,
-              ),
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: Colors.white),
             ),
           ),
           Padding(

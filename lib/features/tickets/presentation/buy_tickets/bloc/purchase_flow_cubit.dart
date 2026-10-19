@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'purchase_flow_state.dart';
 
 class PurchaseFlowCubit extends Cubit<PurchaseFlowState> {
-  PurchaseFlowCubit({required this._repository})
+  new({required this._repository})
     : super(const PurchaseFlowIdle());
 
   final TicketsRepository _repository;
@@ -13,7 +13,7 @@ class PurchaseFlowCubit extends Cubit<PurchaseFlowState> {
   /// Initiates purchase for the selected [ticketGroup].
   Future<void> initiatePurchase(PurchasableTicketGroup ticketGroup) async {
     emit(const PurchaseInitiating());
-    return _repository
+    return await _repository
         .initiatePurchase(ticketGroupId: ticketGroup.id)
         .match(
           (failure) => emit(CouldNotInitiatePurchase(failure: failure)),
@@ -38,7 +38,7 @@ class PurchaseFlowCubit extends Cubit<PurchaseFlowState> {
     final pendingPurchase = state.initiatedPurchase;
     emit(PurchaseVerifying(initiatedPurchase: pendingPurchase));
 
-    return _repository
+    return await _repository
         .verifyPurchase(orderId: pendingPurchase.orderId)
         .match(
           (failure) => emit(CouldNotVerifyPurchase(failure: failure)),

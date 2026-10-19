@@ -2,7 +2,7 @@ import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:flutter/material.dart';
 
 class CreditsScreen extends StatelessWidget {
-  const CreditsScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

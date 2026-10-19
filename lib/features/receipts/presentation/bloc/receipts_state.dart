@@ -1,22 +1,22 @@
 part of 'receipts_cubit.dart';
 
 sealed class ReceiptsState extends Equatable {
-  const ReceiptsState();
+  const new();
 
   @override
   List<Object?> get props => [];
 }
 
 final class ReceiptsInitial extends ReceiptsState {
-  const ReceiptsInitial();
+  const new();
 }
 
 final class ReceiptsLoading extends ReceiptsState {
-  const ReceiptsLoading();
+  const new();
 }
 
 final class ReceiptsLoaded extends ReceiptsState {
-  const ReceiptsLoaded({
+  const new({
     required this.receipts,
     required this.continuationToken,
   });
@@ -33,14 +33,14 @@ final class ReceiptsLoaded extends ReceiptsState {
 }
 
 final class ReceiptsRefreshing extends ReceiptsLoaded {
-  const ReceiptsRefreshing({
+  const new({
     required super.receipts,
     required super.continuationToken,
   });
 }
 
 final class ReceiptsFailure extends ReceiptsState {
-  const ReceiptsFailure({required this.reason});
+  const new({required this.reason});
 
   final String reason;
 

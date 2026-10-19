@@ -3,7 +3,7 @@ import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:fpdart/fpdart.dart';
 
 class TicketsApi {
-  const TicketsApi({required this._executor});
+  const new({required this._executor});
 
   final NetworkRequestExecutor _executor;
 
@@ -62,8 +62,6 @@ class TicketsApi {
   TaskEither<Failure, SinglePurchaseResponse> verifyPurchase({
     required int orderId,
   }) {
-    return _executor.run(
-      (api) => api.v2.purchasesIdGet(id: orderId),
-    );
+    return _executor.run((api) => api.v2.purchasesIdGet(id: orderId));
   }
 }

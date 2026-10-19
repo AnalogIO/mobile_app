@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 /// The current user's profile as displayed in the settings.
 class UserProfile extends Equatable {
-  const UserProfile({
+  const new({
     required this.id,
     required this.name,
     required this.email,

@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 class ReceiptsScreen extends StatelessWidget {
-  const ReceiptsScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class ReceiptsScreen extends StatelessWidget {
 }
 
 class _ReceiptsContent extends StatefulWidget {
-  const _ReceiptsContent({required this.receipts});
+  const new({required this.receipts});
 
   final List<Receipt> receipts;
 

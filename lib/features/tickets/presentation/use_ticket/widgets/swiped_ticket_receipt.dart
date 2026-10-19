@@ -12,7 +12,7 @@ final String Function(DateTime date) _formatDate = DateFormat(
 
 /// A receipt that is shown when a ticket is swiped.
 class SwipedTicketReceipt extends StatelessWidget {
-  const SwipedTicketReceipt({
+  const new({
     required this.productName,
     required this.drinkName,
     required this.time,
@@ -41,9 +41,7 @@ class SwipedTicketReceipt extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                const Positioned.fill(
-                  child: RotatingBeansBackground(),
-                ),
+                const Positioned.fill(child: RotatingBeansBackground()),
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
@@ -56,9 +54,8 @@ class SwipedTicketReceipt extends StatelessWidget {
                           const Gap(16),
                           Text(
                             drinkName,
-                            style: TextTheme.of(
-                              context,
-                            ).headlineLarge?.copyWith(fontWeight: .bold),
+                            style: TextTheme.of(context).headlineLarge
+                                ?.copyWith(fontWeight: .bold),
                             // style: AppTextStyle.ownedTicket,
                           ),
                           const Gap(12),
@@ -98,7 +95,7 @@ class SwipedTicketReceipt extends StatelessWidget {
 
 /// A human-readable "time ago" text that updates in real time.
 class _TimeAgoText extends StatelessWidget {
-  const _TimeAgoText({required this.localTime});
+  const new({required this.localTime});
 
   final DateTime localTime;
 
@@ -114,9 +111,7 @@ class _TimeAgoText extends StatelessWidget {
         final now = snapshot.data!;
         return Text(
           timeSince(localTime, now: now),
-          style: TextTheme.of(context).bodyLarge?.copyWith(
-            fontWeight: .bold,
-          ),
+          style: TextTheme.of(context).bodyLarge?.copyWith(fontWeight: .bold),
         );
       },
     );

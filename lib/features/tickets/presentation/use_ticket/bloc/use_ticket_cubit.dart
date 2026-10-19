@@ -5,14 +5,14 @@ import 'package:equatable/equatable.dart';
 part 'use_ticket_state.dart';
 
 class UseTicketCubit extends Cubit<UseTicketState> {
-  UseTicketCubit({required this._repository}) : super(UseTicketInitial());
+  new({required this._repository}) : super(UseTicketInitial());
 
   final TicketsRepository _repository;
 
   Future<void> useTicket({required int ticketId, required int drinkId}) async {
     emit(UseTicketLoading());
 
-    return _repository
+    return await _repository
         .spendTicket(ticketId: ticketId, drinkId: drinkId)
         .match(
           (failure) => UseTicketFailure(reason: failure.reason),

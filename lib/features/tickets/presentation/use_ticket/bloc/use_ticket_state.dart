@@ -1,18 +1,18 @@
 part of 'use_ticket_cubit.dart';
 
 sealed class UseTicketState extends Equatable {
-  const UseTicketState();
+  const new();
 
   @override
   List<Object> get props => [];
 }
 
-final class UseTicketInitial extends UseTicketState {}
+final class UseTicketInitial extends UseTicketState;
 
-final class UseTicketLoading extends UseTicketState {}
+final class UseTicketLoading extends UseTicketState;
 
 final class UseTicketSuccess extends UseTicketState {
-  const UseTicketSuccess({
+  const new({
     required this.drinkName,
     required this.ticketName,
     required this.usedAt,
@@ -27,7 +27,7 @@ final class UseTicketSuccess extends UseTicketState {
 }
 
 final class UseTicketFailure extends UseTicketState {
-  const UseTicketFailure({required this.reason});
+  const new({required this.reason});
 
   final String reason;
 

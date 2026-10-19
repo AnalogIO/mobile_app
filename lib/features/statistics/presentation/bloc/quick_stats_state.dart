@@ -1,25 +1,25 @@
 part of 'quick_stats_cubit.dart';
 
 sealed class QuickStatsState extends Equatable {
-  const QuickStatsState();
+  const new();
 }
 
 final class QuickStatsInitial extends QuickStatsState {
-  const QuickStatsInitial();
+  const new();
 
   @override
   List<Object?> get props => [];
 }
 
 final class QuickStatsLoading extends QuickStatsState {
-  const QuickStatsLoading();
+  const new();
 
   @override
   List<Object?> get props => [];
 }
 
 final class QuickStatsLoaded extends QuickStatsState {
-  const QuickStatsLoaded(this.quickStats);
+  const new(this.quickStats);
 
   final QuickStats quickStats;
 
@@ -28,11 +28,11 @@ final class QuickStatsLoaded extends QuickStatsState {
 }
 
 final class QuickStatsRefreshing extends QuickStatsLoaded {
-  const QuickStatsRefreshing(super.quickStats);
+  const new(super.quickStats);
 }
 
 final class QuickStatsFailure extends QuickStatsState {
-  const QuickStatsFailure(this.reason);
+  const new(this.reason);
 
   final String reason;
 

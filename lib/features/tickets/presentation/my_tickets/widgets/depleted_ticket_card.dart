@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 /// Displays a message prompting the user to buy more tickets or dismiss.
 /// Uses [TicketCardBase] with muted colors for a less prominent appearance.
 class DepletedTicketCard extends StatelessWidget {
-  const DepletedTicketCard({required this.depletedGroup, super.key});
+  const new({required this.depletedGroup, super.key});
 
   final OwnedTicketGroup depletedGroup;
 
@@ -53,9 +53,7 @@ class DepletedTicketCard extends StatelessWidget {
                 style: TextStyle(color: colorScheme.onSurfaceVariant),
               ),
             ),
-            _BuyMoreButton(
-              depletedTicketGroup: depletedGroup,
-            ),
+            _BuyMoreButton(depletedTicketGroup: depletedGroup),
           ],
         ),
       ],
@@ -64,7 +62,7 @@ class DepletedTicketCard extends StatelessWidget {
 }
 
 class _BuyMoreButton extends StatelessWidget {
-  const _BuyMoreButton({required this.depletedTicketGroup});
+  const new({required this.depletedTicketGroup});
 
   final OwnedTicketGroup depletedTicketGroup;
 

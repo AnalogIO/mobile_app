@@ -5,9 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class _MockAuthRepository extends Mock implements AuthTokenRepository {}
+class _MockAuthRepository extends Mock implements AuthTokenRepository;
 
-class _MockLoginRepository extends Mock implements LoginRepository {}
+class _MockLoginRepository extends Mock implements LoginRepository;
 
 void main() {
   late _MockAuthRepository authTokenRepository;
@@ -52,9 +52,8 @@ void main() {
     blocTest<AuthCubit, AuthState>(
       'emits [Loading, Unauthenticated] when started and not logged in',
       build: () {
-        when(
-          () => authTokenRepository.getTokens(),
-        ).thenReturn(TaskEither.right(none()));
+        when(() => authTokenRepository.getTokens())
+            .thenReturn(TaskEither.right(none()));
         return AuthCubit(
           authTokenRepository: authTokenRepository,
           loginRepository: loginRepository,
@@ -64,23 +63,19 @@ void main() {
         );
       },
       act: (cubit) => cubit.start(),
-      expect: () => [
-        isA<AuthLoading>(),
-        isA<AuthUnauthenticated>(),
-      ],
+      expect: () => [isA<AuthLoading>(), isA<AuthUnauthenticated>()],
     );
 
     blocTest<AuthCubit, AuthState>(
       'emits [Loading, Authenticated] '
       'when authenticateWithMagicLinkToken succeeds',
       setUp: () {
-        when(
-          () => loginRepository.authenticateWithMagicLinkToken('TOKEN'),
-        ).thenReturn(
-          TaskEither.right(
-            const AuthTokens(jwt: 'PROVIDED-JWT', refreshToken: 'REF'),
-          ),
-        );
+        when(() => loginRepository.authenticateWithMagicLinkToken('TOKEN'))
+            .thenReturn(
+              TaskEither.right(
+                const AuthTokens(jwt: 'PROVIDED-JWT', refreshToken: 'REF'),
+              ),
+            );
         when(
           () => authTokenRepository.saveTokens(
             const AuthTokens(jwt: 'PROVIDED-JWT', refreshToken: 'REF'),
@@ -100,9 +95,8 @@ void main() {
       ),
       act: (cubit) => cubit.authenticateWithToken(magicLinkToken: 'TOKEN'),
       verify: (_) {
-        verify(
-          () => loginRepository.authenticateWithMagicLinkToken('TOKEN'),
-        ).called(1);
+        verify(() => loginRepository.authenticateWithMagicLinkToken('TOKEN'))
+            .called(1);
         verify(
           () => authTokenRepository.saveTokens(
             const AuthTokens(jwt: 'PROVIDED-JWT', refreshToken: 'REF'),
@@ -124,9 +118,8 @@ void main() {
       'emits [Loading, Unauthenticated] when logged out '
       'and clears tokens',
       build: () {
-        when(
-          () => authTokenRepository.clearTokens(),
-        ).thenReturn(TaskEither.right(unit));
+        when(() => authTokenRepository.clearTokens())
+            .thenReturn(TaskEither.right(unit));
         return AuthCubit(
           authTokenRepository: authTokenRepository,
           loginRepository: loginRepository,
@@ -140,28 +133,22 @@ void main() {
         verify(() => authTokenRepository.clearTokens()).called(1);
         expect(clearUserContextCalls, 1);
       },
-      expect: () => [
-        isA<AuthLoading>(),
-        isA<AuthUnauthenticated>(),
-      ],
+      expect: () => [isA<AuthLoading>(), isA<AuthUnauthenticated>()],
     );
 
     group('refreshSession', () {
       test('emits nothing and returns true when refresh succeeds', () async {
-        when(
-          () => authTokenRepository.getTokens(),
-        ).thenReturn(
+        when(() => authTokenRepository.getTokens()).thenReturn(
           TaskEither.right(
             some(const AuthTokens(jwt: 'OLD-JWT', refreshToken: 'REF')),
           ),
         );
-        when(
-          () => loginRepository.authenticateWithMagicLinkToken('REF'),
-        ).thenReturn(
-          TaskEither.right(
-            const AuthTokens(jwt: 'NEW-JWT', refreshToken: 'NEW-REF'),
-          ),
-        );
+        when(() => loginRepository.authenticateWithMagicLinkToken('REF'))
+            .thenReturn(
+              TaskEither.right(
+                const AuthTokens(jwt: 'NEW-JWT', refreshToken: 'NEW-REF'),
+              ),
+            );
         when(
           () => authTokenRepository.saveTokens(
             const AuthTokens(jwt: 'NEW-JWT', refreshToken: 'NEW-REF'),
@@ -196,9 +183,8 @@ void main() {
       });
 
       test('returns false when no tokens are stored', () async {
-        when(
-          () => authTokenRepository.getTokens(),
-        ).thenReturn(TaskEither.right(none()));
+        when(() => authTokenRepository.getTokens())
+            .thenReturn(TaskEither.right(none()));
 
         final cubit = AuthCubit(
           authTokenRepository: authTokenRepository,
@@ -220,16 +206,13 @@ void main() {
       });
 
       test('returns false when the token exchange fails', () async {
-        when(
-          () => authTokenRepository.getTokens(),
-        ).thenReturn(
+        when(() => authTokenRepository.getTokens()).thenReturn(
           TaskEither.right(
             some(const AuthTokens(jwt: 'OLD-JWT', refreshToken: 'REF')),
           ),
         );
-        when(
-          () => loginRepository.authenticateWithMagicLinkToken('REF'),
-        ).thenReturn(TaskEither.left(const UnexpectedFailure('boom')));
+        when(() => loginRepository.authenticateWithMagicLinkToken('REF'))
+            .thenReturn(TaskEither.left(const UnexpectedFailure('boom')));
 
         final cubit = AuthCubit(
           authTokenRepository: authTokenRepository,

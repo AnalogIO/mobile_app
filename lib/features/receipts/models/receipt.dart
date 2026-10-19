@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 /// Base class for all receipt types.
 sealed class Receipt extends Equatable {
-  const Receipt({required this.ticketName});
+  const new({required this.ticketName});
 
   final String ticketName;
 
@@ -12,7 +12,7 @@ sealed class Receipt extends Equatable {
 
 /// Receipt for a purchase of tickets.
 final class PurchaseReceipt extends Receipt {
-  const PurchaseReceipt({
+  const new({
     required super.ticketName,
     required this.numberOfTickets,
     required this.status,
@@ -49,7 +49,7 @@ final class PurchaseReceipt extends Receipt {
 
 /// Receipt for a voucher redemption.
 final class VoucherReceipt extends Receipt {
-  const VoucherReceipt({
+  const new({
     required super.ticketName,
     required this.redeemDate,
     required this.numberOfTickets,
@@ -67,7 +67,7 @@ final class VoucherReceipt extends Receipt {
 
 /// Receipt for a ticket that has been used/swiped.
 final class UsedTicketReceipt extends Receipt {
-  const UsedTicketReceipt({
+  const new({
     required super.ticketName,
     required this.drinkName,
     required this.swipeDate,

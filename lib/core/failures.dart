@@ -4,7 +4,7 @@ import 'package:chopper/chopper.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class Failure extends Equatable {
-  const Failure(this.reason);
+  const new(this.reason);
 
   final String reason;
 
@@ -13,21 +13,21 @@ abstract class Failure extends Equatable {
 }
 
 class UnexpectedFailure extends Failure {
-  const UnexpectedFailure(super.reason);
+  const new(super.reason);
 }
 
 class LocalStorageFailure extends Failure {
-  const LocalStorageFailure(super.reason);
+  const new(super.reason);
 }
 
 sealed class NetworkFailure extends Failure {
-  const NetworkFailure(super.reason);
+  const new(super.reason);
 }
 
 class ServerFailure<BodyType> extends NetworkFailure {
-  const ServerFailure(super.reason, this.statusCode);
+  const new(super.reason, this.statusCode);
 
-  factory ServerFailure.fromResponse(Response<BodyType> response) {
+  factory fromResponse(Response<BodyType> response) {
     try {
       final jsonString =
           json.decode(response.bodyString) as Map<String, dynamic>;
@@ -49,5 +49,5 @@ class ServerFailure<BodyType> extends NetworkFailure {
 }
 
 class ConnectionFailure extends NetworkFailure {
-  const ConnectionFailure() : super('Could not reach the server');
+  const new() : super('Could not reach the server');
 }

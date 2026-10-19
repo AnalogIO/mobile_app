@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class UserIcon extends StatelessWidget {
-  const UserIcon.large({
+  const new large({
     required this.id,
     this.icon,
     this.background,
     super.key,
   }) : size = 100;
 
-  const UserIcon.small({
+  const new small({
     required this.id,
     this.icon,
     this.background,
@@ -53,10 +53,7 @@ class UserIcon extends StatelessWidget {
         Container(
           width: size,
           height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
-          ),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: color),
         ),
         CoffeeImage.fromId(image: image, size: size),
       ],
@@ -65,7 +62,7 @@ class UserIcon extends StatelessWidget {
 }
 
 class CoffeeImage extends StatelessWidget {
-  const CoffeeImage.fromId({
+  const new fromId({
     required this.image,
     required this.size,
     super.key,

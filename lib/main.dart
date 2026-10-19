@@ -23,7 +23,7 @@ Future<void> main() async {
 }
 
 class AppBlocObserver extends BlocObserver {
-  const AppBlocObserver();
+  const new();
 
   @override
   void onChange(BlocBase<dynamic> bloc, Change<dynamic> change) {

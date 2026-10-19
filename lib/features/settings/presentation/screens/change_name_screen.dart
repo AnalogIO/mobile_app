@@ -13,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ChangeNameScreen extends StatelessWidget {
-  const ChangeNameScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,20 +53,15 @@ class ChangeNameScreen extends StatelessWidget {
                 if (!context.mounted) return;
                 dismissLoadingOverlay(context);
 
-                result.match(
-                  (failure) => setError(failure.reason),
-                  (_) {
-                    // The name is shown on the leaderboard, so refresh it.
-                    unawaited(
-                      context.read<LeaderboardCubit>().loadLeaderboard(),
-                    );
-                    showSuccessSnackBar(
-                      context: context,
-                      message: 'Name updated',
-                    );
-                    context.pop();
-                  },
-                );
+                result.match((failure) => setError(failure.reason), (_) {
+                  // The name is shown on the leaderboard, so refresh it.
+                  unawaited(context.read<LeaderboardCubit>().loadLeaderboard());
+                  showSuccessSnackBar(
+                    context: context,
+                    message: 'Name updated',
+                  );
+                  context.pop();
+                });
               },
             ),
           };

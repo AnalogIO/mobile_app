@@ -7,10 +7,7 @@ import 'package:equatable/equatable.dart';
 /// `UserIcon.iconCount` icons and [backgroundColorId] selects one of
 /// `UserIcon.colors`.
 class ProfilePicture extends Equatable {
-  const ProfilePicture({
-    required this.iconId,
-    required this.backgroundColorId,
-  });
+  const new({required this.iconId, required this.backgroundColorId});
 
   final int iconId;
   final int backgroundColorId;

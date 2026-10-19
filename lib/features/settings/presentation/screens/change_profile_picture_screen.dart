@@ -12,7 +12,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 class ChangeProfilePictureScreen extends StatelessWidget {
-  const ChangeProfilePictureScreen({super.key});
+  const new({super.key});
 
   int _userIdOf(BuildContext context) {
     return switch (context.read<ProfileCubit>().state) {
@@ -56,10 +56,7 @@ class ChangeProfilePictureScreen extends StatelessWidget {
 }
 
 class _ProfilePicturePicker extends StatefulWidget {
-  const _ProfilePicturePicker({
-    required this.userId,
-    required this.current,
-  });
+  const new({required this.userId, required this.current});
 
   final int userId;
 
@@ -99,10 +96,7 @@ class _ProfilePicturePickerState extends State<_ProfilePicturePicker> {
 
   Future<void> _onSave() async {
     final result = await context.read<ProfilePictureCubit>().setProfilePicture(
-      ProfilePicture(
-        iconId: _iconId,
-        backgroundColorId: _backgroundColorId,
-      ),
+      ProfilePicture(iconId: _iconId, backgroundColorId: _backgroundColorId),
     );
     if (!context.mounted) return;
 
@@ -193,7 +187,7 @@ class _ProfilePicturePickerState extends State<_ProfilePicturePicker> {
 }
 
 class _IconChoice extends StatelessWidget {
-  const _IconChoice({
+  const new({
     required this.iconId,
     required this.selected,
     required this.onTap,
@@ -228,7 +222,7 @@ class _IconChoice extends StatelessWidget {
 }
 
 class _ColorChoice extends StatelessWidget {
-  const _ColorChoice({
+  const new({
     required this.colorId,
     required this.selected,
     required this.onTap,

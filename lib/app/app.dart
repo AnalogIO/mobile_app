@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class App extends StatefulWidget {
-  const App({required this.localStorage, super.key});
+  const new({required this.localStorage, super.key});
 
   final SharedPreferencesWithCache localStorage;
 

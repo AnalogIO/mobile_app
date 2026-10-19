@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ListGroupTitle extends StatelessWidget {
-  const ListGroupTitle({
-    required this.title,
-    super.key,
-  });
+  const new({required this.title, super.key});
 
   final String title;
 

@@ -6,11 +6,11 @@ import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 
-class _MockAuthTokenRepository extends Mock implements AuthTokenRepository {}
+class _MockAuthTokenRepository extends Mock implements AuthTokenRepository;
 
-class _MockCoffeecardApiV2 extends Mock implements CoffeecardApiV2 {}
+class _MockCoffeecardApiV2 extends Mock implements CoffeecardApiV2;
 
-class _MockAuthCubitHandle extends Mock implements AuthCubitHandle {}
+class _MockAuthCubitHandle extends Mock implements AuthCubitHandle;
 
 /// Builds a minimal Chopper [Request] for the given path.
 Request _buildRequest(String path, {Map<String, String> headers = const {}}) {
@@ -104,9 +104,8 @@ void main() {
 
     group('on 401 with successful token refresh', () {
       setUp(() {
-        when(
-          () => authTokenRepository.getTokens(),
-        ).thenReturn(TaskEither.right(some(existingTokens)));
+        when(() => authTokenRepository.getTokens())
+            .thenReturn(TaskEither.right(some(existingTokens)));
 
         when(
           () => tokenRefreshApi.accountAuthPost(
@@ -119,9 +118,8 @@ void main() {
           ),
         );
 
-        when(
-          () => authTokenRepository.saveTokens(newTokens),
-        ).thenReturn(TaskEither.right(newTokens));
+        when(() => authTokenRepository.saveTokens(newTokens))
+            .thenReturn(TaskEither.right(newTokens));
       });
 
       test('retries the request with the new JWT', () async {
@@ -165,9 +163,8 @@ void main() {
 
     group('on 401 with no stored tokens', () {
       setUp(() {
-        when(
-          () => authTokenRepository.getTokens(),
-        ).thenReturn(TaskEither.right(none()));
+        when(() => authTokenRepository.getTokens())
+            .thenReturn(TaskEither.right(none()));
 
         when(() => authCubitHandle.logOut()).thenAnswer((_) async {});
       });
@@ -199,13 +196,11 @@ void main() {
 
     group('on 401 with failed refresh response from server', () {
       setUp(() {
-        when(
-          () => authTokenRepository.getTokens(),
-        ).thenReturn(TaskEither.right(some(existingTokens)));
+        when(() => authTokenRepository.getTokens())
+            .thenReturn(TaskEither.right(some(existingTokens)));
 
-        when(
-          () => tokenRefreshApi.accountAuthPost(body: any(named: 'body')),
-        ).thenAnswer((_) async => _buildRefreshFailureResponse(401));
+        when(() => tokenRefreshApi.accountAuthPost(body: any(named: 'body')))
+            .thenAnswer((_) async => _buildRefreshFailureResponse(401));
 
         when(() => authCubitHandle.logOut()).thenAnswer((_) async {});
       });
@@ -229,13 +224,11 @@ void main() {
 
     group('on 401 with exception during token refresh', () {
       setUp(() {
-        when(
-          () => authTokenRepository.getTokens(),
-        ).thenReturn(TaskEither.right(some(existingTokens)));
+        when(() => authTokenRepository.getTokens())
+            .thenReturn(TaskEither.right(some(existingTokens)));
 
-        when(
-          () => tokenRefreshApi.accountAuthPost(body: any(named: 'body')),
-        ).thenThrow(Exception('Network error'));
+        when(() => tokenRefreshApi.accountAuthPost(body: any(named: 'body')))
+            .thenThrow(Exception('Network error'));
 
         when(() => authCubitHandle.logOut()).thenAnswer((_) async {});
       });
@@ -259,25 +252,22 @@ void main() {
 
     group('concurrent 401 responses', () {
       test('only calls the refresh API once', () async {
-        when(
-          () => authTokenRepository.getTokens(),
-        ).thenReturn(TaskEither.right(some(existingTokens)));
+        when(() => authTokenRepository.getTokens())
+            .thenReturn(TaskEither.right(some(existingTokens)));
 
-        when(
-          () => tokenRefreshApi.accountAuthPost(body: any(named: 'body')),
-        ).thenAnswer((_) async {
-          // Simulate network latency so second call arrives while first is
-          // in-flight.
-          await Future<void>.delayed(const Duration(milliseconds: 10));
-          return _buildRefreshSuccessResponse(
-            jwt: newTokens.jwt,
-            refreshToken: newTokens.refreshToken,
-          );
-        });
+        when(() => tokenRefreshApi.accountAuthPost(body: any(named: 'body')))
+            .thenAnswer((_) async {
+              // Simulate network latency so second call arrives while first is
+              // in-flight.
+              await Future<void>.delayed(const Duration(milliseconds: 10));
+              return _buildRefreshSuccessResponse(
+                jwt: newTokens.jwt,
+                refreshToken: newTokens.refreshToken,
+              );
+            });
 
-        when(
-          () => authTokenRepository.saveTokens(newTokens),
-        ).thenReturn(TaskEither.right(newTokens));
+        when(() => authTokenRepository.saveTokens(newTokens))
+            .thenReturn(TaskEither.right(newTokens));
 
         final request = _buildRequest('/api/v2/tickets');
         final response = _buildResponse(401);
@@ -293,9 +283,8 @@ void main() {
         expect(results[1]!.headers['Authorization'], 'Bearer ${newTokens.jwt}');
 
         // Refresh endpoint called exactly once despite two concurrent 401s.
-        verify(
-          () => tokenRefreshApi.accountAuthPost(body: any(named: 'body')),
-        ).called(1);
+        verify(() => tokenRefreshApi.accountAuthPost(body: any(named: 'body')))
+            .called(1);
       });
     });
   });

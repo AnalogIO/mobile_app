@@ -13,7 +13,7 @@ import 'package:gap/gap.dart';
 ///
 /// See `CONTRIBUTING.md` for the conventions on failure states.
 class FailureMessage extends StatelessWidget {
-  const FailureMessage({required this.message, this.onRetry, super.key});
+  const new({required this.message, this.onRetry, super.key});
 
   final String message;
 

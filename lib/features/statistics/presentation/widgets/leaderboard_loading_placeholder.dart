@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// A placeholder widget that mimics the structure of the
 /// leaderboard while data is loading.
 class LeaderboardLoadingPlaceholder extends StatelessWidget {
-  const LeaderboardLoadingPlaceholder({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

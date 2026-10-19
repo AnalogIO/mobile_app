@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 class CircularNextButton extends StatelessWidget {
-  const CircularNextButton({this.onPressed, super.key});
+  const new({this.onPressed, super.key});
 
   final VoidCallback? onPressed;
 

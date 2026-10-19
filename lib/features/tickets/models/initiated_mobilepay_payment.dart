@@ -1,5 +1,5 @@
 class InitiatedMobilePayPayment {
-  const InitiatedMobilePayPayment({
+  const new({
     required this.orderId,
     required this.mobilePayRedirectUri,
   });

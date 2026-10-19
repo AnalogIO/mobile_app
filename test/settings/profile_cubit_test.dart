@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class _MockSettingsRepository extends Mock implements SettingsRepository {}
+class _MockSettingsRepository extends Mock implements SettingsRepository;
 
 UserProfile _profile({
   int id = 1,
@@ -38,28 +38,23 @@ void main() {
     blocTest<ProfileCubit, ProfileState>(
       'loadProfile: emits loading then loaded',
       build: () {
-        when(() => repository.getProfile()).thenAnswer(
-          (_) => TaskEither.right(_profile()),
-        );
+        when(() => repository.getProfile())
+            .thenAnswer((_) => TaskEither.right(_profile()));
         return ProfileCubit(repository: repository);
       },
       act: (cubit) => cubit.loadProfile(),
       expect: () => [
         isA<ProfileLoading>(),
-        isA<ProfileLoaded>().having(
-          (s) => s.profile.name,
-          'name',
-          'Monir',
-        ),
+        isA<ProfileLoaded>().having((s) => s.profile.name, 'name', 'Monir'),
       ],
     );
 
     blocTest<ProfileCubit, ProfileState>(
       'loadProfile: emits failure on error',
       build: () {
-        when(() => repository.getProfile()).thenAnswer(
-          (_) => TaskEither.left(const UnexpectedFailure('boom')),
-        );
+        when(
+          () => repository.getProfile(),
+        ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
         return ProfileCubit(repository: repository);
       },
       act: (cubit) => cubit.loadProfile(),
@@ -72,18 +67,13 @@ void main() {
     blocTest<ProfileCubit, ProfileState>(
       'updateName: emits loaded with the new name',
       build: () {
-        when(
-          () => repository.updateName(any()),
-        ).thenAnswer((_) => TaskEither.right(_profile(name: 'New Name')));
+        when(() => repository.updateName(any()))
+            .thenAnswer((_) => TaskEither.right(_profile(name: 'New Name')));
         return ProfileCubit(repository: repository);
       },
       act: (cubit) => cubit.updateName('New Name'),
       expect: () => [
-        isA<ProfileLoaded>().having(
-          (s) => s.profile.name,
-          'name',
-          'New Name',
-        ),
+        isA<ProfileLoaded>().having((s) => s.profile.name, 'name', 'New Name'),
       ],
     );
 
@@ -92,9 +82,7 @@ void main() {
       build: () {
         when(
           () => repository.updateAppearAnonymous(appearAnonymous: true),
-        ).thenAnswer(
-          (_) => TaskEither.right(_profile(appearAnonymous: true)),
-        );
+        ).thenAnswer((_) => TaskEither.right(_profile(appearAnonymous: true)));
         return ProfileCubit(repository: repository);
       },
       act: (cubit) => cubit.updateAppearAnonymous(appearAnonymous: true),
@@ -138,11 +126,7 @@ void main() {
       act: (cubit) => cubit.updateOccupation(2),
       expect: () => [
         isA<ProfileLoaded>()
-            .having(
-              (s) => s.profile.programmeId,
-              'programmeId',
-              2,
-            )
+            .having((s) => s.profile.programmeId, 'programmeId', 2)
             .having(
               (s) => s.profile.occupation,
               'occupation',
@@ -155,12 +139,11 @@ void main() {
       test(
         'updateName: keeps the loaded state and returns the failure',
         () async {
-          when(() => repository.getProfile()).thenAnswer(
-            (_) => TaskEither.right(_profile()),
-          );
-          when(() => repository.updateName(any())).thenAnswer(
-            (_) => TaskEither.left(const UnexpectedFailure('boom')),
-          );
+          when(() => repository.getProfile())
+              .thenAnswer((_) => TaskEither.right(_profile()));
+          when(
+            () => repository.updateName(any()),
+          ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
 
           final cubit = ProfileCubit(repository: repository);
           addTearDown(cubit.close);
@@ -180,12 +163,11 @@ void main() {
       test(
         'updateEmail: keeps the loaded state and returns the failure',
         () async {
-          when(() => repository.getProfile()).thenAnswer(
-            (_) => TaskEither.right(_profile()),
-          );
-          when(() => repository.updateEmail(any())).thenAnswer(
-            (_) => TaskEither.left(const UnexpectedFailure('boom')),
-          );
+          when(() => repository.getProfile())
+              .thenAnswer((_) => TaskEither.right(_profile()));
+          when(
+            () => repository.updateEmail(any()),
+          ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
 
           final cubit = ProfileCubit(repository: repository);
           addTearDown(cubit.close);
@@ -205,9 +187,8 @@ void main() {
       test(
         'updateAppearAnonymous: keeps the loaded state and returns the failure',
         () async {
-          when(() => repository.getProfile()).thenAnswer(
-            (_) => TaskEither.right(_profile()),
-          );
+          when(() => repository.getProfile())
+              .thenAnswer((_) => TaskEither.right(_profile()));
           when(
             () => repository.updateAppearAnonymous(appearAnonymous: true),
           ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
@@ -232,12 +213,11 @@ void main() {
       test(
         'updateOccupation: keeps the loaded state and returns the failure',
         () async {
-          when(() => repository.getProfile()).thenAnswer(
-            (_) => TaskEither.right(_profile()),
-          );
-          when(() => repository.updateProgramme(2)).thenAnswer(
-            (_) => TaskEither.left(const UnexpectedFailure('boom')),
-          );
+          when(() => repository.getProfile())
+              .thenAnswer((_) => TaskEither.right(_profile()));
+          when(
+            () => repository.updateProgramme(2),
+          ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
 
           final cubit = ProfileCubit(repository: repository);
           addTearDown(cubit.close);
@@ -256,9 +236,8 @@ void main() {
 
       group('requestAccountDeletion', () {
         test('returns right and emits nothing on success', () async {
-          when(() => repository.requestAccountDeletion()).thenAnswer(
-            (_) => TaskEither.right(unit),
-          );
+          when(() => repository.requestAccountDeletion())
+              .thenAnswer((_) => TaskEither.right(unit));
 
           final cubit = ProfileCubit(repository: repository);
           final states = <ProfileState>[];
@@ -273,9 +252,9 @@ void main() {
         });
 
         test('returns the failure and emits nothing on error', () async {
-          when(() => repository.requestAccountDeletion()).thenAnswer(
-            (_) => TaskEither.left(const UnexpectedFailure('boom')),
-          );
+          when(
+            () => repository.requestAccountDeletion(),
+          ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
 
           final cubit = ProfileCubit(repository: repository);
           final states = <ProfileState>[];

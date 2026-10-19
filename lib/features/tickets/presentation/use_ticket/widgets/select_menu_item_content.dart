@@ -2,7 +2,7 @@ part of 'use_ticket_card.dart';
 
 /// Content shown when the user is selecting a drink.
 class _SelectDrinkContent extends StatelessWidget {
-  const _SelectDrinkContent({
+  const new({
     required this.drinks,
     required this.selectedDrink,
     required this.onDrinkSelected,

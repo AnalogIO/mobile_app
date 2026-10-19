@@ -1,7 +1,7 @@
 part of 'leaderboard_cubit.dart';
 
 sealed class LeaderboardState extends Equatable {
-  const LeaderboardState({required this.filter});
+  const new({required this.filter});
   final LeaderboardFilter filter;
 
   @override
@@ -9,15 +9,15 @@ sealed class LeaderboardState extends Equatable {
 }
 
 final class LeaderboardInitial extends LeaderboardState {
-  const LeaderboardInitial({required super.filter});
+  const new({required super.filter});
 }
 
 final class LeaderboardLoading extends LeaderboardState {
-  const LeaderboardLoading({required super.filter});
+  const new({required super.filter});
 }
 
 final class LeaderboardLoaded extends LeaderboardState {
-  const LeaderboardLoaded(this.leaderboard, {required super.filter});
+  const new(this.leaderboard, {required super.filter});
   final List<LeaderboardUserEntry> leaderboard;
 
   @override
@@ -25,11 +25,11 @@ final class LeaderboardLoaded extends LeaderboardState {
 }
 
 final class LeaderboardRefreshing extends LeaderboardLoaded {
-  const LeaderboardRefreshing(super.leaderboard, {required super.filter});
+  const new(super.leaderboard, {required super.filter});
 }
 
 final class LeaderboardFailure extends LeaderboardState {
-  const LeaderboardFailure(this.reason, {required super.filter});
+  const new(this.reason, {required super.filter});
   final String reason;
 
   @override

@@ -1,24 +1,24 @@
 part of 'profile_picture_cubit.dart';
 
 sealed class ProfilePictureState extends Equatable {
-  const ProfilePictureState();
+  const new();
 
   @override
   List<Object?> get props => [];
 }
 
 final class ProfilePictureInitial extends ProfilePictureState {
-  const ProfilePictureInitial();
+  const new();
 }
 
 final class ProfilePictureLoading extends ProfilePictureState {
-  const ProfilePictureLoading();
+  const new();
 }
 
 /// [picture] is `none()` when the user has not chosen a profile picture yet;
 /// `UserIcon` then falls back to deriving one from the user id.
 final class ProfilePictureLoaded extends ProfilePictureState {
-  const ProfilePictureLoaded(this.picture);
+  const new(this.picture);
 
   final Option<ProfilePicture> picture;
 
@@ -27,11 +27,11 @@ final class ProfilePictureLoaded extends ProfilePictureState {
 }
 
 final class ProfilePictureRefreshing extends ProfilePictureLoaded {
-  const ProfilePictureRefreshing(super.picture);
+  const new(super.picture);
 }
 
 final class ProfilePictureFailure extends ProfilePictureState {
-  const ProfilePictureFailure({required this.reason});
+  const new({required this.reason});
 
   final String reason;
 

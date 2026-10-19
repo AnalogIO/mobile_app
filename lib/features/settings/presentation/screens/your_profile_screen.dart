@@ -12,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class YourProfileScreen extends StatelessWidget {
-  const YourProfileScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +34,9 @@ class YourProfileScreen extends StatelessWidget {
                 onRetry: () => context.read<ProfileCubit>().loadProfile(),
               ),
               ProfileLoaded(:final profile) ||
-              ProfileRefreshing(:final profile) => _ProfileContent(
-                profile: profile,
-              ),
+              ProfileRefreshing(
+                :final profile,
+              ) => _ProfileContent(profile: profile),
             };
           },
         ),
@@ -46,7 +46,7 @@ class YourProfileScreen extends StatelessWidget {
 }
 
 class _ProfileContent extends StatelessWidget {
-  const _ProfileContent({required this.profile});
+  const new({required this.profile});
 
   final UserProfile profile;
 

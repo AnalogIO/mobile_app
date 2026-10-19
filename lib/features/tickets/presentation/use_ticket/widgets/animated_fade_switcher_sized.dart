@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 /// - false = [firstChild] fully visible
 /// - true = [secondChild] fully visible
 class AnimatedFadeSwitcherSized extends StatefulWidget {
-  const AnimatedFadeSwitcherSized({
+  const new({
     required this.showSecond,
     required this.firstChild,
     required this.secondChild,
@@ -93,7 +93,7 @@ class _AnimatedFadeSwitcherSizedState extends State<AnimatedFadeSwitcherSized>
 }
 
 class _AnimatedFadeChild extends StatelessWidget {
-  const _AnimatedFadeChild({
+  const new({
     required this.animation,
     required this.interval,
     required this.child,
@@ -118,10 +118,7 @@ class _AnimatedFadeChild extends StatelessWidget {
 
         return IgnorePointer(
           ignoring: effectiveOpacity < 0.5,
-          child: Opacity(
-            opacity: effectiveOpacity,
-            child: child,
-          ),
+          child: Opacity(opacity: effectiveOpacity, child: child),
         );
       },
       child: child,

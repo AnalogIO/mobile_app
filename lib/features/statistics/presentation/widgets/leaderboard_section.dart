@@ -7,7 +7,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:gap/gap.dart';
 
 class LeaderboardSection extends StatelessWidget {
-  const LeaderboardSection({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

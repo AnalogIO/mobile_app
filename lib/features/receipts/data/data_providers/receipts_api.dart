@@ -6,7 +6,7 @@ import 'package:fpdart/fpdart.dart';
 typedef Json = Map<String, dynamic>;
 
 class ReceiptsApi {
-  const ReceiptsApi({required this._executor});
+  const new({required this._executor});
 
   final NetworkRequestExecutor _executor;
 
@@ -35,12 +35,7 @@ class ReceiptsApi {
         'ContinuationToken': continuationToken,
       };
 
-      final request = Request(
-        'GET',
-        url,
-        client.baseUrl,
-        parameters: params,
-      );
+      final request = Request('GET', url, client.baseUrl, parameters: params);
 
       return client.send<Json, Json>(request);
     });

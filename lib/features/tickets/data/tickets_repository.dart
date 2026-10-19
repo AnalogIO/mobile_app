@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:fpdart/fpdart.dart';
 
 class TicketsRepository {
-  const TicketsRepository({
+  const new({
     required this._ticketsApi,
     required this._ownedTicketsLocalStore,
     required this._drinksLocalStore,
@@ -77,9 +77,7 @@ class TicketsRepository {
 
   /// Initiate a purchase flow for a ticket group by id.
   TaskEither<PurchaseInitiationFailure, InitiatedMobilePayPayment>
-  initiatePurchase({
-    required int ticketGroupId,
-  }) {
+  initiatePurchase({required int ticketGroupId}) {
     return _ticketsApi
         .initiateMobilePayPurchase(ticketGroupId: ticketGroupId)
         // map Left type from Failure to PurchaseInitiationFailure
@@ -124,51 +122,49 @@ class TicketsRepository {
         .mapLeft<PurchaseVerificationFailure>(
           (failure) => PurchaseUnexpectedFailure(failure.reason),
         )
-        .flatMap(
-          (response) {
-            return TaskEither(() async {
-              if (response.purchaseStatus == PurchaseStatus.cancelled) {
-                return const Left(PurchaseCancelledByUser());
-              }
-              if (response.purchaseStatus == PurchaseStatus.pendingpayment) {
-                return const Left(PurchasePending());
-              }
-              if (response.purchaseStatus != PurchaseStatus.completed) {
-                return const Left(PurchaseUnexpectedFailure());
-              }
+        .flatMap((response) {
+          return TaskEither(() async {
+            if (response.purchaseStatus == PurchaseStatus.cancelled) {
+              return const Left(PurchaseCancelledByUser());
+            }
+            if (response.purchaseStatus == PurchaseStatus.pendingpayment) {
+              return const Left(PurchasePending());
+            }
+            if (response.purchaseStatus != PurchaseStatus.completed) {
+              return const Left(PurchaseUnexpectedFailure());
+            }
 
-              // the response doesn't include info about the purchased ticket
-              // group other than its id, so we need to get the ticket group
-              // details from the list of purchasable tickets.
-              final successfulPurchase = await _purchasableTicketsLocalStore
-                  .get()
-                  .map(
-                    (groups) => groups.firstWhereOrNull(
-                      (group) => group.id == response.productId,
-                    ),
-                  )
-                  .getOrElse((_) => null)
-                  .map((purchasedTicketGroup) {
-                    if (purchasedTicketGroup != null) {
-                      return SuccessfulPurchase(
-                        ticketName: purchasedTicketGroup.title,
-                        amountOfTickets: purchasedTicketGroup.numberOfTickets,
-                      );
-                    } else {
-                      // this should never happen, but if it does, we can still
-                      // proceed with showing a generic success message
-                      return const SuccessfulPurchase(
-                        ticketName: 'Some tickets',
-                        amountOfTickets: 0,
-                      );
-                    }
-                  })
-                  .run();
+            // the response doesn't include info about the purchased ticket
+            // group other than its id, so we need to get the ticket group
+            // details from the list of purchasable tickets.
+            final successfulPurchase = await _purchasableTicketsLocalStore
+                .get()
+                .map(
+                  (groups) => groups.firstWhereOrNull(
+                    (group) => group.id == response.productId,
+                  ),
+                )
+                .getOrElse((_) => null)
+                .map((purchasedTicketGroup) {
+                  if (purchasedTicketGroup != null) {
+                    return SuccessfulPurchase(
+                      ticketName: purchasedTicketGroup.title,
+                      amountOfTickets: purchasedTicketGroup.numberOfTickets,
+                    );
+                  } else {
+                    // this should never happen, but if it does, we can still
+                    // proceed with showing a generic success message
+                    return const SuccessfulPurchase(
+                      ticketName: 'Some tickets',
+                      amountOfTickets: 0,
+                    );
+                  }
+                })
+                .run();
 
-              return Right(successfulPurchase);
-            });
-          },
-        );
+            return Right(successfulPurchase);
+          });
+        });
   }
 
   /// Get the list of purchasable ticket groups.
@@ -214,21 +210,17 @@ class TicketsRepository {
     final cachedResult = await _ownedTicketsLocalStore.get().run();
 
     List<OwnedTicketGroup>? preferredOrder;
-    cachedResult.match(
-      (_) => null,
-      (cachedTickets) {
-        preferredOrder = cachedTickets;
-        return null;
-      },
-    );
+    cachedResult.match((_) => null, (cachedTickets) {
+      preferredOrder = cachedTickets;
+      return null;
+    });
 
     if (preferredOrder != null) {
       yield Right(preferredOrder!);
     }
 
-    yield await _fetchAndPersistOwnedTickets(
-      preferredOrder: preferredOrder,
-    ).run();
+    yield await _fetchAndPersistOwnedTickets(preferredOrder: preferredOrder)
+        .run();
   }
 
   /// Refreshes owned tickets from the API while preserving [preferredOrder]

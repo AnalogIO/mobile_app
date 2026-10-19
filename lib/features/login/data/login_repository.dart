@@ -5,16 +5,13 @@ import 'package:fpdart/fpdart.dart';
 
 /// Handles data operations related to user login.
 class LoginRepository {
-  const LoginRepository({required this._executor});
+  const new({required this._executor});
 
   final NetworkRequestExecutor _executor;
 
   /// Requests a magic link to be sent to the provided email.
   TaskEither<Failure, Unit> requestMagicLink(String email) {
-    final request = UserLoginRequest(
-      email: email,
-      loginType: LoginType.app,
-    );
+    final request = UserLoginRequest(email: email, loginType: LoginType.app);
     return _executor
         .run((api) => api.v2.accountLoginPost(body: request))
         .map((_) => unit);

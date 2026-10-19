@@ -6,7 +6,7 @@ enum FormInputType { email, nonEmptyString }
 
 /// A simple form with a text field and a submit button.
 class AnalogForm extends StatefulWidget {
-  const AnalogForm({
+  const new({
     required this.labelText,
     required this.submitText,
     required this.onSubmit,

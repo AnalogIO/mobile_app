@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 enum SpinnerColor { light, dark }
 
 class AnalogCircularProgressIndicator extends StatelessWidget {
-  const AnalogCircularProgressIndicator({
+  const new({
     required this.spinnerColor,
     super.key,
   });

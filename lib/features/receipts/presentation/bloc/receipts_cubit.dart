@@ -10,24 +10,21 @@ part 'receipts_state.dart';
 /// This includes fetching receipts from the API, handling loading
 /// and error states, and managing pagination using continuation tokens.
 class ReceiptsCubit extends Cubit<ReceiptsState> {
-  ReceiptsCubit({required this._repository}) : super(const ReceiptsInitial());
+  new({required this._repository}) : super(const ReceiptsInitial());
 
   final ReceiptsRepository _repository;
 
   /// Fetches receipts when they are not already loaded.
   ///
   /// Does nothing if receipts are already loaded or loading.
-  Future<void> getReceipts({
-    String? type,
-    int? batchSize,
-  }) async {
+  Future<void> getReceipts({String? type, int? batchSize}) async {
     final currentState = state;
     if (currentState is ReceiptsLoading || currentState is ReceiptsLoaded) {
       return;
     }
 
     emit(const ReceiptsLoading());
-    return _repository
+    return await _repository
         .fetchReceipts(type: GetReceiptsType.all)
         .match(
           (failure) => ReceiptsFailure(reason: failure.reason),
@@ -41,10 +38,7 @@ class ReceiptsCubit extends Cubit<ReceiptsState> {
   }
 
   /// Refreshes the receipts by fetching the latest data from the API.
-  Future<void> refreshReceipts({
-    String? type,
-    int? batchSize,
-  }) async {
+  Future<void> refreshReceipts({String? type, int? batchSize}) async {
     final currentState = state;
     if (currentState is ReceiptsLoaded) {
       emit(
@@ -57,7 +51,7 @@ class ReceiptsCubit extends Cubit<ReceiptsState> {
       emit(const ReceiptsLoading());
     }
 
-    return _repository
+    return await _repository
         .fetchReceipts(type: GetReceiptsType.all)
         .match(
           (failure) => ReceiptsFailure(reason: failure.reason),

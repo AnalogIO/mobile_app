@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 //  email sent and calculate the remaining cooldown time based on that every 1s.
 //  This way, if the user navigates away and comes back, the time is correct.
 class EmailSentScreen extends StatefulWidget {
-  const EmailSentScreen({required this.email, super.key});
+  const new({required this.email, super.key});
 
   final String email;
 

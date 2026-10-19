@@ -17,7 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class _MockAuthCubit extends Mock implements AuthCubit {}
+class _MockAuthCubit extends Mock implements AuthCubit;
 
 class _MockExecutor extends Mock implements NetworkRequestExecutor {
   @override
@@ -25,12 +25,12 @@ class _MockExecutor extends Mock implements NetworkRequestExecutor {
       TaskEither.left(const ConnectionFailure());
 }
 
-class _MockTicketsRepository extends Mock implements TicketsRepository {}
+class _MockTicketsRepository extends Mock implements TicketsRepository;
 
-class _MockPurchaseFlowCubit extends Mock implements PurchaseFlowCubit {}
+class _MockPurchaseFlowCubit extends Mock implements PurchaseFlowCubit;
 
 class _MockSharedPreferencesWithCache extends Mock
-    implements SharedPreferencesWithCache {}
+    implements SharedPreferencesWithCache;
 
 void main() {
   late _MockAuthCubit mockAuthCubit;
@@ -51,12 +51,10 @@ void main() {
     mockPurchaseFlowCubit = _MockPurchaseFlowCubit();
     mockLocalStorage = _MockSharedPreferencesWithCache();
 
-    when(() => mockTicketsRepository.getOwnedTickets()).thenAnswer(
-      (_) => Stream.value(const Right(<OwnedTicketGroup>[])),
-    );
-    when(() => mockTicketsRepository.getPurchasableTickets()).thenAnswer(
-      (_) => TaskEither.right(<PurchasableTicketGroup>[]),
-    );
+    when(() => mockTicketsRepository.getOwnedTickets())
+        .thenAnswer((_) => Stream.value(const Right(<OwnedTicketGroup>[])));
+    when(() => mockTicketsRepository.getPurchasableTickets())
+        .thenAnswer((_) => TaskEither.right(<PurchasableTicketGroup>[]));
     when(
       () => mockTicketsRepository.refreshOwnedTickets(
         preferredOrder: any(named: 'preferredOrder'),
@@ -135,41 +133,40 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
   });
 
-  testWidgets(
-    'resumes redeem voucher deep link after successful login',
-    (tester) async {
-      final ctl = StreamController<AuthState>();
-      when(() => mockAuthCubit.state).thenReturn(const AuthUnauthenticated());
-      whenListen(
-        mockAuthCubit,
-        ctl.stream,
-        initialState: const AuthUnauthenticated(),
-      );
+  testWidgets('resumes redeem voucher deep link after successful login', (
+    tester,
+  ) async {
+    final ctl = StreamController<AuthState>();
+    when(() => mockAuthCubit.state).thenReturn(const AuthUnauthenticated());
+    whenListen(
+      mockAuthCubit,
+      ctl.stream,
+      initialState: const AuthUnauthenticated(),
+    );
 
-      await tester.pumpWidget(buildApp(router: goRouter));
+    await tester.pumpWidget(buildApp(router: goRouter));
 
-      goRouter.go('/tickets/redeem-voucher/OMM-QPY7EQUQ');
-      await pumpNavigation(tester);
+    goRouter.go('/tickets/redeem-voucher/OMM-QPY7EQUQ');
+    await pumpNavigation(tester);
 
-      expect(find.text('Please log in to continue.'), findsOneWidget);
+    expect(find.text('Please log in to continue.'), findsOneWidget);
 
-      ctl.add(
-        const AuthAuthenticated(
-          tokens: AuthTokens(jwt: 'j', refreshToken: 'r'),
-        ),
-      );
-      await pumpNavigation(tester);
+    ctl.add(
+      const AuthAuthenticated(
+        tokens: AuthTokens(jwt: 'j', refreshToken: 'r'),
+      ),
+    );
+    await pumpNavigation(tester);
 
-      expect(find.text('Redeem voucher?'), findsOneWidget);
-      expect(
-        find.text('Confirm to redeem voucher with code "OMM-QPY7EQUQ"'),
-        findsOneWidget,
-      );
+    expect(find.text('Redeem voucher?'), findsOneWidget);
+    expect(
+      find.text('Confirm to redeem voucher with code "OMM-QPY7EQUQ"'),
+      findsOneWidget,
+    );
 
-      await ctl.close();
-      await tester.pump(const Duration(seconds: 1));
-    },
-  );
+    await ctl.close();
+    await tester.pump(const Duration(seconds: 1));
+  });
 
   testWidgets(
     'blocks navigation to /login when already logged in and in main area',
@@ -200,65 +197,60 @@ void main() {
     },
   );
 
-  testWidgets(
-    'shows and hides loading overlay based on AuthLoading',
-    (tester) async {
-      when(() => mockAuthCubit.state).thenReturn(const AuthInitial());
+  testWidgets('shows and hides loading overlay based on AuthLoading', (
+    tester,
+  ) async {
+    when(() => mockAuthCubit.state).thenReturn(const AuthInitial());
 
-      final ctl = StreamController<AuthState>();
-      whenListen(mockAuthCubit, ctl.stream, initialState: const AuthInitial());
+    final ctl = StreamController<AuthState>();
+    whenListen(mockAuthCubit, ctl.stream, initialState: const AuthInitial());
 
-      // Use a fresh local GoRouter so AuthNavigator can call context.go
-      // without side-effects from the singleton's indexed-stack.
-      final testRouter = GoRouter(
-        routes: [
-          GoRoute(
-            path: '/',
-            builder: (_, _) => const AuthNavigator(child: SizedBox()),
-          ),
-          GoRoute(path: '/login', builder: (_, _) => const SizedBox()),
-          GoRoute(path: '/tickets', builder: (_, _) => const SizedBox()),
-        ],
-      );
+    // Use a fresh local GoRouter so AuthNavigator can call context.go
+    // without side-effects from the singleton's indexed-stack.
+    final testRouter = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (_, _) => const AuthNavigator(child: SizedBox()),
+        ),
+        GoRoute(path: '/login', builder: (_, _) => const SizedBox()),
+        GoRoute(path: '/tickets', builder: (_, _) => const SizedBox()),
+      ],
+    );
 
-      await tester.pumpWidget(buildApp(router: testRouter));
-      await pumpNavigation(tester);
+    await tester.pumpWidget(buildApp(router: testRouter));
+    await pumpNavigation(tester);
 
-      final preModalCount = tester.widgetList(find.byType(ModalBarrier)).length;
-      final preIndicatorCount = tester
-          .widgetList(find.byType(AnalogCircularProgressIndicator))
-          .length;
+    final preModalCount = tester.widgetList(find.byType(ModalBarrier)).length;
+    final preIndicatorCount = tester
+        .widgetList(find.byType(AnalogCircularProgressIndicator))
+        .length;
 
-      ctl.add(const AuthLoading());
-      await pumpNavigation(tester);
+    ctl.add(const AuthLoading());
+    await pumpNavigation(tester);
 
-      final postModalCount = tester
-          .widgetList(find.byType(ModalBarrier))
-          .length;
-      final postIndicatorCount = tester
-          .widgetList(find.byType(AnalogCircularProgressIndicator))
-          .length;
+    final postModalCount = tester.widgetList(find.byType(ModalBarrier)).length;
+    final postIndicatorCount = tester
+        .widgetList(find.byType(AnalogCircularProgressIndicator))
+        .length;
 
-      expect(postModalCount, greaterThan(preModalCount));
-      expect(postIndicatorCount, greaterThan(preIndicatorCount));
+    expect(postModalCount, greaterThan(preModalCount));
+    expect(postIndicatorCount, greaterThan(preIndicatorCount));
 
-      ctl.add(const AuthUnauthenticated());
-      await pumpNavigation(tester);
+    ctl.add(const AuthUnauthenticated());
+    await pumpNavigation(tester);
 
-      final finalModalCount = tester
-          .widgetList(find.byType(ModalBarrier))
-          .length;
-      final finalIndicatorCount = tester
-          .widgetList(find.byType(AnalogCircularProgressIndicator))
-          .length;
+    final finalModalCount = tester.widgetList(find.byType(ModalBarrier)).length;
+    final finalIndicatorCount = tester
+        .widgetList(find.byType(AnalogCircularProgressIndicator))
+        .length;
 
-      expect(finalIndicatorCount, lessThan(postIndicatorCount));
-      expect(finalModalCount, greaterThanOrEqualTo(preModalCount));
+    expect(finalIndicatorCount, lessThan(postIndicatorCount));
+    expect(finalModalCount, greaterThanOrEqualTo(preModalCount));
 
-      await ctl.close();
-      await tester.pump(const Duration(seconds: 1));
-    },
-  );
+    await ctl.close();
+    await tester.pump(const Duration(seconds: 1));
+  });
 
   testWidgets('shows snackbar on AuthFailure', (tester) async {
     when(() => mockAuthCubit.state).thenReturn(const AuthInitial());
@@ -279,26 +271,25 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
   });
 
-  testWidgets(
-    'navigates to email-sent when AuthEmailSent is emitted',
-    (tester) async {
-      when(() => mockAuthCubit.state).thenReturn(const AuthInitial());
-      whenListen(
-        mockAuthCubit,
-        Stream.fromIterable([
-          const AuthInitial(),
-          const AuthEmailSent(email: 'user@example.com'),
-        ]),
-        initialState: const AuthInitial(),
-      );
+  testWidgets('navigates to email-sent when AuthEmailSent is emitted', (
+    tester,
+  ) async {
+    when(() => mockAuthCubit.state).thenReturn(const AuthInitial());
+    whenListen(
+      mockAuthCubit,
+      Stream.fromIterable([
+        const AuthInitial(),
+        const AuthEmailSent(email: 'user@example.com'),
+      ]),
+      initialState: const AuthInitial(),
+    );
 
-      await tester.pumpWidget(buildApp(router: goRouter));
-      await pumpNavigation(tester);
+    await tester.pumpWidget(buildApp(router: goRouter));
+    await pumpNavigation(tester);
 
-      expect(find.text('Check your email'), findsOneWidget);
-      expect(find.text('user@example.com'), findsOneWidget);
+    expect(find.text('Check your email'), findsOneWidget);
+    expect(find.text('user@example.com'), findsOneWidget);
 
-      await tester.pump(const Duration(seconds: 1));
-    },
-  );
+    await tester.pump(const Duration(seconds: 1));
+  });
 }

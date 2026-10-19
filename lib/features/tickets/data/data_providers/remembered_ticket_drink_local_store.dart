@@ -6,9 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Persists the most recently selected drink per ticket group.
 class RememberedTicketDrinkLocalStore {
-  const RememberedTicketDrinkLocalStore({
-    required this._store,
-  });
+  const new({required this._store});
 
   final SharedPreferencesWithCache _store;
 
@@ -18,15 +16,12 @@ class RememberedTicketDrinkLocalStore {
     required int ticketGroupId,
     required int drinkId,
   }) {
-    return TaskEither.tryCatch(
-      () async {
-        final entries = _readEntries();
-        entries['$ticketGroupId'] = drinkId;
-        await _store.setString(storageKey, json.encode(entries));
-        return unit;
-      },
-      (error, _) => LocalStorageFailure(error.toString()),
-    );
+    return TaskEither.tryCatch(() async {
+      final entries = _readEntries();
+      entries['$ticketGroupId'] = drinkId;
+      await _store.setString(storageKey, json.encode(entries));
+      return unit;
+    }, (error, _) => LocalStorageFailure(error.toString()));
   }
 
   int? getLastSelectedDrinkId({required int ticketGroupId}) {
@@ -40,13 +35,10 @@ class RememberedTicketDrinkLocalStore {
   }
 
   TaskEither<Failure, Unit> clear() {
-    return TaskEither.tryCatch(
-      () async {
-        await _store.remove(storageKey);
-        return unit;
-      },
-      (error, _) => LocalStorageFailure(error.toString()),
-    );
+    return TaskEither.tryCatch(() async {
+      await _store.remove(storageKey);
+      return unit;
+    }, (error, _) => LocalStorageFailure(error.toString()));
   }
 
   Map<String, dynamic> _readEntries() {

@@ -6,23 +6,19 @@ import 'package:chopper/chopper.dart';
 /// An interceptor that adds the Authorization header with the JWT token
 /// to outgoing HTTP requests if a token is available in the [AuthTokenStore].
 class NetworkRequestInterceptor implements Interceptor {
-  NetworkRequestInterceptor({
-    required this._authTokenStore,
-  });
+  new({required this._authTokenStore});
 
   final AuthTokenStore _authTokenStore;
 
   @override
   FutureOr<Response<BodyType>> intercept<BodyType>(Chain<BodyType> chain) {
-    return chain.proceed(
-      switch (_authTokenStore.token) {
-        null => chain.request,
-        final token => applyHeader(
-          chain.request,
-          'Authorization',
-          'Bearer $token',
-        ),
-      },
-    );
+    return chain.proceed(switch (_authTokenStore.token) {
+      null => chain.request,
+      final token => applyHeader(
+        chain.request,
+        'Authorization',
+        'Bearer $token',
+      ),
+    });
   }
 }

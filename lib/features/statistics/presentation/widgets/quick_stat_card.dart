@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class QuickStatCard extends StatelessWidget {
-  const QuickStatCard({
+  const new({
     required this.description,
     required this.number,
     this.extraText,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class OpeningHoursScreen extends StatelessWidget {
-  const OpeningHoursScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

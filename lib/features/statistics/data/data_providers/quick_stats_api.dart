@@ -3,7 +3,7 @@ import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:fpdart/fpdart.dart';
 
 class QuickStatsApi {
-  const QuickStatsApi({required this._executor});
+  const new({required this._executor});
 
   final NetworkRequestExecutor _executor;
 

@@ -16,11 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Provides the top-level dependencies required throughout the app.
 class DependenciesProvider extends StatelessWidget {
-  const DependenciesProvider({
-    required this.localStorage,
-    required this.child,
-    super.key,
-  });
+  const new({required this.localStorage, required this.child, super.key});
 
   final SharedPreferencesWithCache localStorage;
   final MaterialApp child;
@@ -116,9 +112,9 @@ class DependenciesProvider extends StatelessWidget {
                 authTokenRepository: context.read(),
                 loginRepository: context.read(),
                 clearAuthenticatedUserContext: () async {
-                  await RememberedTicketDrinkLocalStore(
-                    store: localStorage,
-                  ).clear().run();
+                  await RememberedTicketDrinkLocalStore(store: localStorage)
+                      .clear()
+                      .run();
                   await ProfilePictureLocalStore(store: localStorage)
                       .clear()
                       .run();

@@ -1,6 +1,1 @@
-enum GetReceiptsType {
-  all,
-  ticketSwipes,
-  purchases,
-  vouchers,
-}
+enum GetReceiptsType { all, ticketSwipes, purchases, vouchers }

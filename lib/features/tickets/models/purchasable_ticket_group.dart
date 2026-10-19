@@ -8,7 +8,7 @@ import 'package:equatable/equatable.dart';
 //  fields in certain contexts.
 // FIXME(marfavi): rename fields
 class PurchasableTicketGroup extends Equatable {
-  const PurchasableTicketGroup({
+  const new({
     required this.id,
     required this.title,
     required this.description,

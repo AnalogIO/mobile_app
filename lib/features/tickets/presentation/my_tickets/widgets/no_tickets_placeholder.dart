@@ -2,7 +2,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 
 class NoTicketsPlaceholder extends StatelessWidget {
-  const NoTicketsPlaceholder({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +21,7 @@ class NoTicketsPlaceholder extends StatelessWidget {
           child: Text(
             'Tickets you buy will appear here.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: colorScheme.onSurfaceVariant,
-            ),
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
           ),
         ),
       ),

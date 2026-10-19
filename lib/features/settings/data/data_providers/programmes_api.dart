@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 
 /// Thin wrapper around the generated programmes endpoint.
 class ProgrammesApi {
-  const ProgrammesApi({required this._executor});
+  const new({required this._executor});
 
   final NetworkRequestExecutor _executor;
 

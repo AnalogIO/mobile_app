@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// A widget that fades in its child after a specified delay.
 class DelayedFadeIn extends StatefulWidget {
-  const DelayedFadeIn({
+  const new({
     required this.child,
     this.delay = const Duration(milliseconds: 250),
     super.key,

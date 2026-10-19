@@ -11,7 +11,7 @@ part 'profile_state.dart';
 /// It fetches the profile from the backend and applies edits (name, email and
 /// anonymous mode) back to it.
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit({required this._repository}) : super(const ProfileInitial());
+  new({required this._repository}) : super(const ProfileInitial());
 
   final SettingsRepository _repository;
 

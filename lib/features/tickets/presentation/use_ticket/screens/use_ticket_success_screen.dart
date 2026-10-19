@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class UseTicketSuccessScreen extends StatelessWidget {
-  const UseTicketSuccessScreen({
+  const new({
     required this.drinkName,
     required this.ticketName,
     required this.usedAt,
@@ -31,9 +31,8 @@ class UseTicketSuccessScreen extends StatelessWidget {
         const Gap(24),
         Text(
           'Tap anywhere to dismiss',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: Colors.white,
-          ),
+          style: Theme.of(context).textTheme.labelSmall
+              ?.copyWith(color: Colors.white),
         ),
       ],
     );

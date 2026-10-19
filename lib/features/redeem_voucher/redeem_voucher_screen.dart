@@ -4,9 +4,9 @@ import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher.dart';
 import 'package:flutter/material.dart';
 
 class RedeemVoucherScreen extends StatelessWidget {
-  const RedeemVoucherScreen({super.key}) : initialVoucherCode = '';
+  const new({super.key}) : initialVoucherCode = '';
 
-  const RedeemVoucherScreen.prefilled({
+  const new prefilled({
     required this.initialVoucherCode,
     super.key,
   });
@@ -24,7 +24,7 @@ class RedeemVoucherScreen extends StatelessWidget {
         errorMessage: 'Please enter a voucher code',
         initialValue: initialVoucherCode,
         onSubmit: (voucherCode, setError) async {
-          return redeemVoucher(
+          return await redeemVoucher(
             context: context,
             voucherCode: voucherCode,
             onFailure: setError,

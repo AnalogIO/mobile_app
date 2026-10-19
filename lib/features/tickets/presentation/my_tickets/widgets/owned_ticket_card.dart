@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 class OwnedTicketCard extends StatelessWidget {
-  const OwnedTicketCard({required this.ownedGroup, super.key});
+  const new({required this.ownedGroup, super.key});
 
   final OwnedTicketGroup ownedGroup;
 

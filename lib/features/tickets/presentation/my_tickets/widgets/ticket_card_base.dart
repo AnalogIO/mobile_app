@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 ///
 /// Uses [Hero] animations with a unique tag based on [id].
 class TicketCardBase extends StatelessWidget {
-  const TicketCardBase({
+  const new({
     required this.id,
     required this.title,
     required this.backgroundImagePath,
@@ -96,7 +96,7 @@ class TicketCardBase extends StatelessWidget {
 /// Uses [ColorFiltered] to apply the card's color to the image shape,
 /// creating a subtle branded graphic effect.
 class _BackgroundGraphic extends StatelessWidget {
-  const _BackgroundGraphic({
+  const new({
     required this.imagePath,
     required this.color,
     required this.opacity,
@@ -129,7 +129,7 @@ class _BackgroundGraphic extends StatelessWidget {
 /// This is done using a linear gradient that uses the card's color at the
 /// bottom-right and fades to transparent towards the top-left.
 class _GradientOverlay extends StatelessWidget {
-  const _GradientOverlay({required this.color});
+  const new({required this.color});
 
   final Color color;
 
@@ -152,7 +152,7 @@ class _GradientOverlay extends StatelessWidget {
 
 /// The card's text content: title and children.
 class _Content extends StatelessWidget {
-  const _Content({
+  const new({
     required this.titleWidget,
     required this.foregroundColor,
     required this.children,

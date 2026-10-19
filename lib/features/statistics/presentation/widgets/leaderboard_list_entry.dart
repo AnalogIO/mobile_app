@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class LeaderboardListEntry extends StatelessWidget {
-  const LeaderboardListEntry({required this.entry, super.key});
+  const new({required this.entry, super.key});
 
   final LeaderboardUserEntry entry;
 
