@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 /// A widget that fades in its child after a specified delay.
@@ -17,15 +19,22 @@ class DelayedFadeIn extends StatefulWidget {
 
 class _DelayedFadeInState extends State<DelayedFadeIn> {
   bool _visible = false;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(widget.delay, () {
+    _timer = Timer(widget.delay, () {
       if (mounted) {
         setState(() => _visible = true);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override

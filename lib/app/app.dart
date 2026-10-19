@@ -2,12 +2,16 @@ import 'package:cafe_analog_app/app/app_brightness_provider.dart';
 import 'package:cafe_analog_app/app/dependencies_provider.dart';
 import 'package:cafe_analog_app/app/router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class App extends StatefulWidget {
-  const new({required this.localStorage, super.key});
+  const new({required this.localStorage, this.router, super.key});
 
   final SharedPreferencesWithCache localStorage;
+
+  /// Optional router override, primarily for tests.
+  final GoRouter? router;
 
   @override
   State<App> createState() => _AppState();
@@ -21,7 +25,7 @@ class _AppState extends State<App> {
     return DependenciesProvider(
       localStorage: widget.localStorage,
       child: MaterialApp.router(
-        routerConfig: AnalogGoRouter.instance.goRouter,
+        routerConfig: widget.router ?? AnalogGoRouter.instance.goRouter,
         theme: ThemeData(
           brightness: appBrightness,
           colorScheme: .fromSeed(

@@ -38,7 +38,7 @@ void main() {
   late _MockTicketsRepository mockTicketsRepository;
   late _MockPurchaseFlowCubit mockPurchaseFlowCubit;
   late _MockSharedPreferencesWithCache mockLocalStorage;
-  late final goRouter = AnalogGoRouter.instance.goRouter;
+  late GoRouter goRouter;
 
   setUpAll(() {
     registerFallbackValue(const AuthInitial());
@@ -71,15 +71,16 @@ void main() {
       const Stream<PurchaseFlowState>.empty(),
       initialState: const PurchaseFlowIdle(),
     );
+
+    goRouter = AnalogGoRouter.instance.createRouter();
   });
 
   tearDown(() {
-    goRouter.go('/');
+    goRouter.dispose();
   });
 
   /// Wraps the widget tree with the repository and bloc providers needed by
-  /// the singleton [goRouter] (whose indexed-stack may materialise
-  /// TicketsScreen).
+  /// the test [goRouter] (whose indexed-stack may materialise TicketsScreen).
   Widget buildApp({required GoRouter router}) {
     return MultiRepositoryProvider(
       providers: [
@@ -253,43 +254,39 @@ void main() {
   });
 
   testWidgets('shows snackbar on AuthFailure', (tester) async {
+    final ctl = StreamController<AuthState>();
     when(() => mockAuthCubit.state).thenReturn(const AuthInitial());
-    whenListen(
-      mockAuthCubit,
-      Stream.fromIterable([
-        const AuthInitial(),
-        const AuthFailure(reason: 'bad'),
-      ]),
-      initialState: const AuthInitial(),
-    );
+    whenListen(mockAuthCubit, ctl.stream, initialState: const AuthInitial());
 
     await tester.pumpWidget(buildApp(router: goRouter));
+    await tester.pump();
+
+    ctl.add(const AuthFailure(reason: 'bad'));
     await pumpNavigation(tester);
 
     expect(find.text('Authentication failed: bad'), findsOneWidget);
 
+    await ctl.close();
     await tester.pump(const Duration(seconds: 1));
   });
 
   testWidgets('navigates to email-sent when AuthEmailSent is emitted', (
     tester,
   ) async {
+    final ctl = StreamController<AuthState>();
     when(() => mockAuthCubit.state).thenReturn(const AuthInitial());
-    whenListen(
-      mockAuthCubit,
-      Stream.fromIterable([
-        const AuthInitial(),
-        const AuthEmailSent(email: 'user@example.com'),
-      ]),
-      initialState: const AuthInitial(),
-    );
+    whenListen(mockAuthCubit, ctl.stream, initialState: const AuthInitial());
 
     await tester.pumpWidget(buildApp(router: goRouter));
+    await tester.pump();
+
+    ctl.add(const AuthEmailSent(email: 'user@example.com'));
     await pumpNavigation(tester);
 
     expect(find.text('Check your email'), findsOneWidget);
     expect(find.text('user@example.com'), findsOneWidget);
 
+    await ctl.close();
     await tester.pump(const Duration(seconds: 1));
   });
 }
