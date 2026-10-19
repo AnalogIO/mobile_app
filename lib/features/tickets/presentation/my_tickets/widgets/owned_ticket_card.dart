@@ -30,7 +30,7 @@ class OwnedTicketCard extends StatelessWidget {
         ticket: ownedGroup,
         onTicketUsedSuccessfully: () => Future.wait([
           context.read<OwnedTicketsCubit>().loadOwnedTickets(),
-          context.read<ReceiptsCubit>().refreshReceipts(),
+          context.read<ReceiptsCubit>().loadReceipts(),
           context.read<QuickStatsCubit>().loadQuickStats(),
           context.read<LeaderboardCubit>().loadLeaderboard(),
         ]),

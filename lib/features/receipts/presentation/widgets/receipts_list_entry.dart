@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ReceiptsListEntry extends StatelessWidget {
-  const new({required this.receipt, super.key});
+  const new({required this.receipt, this.onTap, super.key});
 
   final Receipt receipt;
+  final VoidCallback? onTap;
 
   String _formatDate(DateTime dateTime) {
     return DateFormat('dd.MM.yyyy HH:mm').format(dateTime);
@@ -73,6 +74,7 @@ class ReceiptsListEntry extends StatelessWidget {
         style: const TextStyle(fontFamily: 'monospace'),
       ),
       trailing: trailing,
+      onTap: onTap,
     );
   }
 }

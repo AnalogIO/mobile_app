@@ -29,4 +29,28 @@ class LoginRepository {
           ),
         );
   }
+
+  /// Completes the registration started by the welcome email.
+  ///
+  /// The email is not sent here: it is read by the backend from the
+  /// single-use [registrationToken].
+  TaskEither<Failure, AuthTokens> completeRegistration({
+    required String registrationToken,
+    required String name,
+    required int programmeId,
+  }) {
+    final request = CompleteRegistrationRequest(
+      token: registrationToken,
+      name: name,
+      programmeId: programmeId,
+    );
+    return _executor
+        .run((api) => api.v2.accountRegisterPost(body: request))
+        .map(
+          (response) => AuthTokens(
+            jwt: response.jwt,
+            refreshToken: response.refreshToken,
+          ),
+        );
+  }
 }
