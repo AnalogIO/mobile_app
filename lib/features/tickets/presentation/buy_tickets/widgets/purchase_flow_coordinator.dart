@@ -27,6 +27,15 @@ class PurchaseFlowCoordinator extends StatefulWidget {
 class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
   void Function(BuildContext context)? _dismissLoadingOverlay;
 
+  /// Reloads the owned tickets after a purchase that was still pending.
+  Timer? _pendingPurchaseReloadTimer;
+
+  @override
+  void dispose() {
+    _pendingPurchaseReloadTimer?.cancel();
+    super.dispose();
+  }
+
   void _showOverlay() {
     setState(() => _dismissLoadingOverlay ??= showLoadingOverlay(context));
   }
@@ -49,20 +58,41 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
           case PurchaseInitiating():
             _showOverlay();
           case PurchaseInitiated(:final initiatedPurchase):
-            unawaited(
-              _launchMobilePay(initiatedPurchase.mobilePayRedirectUri)
-                  .mapLeft(
-                    (failure) => _showDialog(
-                      title: 'Could not launch MobilePay',
-                      content: failure.reason,
-                    ),
-                  )
-                  .run(),
-            );
-          case PurchaseVerifying():
-            // probably don't need to do anything here, but could show a
-            // different loading indicator if desired
-            break;
+            switch (initiatedPurchase) {
+              case InitiatedMobilePayPayment(:final mobilePayRedirectUri):
+                unawaited(
+                  _launchMobilePay(mobilePayRedirectUri)
+                      .mapLeft(
+                        (failure) => _showDialog(
+                          title: 'Could not launch MobilePay',
+                          content: failure.reason,
+                        ),
+                      )
+                      .run(),
+                );
+              case InitiatedNexiPayment(:final paymentUrl):
+                unawaited(
+                  _openNexiPayment(paymentUrl).match(
+                    (failure) {
+                      _hideOverlay();
+                      return _showDialog(
+                        title: 'Could not open Nexi payment',
+                        content: failure.reason,
+                      );
+                    },
+                    // We aren't told if the user closes the payment page
+                    // without paying, so don't block the app while it is
+                    // open.
+                    (_) => _hideOverlay(),
+                  ).run(),
+                );
+            }
+          case PurchaseVerifying(:final initiatedPurchase):
+            if (initiatedPurchase is InitiatedNexiPayment) {
+              unawaited(closeInAppWebView());
+              // The overlay was hidden while the payment page was open
+              _showOverlay();
+            }
           case PurchaseCompleted(:final successfulPurchase):
             _hideOverlay();
             showSuccessSnackBar(
@@ -77,6 +107,16 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
               // user intentionally cancelled the purchase, so nothing went
               // wrong; just show a snackbar
               return showSnackBar(context: context, message: failure.reason);
+            }
+            if (failure is PurchasePending) {
+              // not a failure: the payment may just not be confirmed yet, so
+              // reload the tickets again once it has had more time
+              _reloadOwnedTicketsLater();
+              final _ = _showDialog(
+                title: 'Payment processing',
+                content: failure.reason,
+              );
+              return;
             }
             // for other failure types, show a dialog with the failure reason
             final _ = _showDialog(
@@ -93,6 +133,14 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
     return showAnalogDialog(context: context, title: title, content: content);
   }
 
+  void _reloadOwnedTicketsLater() {
+    _pendingPurchaseReloadTimer?.cancel();
+    _pendingPurchaseReloadTimer = Timer(const Duration(seconds: 15), () {
+      if (!mounted) return;
+      final _ = context.read<OwnedTicketsCubit>().loadOwnedTickets();
+    });
+  }
+
   TaskEither<Failure, Unit> _launchMobilePay(Uri mobilePayRedirectUri) {
     // launchUrl can either return false or throw an exception if it fails.
     return TaskEither.tryCatch(
@@ -103,6 +151,25 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
         );
         if (!didLaunch) {
           throw Exception('Failed to launch MobilePay');
+        }
+        return unit;
+      },
+      (error, _) => UnexpectedFailure(error.toString()),
+    );
+  }
+
+  /// Opens Nexi's hosted payment page in an in-app browser (Custom Tabs on
+  /// Android, SFSafariViewController on iOS), where Apple Pay and Google Pay
+  /// work, unlike in a WebView.
+  TaskEither<Failure, Unit> _openNexiPayment(Uri paymentUrl) {
+    return TaskEither.tryCatch(
+      () async {
+        final didLaunch = await launchUrl(
+          paymentUrl,
+          mode: LaunchMode.inAppBrowserView,
+        );
+        if (!didLaunch) {
+          throw Exception('Failed to open the payment page');
         }
         return unit;
       },

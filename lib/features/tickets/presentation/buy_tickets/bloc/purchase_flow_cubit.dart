@@ -10,11 +10,18 @@ class PurchaseFlowCubit extends Cubit<PurchaseFlowState> {
 
   final TicketsRepository _repository;
 
-  /// Initiates purchase for the selected [ticketGroup].
-  Future<void> initiatePurchase(PurchasableTicketGroup ticketGroup) async {
+  /// Initiates purchase for the selected [ticketGroup],
+  /// with payment method [paymentMethod]
+  Future<void> initiatePurchase(
+    PurchasableTicketGroup ticketGroup, {
+    required PaymentMethod paymentMethod,
+  }) async {
     emit(const PurchaseInitiating());
     return _repository
-        .initiatePurchase(ticketGroupId: ticketGroup.id)
+        .initiatePurchase(
+          ticketGroupId: ticketGroup.id,
+          paymentMethod: paymentMethod,
+        )
         .match(
           (failure) => emit(CouldNotInitiatePurchase(failure: failure)),
           (initiatedPayment) =>
