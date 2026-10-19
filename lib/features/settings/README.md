@@ -47,11 +47,15 @@ Profile card, account information, about, legal and logout.
   no longer exists.
 - Licenses open Flutter's built-in `LicensePage` (auto-generated from package
   licenses). The Privacy policy opens `https://www.cafeanalog.dk/privacy-policy`
-  and the Terms of service open `https://www.cafeanalog.dk/terms`, both in an
-  in-app browser via `url_launcher` (`LaunchMode.inAppBrowserView`, shared
-  `_openLegalPage` helper). Keep these URLs in sync with the App Store Connect /
-  Play Console listings. The Credits page is still empty; Contact us also
-  remains a placeholder.
+  in an in-app browser via `url_launcher` (`LaunchMode.inAppBrowserView`, shared
+  `_openExternalPage` helper). Keep this URL in sync with the App Store Connect /
+  Play Console listings.
+- Contact us opens the Cognito feedback form
+  (`https://www.cognitoforms.com/CafeAnalog1/BugReport`). FAQ, Credits and
+  opening hours are reachable from the About section.
+- **Terms of service are not linked yet.** `https://www.cafeanalog.dk/terms`
+  currently returns 404, so the tile was removed rather than shipping a broken
+  link. Add it back once the page exists (tracked by mobile_app issue #41).
 - The profile picture (icon + background color) is stored **locally** in
   `SharedPreferences` (`ProfilePictureLocalStore`), because the backend has no
   profile picture fields. When the backend gains `profilePictureId` and

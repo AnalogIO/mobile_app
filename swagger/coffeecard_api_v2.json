@@ -1333,6 +1333,60 @@
           }
         }
       }
+    },
+    "/api/v2/account/register": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Complete a registration that was started from an app login request.\nThe email is read from the single-use token, not from the request body.",
+        "operationId": "Account_CompleteRegistration",
+        "requestBody": {
+          "x-name": "request",
+          "description": "Registration token, name and programme",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteRegistrationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Account created and the user is signed in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid token, name or programme",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or expired registration token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2648,6 +2702,41 @@
           }
         },
         "additionalProperties": false
+      },
+      "CompleteRegistrationRequest": {
+        "type": "object",
+        "description": "Request to complete a registration that was started from a login request.\nThe email address is read from the single-use registration token and is\ndeliberately not part of this request.",
+        "example": {
+          "token": "[no example provided]",
+          "name": "John Doe",
+          "programmeId": 1
+        },
+        "additionalProperties": false,
+        "required": [
+          "token",
+          "name",
+          "programmeId"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Token from the registration link sent to the user's email",
+            "minLength": 1,
+            "example": "[no example provided]"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the user",
+            "minLength": 1,
+            "example": "John Doe"
+          },
+          "programmeId": {
+            "type": "integer",
+            "description": "Programme of the user",
+            "format": "int32",
+            "example": 1
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -2666,8 +2755,8 @@
     }
   },
   "security": [
-    { },
-    { }
+    {},
+    {}
   ],
   "tags": [
     {

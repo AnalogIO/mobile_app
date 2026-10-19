@@ -75,6 +75,26 @@ class AnalogGoRouter {
             ),
           ],
         ),
+        // Registration link sent to new users after they enter their email.
+        GoRoute(
+          path: '/register/:token',
+          pageBuilder: (context, state) {
+            final registrationToken = state.pathParameters['token']!;
+            return CustomTransitionPage(
+              child: BlocProvider(
+                create: (context) {
+                  final cubit = ProgrammesCubit(repository: context.read());
+                  unawaited(cubit.loadProgrammes());
+                  return cubit;
+                },
+                child: RegisterScreen(registrationToken: registrationToken),
+              ),
+              transitionsBuilder: (_, animation, _, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
         StatefulShellRoute.indexedStack(
           // fade in the main scaffold (doesn't affect branch transitions)
           pageBuilder: (_, _, shell) => CustomTransitionPage(
@@ -201,14 +221,25 @@ class AnalogGoRouter {
                       const NoTransitionPage(child: ReceiptsScreen()),
                   routes: [
                     GoRoute(
-                      path: 'purchase_receipt/:id',
-                      // TODO(marfavi): Implement receipt screen
-                      builder: (context, state) => Container(),
-                    ),
-                    GoRoute(
-                      path: 'swipe_receipt/:id',
-                      // TODO(marfavi): Implement receipt screen
-                      builder: (context, state) => Container(),
+                      path: 'details',
+                      builder: (context, state) {
+                        final receipt = state.extra;
+                        if (receipt is! Receipt) {
+                          return const Scaffold(
+                            body: Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Text(
+                                  'No receipt data found. Please go back and '
+                                  'select a receipt again.',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        return ReceiptDetailsScreen(receipt: receipt);
+                      },
                     ),
                   ],
                 ),
@@ -300,6 +331,11 @@ class AnalogGoRouter {
                               const MaterialPage(child: OpeningHoursScreen()),
                         ),
                         GoRoute(
+                          path: 'faq',
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: FaqScreen()),
+                        ),
+                        GoRoute(
                           path: 'credits',
                           pageBuilder: (context, state) =>
                               const MaterialPage(child: CreditsScreen()),
@@ -332,17 +368,22 @@ class AnalogGoRouter {
     final loc = state.matchedLocation;
     final isLoggedIn = context.read<AuthCubit>().state is AuthAuthenticated;
 
-    // User is going anywhere within [/login, /login/email-sent, /login/auth/]
-    final goingToLoginFlow = loc.startsWith('/login');
+    // User is going anywhere within the public authentication flow
+    // [/login, /login/email-sent, /login/auth/, /register/].
+    final goingToLoginFlow =
+        loc.startsWith('/login') || loc.startsWith('/register');
 
     // User is specifically accessing the app via a magic link (/login/auth/)
     final goingToAuthenticate = loc.startsWith('/login/auth/');
 
+    // User is completing registration from a welcome email (/register/).
+    final goingToRegister = loc.startsWith('/register/');
+
     // User is starting the app
     final isStartingApp = loc == '/';
 
-    // If not logged in, always go to login unless already going there
-    // (or starting the app, which will handle redirection itself)
+    // If not logged in, always go to login unless already in the public auth
+    // flow (or starting the app, which will handle redirection itself)
     if (!isLoggedIn &&
         !goingToLoginFlow &&
         !goingToAuthenticate &&
@@ -356,8 +397,9 @@ class AnalogGoRouter {
       return '/login';
     }
 
-    // If logged in and accessing app via login deep link, redirect to main app
-    if (isLoggedIn && goingToAuthenticate) {
+    // If logged in and accessing the app via a magic link or registration
+    // link, redirect to the main app.
+    if (isLoggedIn && (goingToAuthenticate || goingToRegister)) {
       _logRouteDebug(
         'redirect apply',
         'from=${state.uri} to=/tickets reason=already_logged_in_magic_link',
@@ -399,8 +441,10 @@ class AnalogGoRouter {
           'isLoggedIn=$isLoggedIn',
     );
 
-    // User is going anywhere within [/login, /login/email-sent, /login/auth/]
-    final goingToLoginFlow = nextLoc.startsWith('/login');
+    // User is going anywhere within the public authentication flow
+    // [/login, /login/email-sent, /login/auth/, /register/].
+    final goingToLoginFlow =
+        nextLoc.startsWith('/login') || nextLoc.startsWith('/register');
 
     // User is starting the app
     final isStartingApp = nextLoc == '/';

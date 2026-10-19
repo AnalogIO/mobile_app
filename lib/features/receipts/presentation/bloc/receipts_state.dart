@@ -16,21 +16,49 @@ final class ReceiptsLoading extends ReceiptsState {
 }
 
 final class ReceiptsLoaded extends ReceiptsState {
-  const new({required this.receipts, required this.continuationToken});
+  const new({
+    required this.receipts,
+    required this.continuationToken,
+    required this.hasMore,
+    this.loadMoreError,
+  });
 
-  /// List of receipts (purchases, swipes, vouchers)
-  /// sorted by date (newest first)
+  /// List of receipts (purchases, swipes, vouchers), newest first.
   final List<Receipt> receipts;
 
-  /// Token for fetching the next batch of receipts (pagination)
+  /// Token for fetching the next batch of receipts (pagination).
   final String continuationToken;
 
+  /// Whether the API returned a non-empty page, i.e. there may be more.
+  final bool hasMore;
+
+  /// Set when loading the next page failed. The already loaded receipts are
+  /// kept on screen so the user can retry.
+  final String? loadMoreError;
+
   @override
-  List<Object?> get props => [receipts, continuationToken];
+  List<Object?> get props => [
+    receipts,
+    continuationToken,
+    hasMore,
+    loadMoreError,
+  ];
 }
 
 final class ReceiptsRefreshing extends ReceiptsLoaded {
-  const new({required super.receipts, required super.continuationToken});
+  const new({
+    required super.receipts,
+    required super.continuationToken,
+    required super.hasMore,
+  });
+}
+
+final class ReceiptsLoadingMore extends ReceiptsLoaded {
+  const new({
+    required super.receipts,
+    required super.continuationToken,
+    required super.hasMore,
+  });
 }
 
 final class ReceiptsFailure extends ReceiptsState {

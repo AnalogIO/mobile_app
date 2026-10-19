@@ -144,7 +144,7 @@ class DependenciesProvider extends StatelessWidget {
           BlocProvider(
             create: (context) =>
                 ReceiptsCubit(repository: context.read())
-                  ..getReceipts().ignore(),
+                  ..loadReceipts().ignore(),
           ),
         ],
         child: child,
