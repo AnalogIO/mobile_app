@@ -20,7 +20,18 @@ flutter run --flavor development   # against the dev backend
 flutter run --flavor production    # production app id, name and deep link scheme
 ```
 
-There are two flavours: `development` and `production`. They differ in application id, display name and deep link scheme.
+There are two flavours: `development` and `production`. They differ in application id, display name, deep link scheme and backend:
+
+| Flavour | Backend | Android application id | iOS bundle id |
+| --- | --- | --- | --- |
+| `development` | `https://core.dev.analogio.dk` | `dk.analogio.analog.dev` | `dk.analogio.analog.dev` |
+| `production` | `https://core.prd.analogio.dk` | `dk.analog.digitalclipcard` | `DK.AnalogIO.DigitalCoffeeCard` |
+
+The production ids match the old `coffeecard_app`, so the new app ships as an update to the existing listing instead of a new app. The backend is selected in [`lib/core/environment.dart`](lib/core/environment.dart); for a local backend, override it without editing code:
+
+```sh
+flutter run --flavor development --dart-define=API_BASE_URL=http://192.168.1.10:5080
+```
 
 ## Make targets 🛠
 
