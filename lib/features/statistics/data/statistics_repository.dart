@@ -48,10 +48,10 @@ class StatisticsRepository {
                   return allEntries
                       .map(
                         (entry) => LeaderboardUserEntry(
-                          userId: entry.id,
+                          userId: entry.id!,
                           name: entry.name ?? 'Anonymous',
-                          rank: entry.rank,
-                          drinksConsumed: entry.score,
+                          rank: entry.rank!,
+                          drinksConsumed: entry.score!,
                           isCurrentUser: entry.id == currentUserId,
                         ),
                       )
