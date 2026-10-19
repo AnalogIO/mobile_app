@@ -194,8 +194,9 @@ Scope cubits as low as possible:
 
 - Tests live in `test/`, mirroring the `lib/` layout where practical (`test/tickets/`, `test/core/`, `test/http/`). App-level tests (router, auth, app wiring) live at the `test/` root.
 - Cubit tests use `bloc_test` and `mocktail` mocks of the repository (see `test/tickets/owned_tickets_cubit_test.dart`).
-- Before pushing, run `make fix` (format + auto-fixes), `flutter analyze` and `flutter test`.
-- CI (`.github/workflows/main.yaml`) runs the same checks: format, analyze, tests with coverage, plus a spell check over all Markdown files. PR titles must follow the conventional commits spec (semantic-pull-request workflow).
+- Before pushing, run `make fix` (format + auto-fixes), `flutter analyze`, `flutter test`, and at least one `flutter build` for the platform you touched. Android debug builds of both flavours and iOS simulator builds run in CI; release-signing secrets are not available to pull requests.
+- CI (`.github/workflows/main.yaml`) runs the same checks: format, analyze, tests with coverage, Android debug/release builds and iOS simulator builds, plus a spell check over all Markdown files. PR titles must follow the conventional commits spec (semantic-pull-request workflow).
+- When upgrading Flutter, also update the Android Gradle wrapper, Android Gradle Plugin and Kotlin Gradle Plugin to the versions used by the Flutter template (`flutter create` in a scratch project). Flutter refuses to build when the Gradle version is below its minimum, and the CI build jobs catch this.
 
 ## Documentation
 
