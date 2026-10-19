@@ -36,7 +36,10 @@ class AnalogForm extends StatefulWidget {
   final String errorMessage;
 
   /// Called when the form is submitted with valid input.
-  final void Function(String text) onSubmit;
+  ///
+  /// The second parameter allows the callback to show a submission error.
+  final void Function(String text, void Function(String message) setError)
+  onSubmit;
 
   @override
   State<AnalogForm> createState() => _AnalogFormState();
@@ -86,7 +89,11 @@ class _AnalogFormState extends State<AnalogForm> {
     // It is helpful for the user to see an error message in that case.
     setState(() => _errorText = _validate(_controller.text));
     if (_isValid) {
-      widget.onSubmit(_controller.text.trim());
+      void onErrorCallback(String message) {
+        setState(() => _errorText = message);
+      }
+
+      widget.onSubmit(_controller.text.trim(), onErrorCallback);
     }
   }
 

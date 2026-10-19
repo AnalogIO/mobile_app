@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:cafe_analog_app/http/http.dart';
-import 'package:cafe_analog_app/login/bloc/auth_cubit_handle.dart';
-import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/login/data/auth_token_store.dart';
-import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
-import 'package:cafe_analog_app/login/data/login_repository.dart';
+import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
+import 'package:cafe_analog_app/features/login/login.dart';
+import 'package:cafe_analog_app/features/receipts/receipts.dart';
+import 'package:cafe_analog_app/features/settings/settings.dart';
+import 'package:cafe_analog_app/features/statistics/statistics.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
+import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +14,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Provides the dependencies required throughout the app.
+/// Provides the top-level dependencies required throughout the app.
 class DependenciesProvider extends StatelessWidget {
   const DependenciesProvider({
     required this.localStorage,
@@ -33,6 +34,7 @@ class DependenciesProvider extends StatelessWidget {
         RepositoryProvider(create: (_) => const FlutterSecureStorage()),
         RepositoryProvider(create: (_) => AuthTokenStore()),
         RepositoryProvider(create: (_) => AuthCubitHandle()),
+        RepositoryProvider(create: (_) => PendingLoginRedirectStore()),
         RepositoryProvider(
           create: (context) => AuthTokenRepository(
             secureStorage: context.read(),
@@ -59,23 +61,94 @@ class DependenciesProvider extends StatelessWidget {
           ),
         ),
 
-        // Auth/login repositories
+        // Login repository
         RepositoryProvider(
           create: (context) => LoginRepository(executor: context.read()),
+        ),
+
+        // Tickets repository
+        RepositoryProvider(
+          create: (context) => TicketsRepository(
+            ticketsApi: TicketsApi(executor: context.read()),
+            ownedTicketsLocalStore: OwnedTicketsLocalStore(
+              store: context.read(),
+            ),
+            drinksLocalStore: DrinksLocalStore(),
+            purchasableTicketsLocalStore: PurchasableTicketsLocalStore(),
+            rememberedTicketDrinkLocalStore: RememberedTicketDrinkLocalStore(
+              store: context.read(),
+            ),
+          ),
+        ),
+
+        // Statistics repository
+        RepositoryProvider(
+          create: (context) => StatisticsRepository(
+            leaderboardApi: LeaderboardApi(executor: context.read()),
+            quickStatsApi: QuickStatsApi(executor: context.read()),
+          ),
+        ),
+
+        // Receipts repository
+        RepositoryProvider(
+          create: (context) => ReceiptsRepository(
+            receiptsApi: ReceiptsApi(executor: context.read()),
+          ),
+        ),
+
+        // Settings repository
+        RepositoryProvider(
+          create: (context) => SettingsRepository(
+            accountApi: AccountApi(executor: context.read()),
+            programmesApi: ProgrammesApi(executor: context.read()),
+            profilePictureLocalStore: ProfilePictureLocalStore(
+              store: context.read(),
+            ),
+          ),
         ),
       ],
       child: MultiBlocProvider(
         providers: [
+          // Authentication cubit
           BlocProvider(
             create: (context) {
               final authCubit = AuthCubit(
                 authTokenRepository: context.read(),
                 loginRepository: context.read(),
+                clearAuthenticatedUserContext: () async {
+                  await RememberedTicketDrinkLocalStore(
+                    store: localStorage,
+                  ).clear().run();
+                  await ProfilePictureLocalStore(store: localStorage)
+                      .clear()
+                      .run();
+                },
               );
               unawaited(authCubit.start());
               context.read<AuthCubitHandle>().bind(authCubit);
               return authCubit;
             },
+          ),
+          // Purchase flow cubit
+          BlocProvider(
+            create: (context) => PurchaseFlowCubit(repository: context.read()),
+          ),
+          // Statistics cubits
+          BlocProvider(
+            create: (context) =>
+                LeaderboardCubit(repository: context.read())
+                  ..loadLeaderboard().ignore(),
+          ),
+          BlocProvider(
+            create: (context) =>
+                QuickStatsCubit(repository: context.read())
+                  ..loadQuickStats().ignore(),
+          ),
+          // Receipts cubit
+          BlocProvider(
+            create: (context) =>
+                ReceiptsCubit(repository: context.read())
+                  ..getReceipts().ignore(),
           ),
         ],
         child: child,

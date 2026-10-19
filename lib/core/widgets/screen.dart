@@ -12,16 +12,16 @@ class Screen extends StatelessWidget {
     this.onRefresh,
     super.key,
   }) : _body = ListView(
+         physics: const AlwaysScrollableScrollPhysics(),
          children: [...children, const Gap(16)],
        );
 
   /// Creates a Screen with a custom body widget.
   const Screen.withBody({
     required this.name,
-    required Widget body,
+    required this._body,
     super.key,
-  }) : _body = body,
-       onRefresh = null;
+  }) : onRefresh = null;
 
   final String name;
 

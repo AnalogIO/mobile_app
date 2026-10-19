@@ -9,7 +9,7 @@ targets:
       swagger_dart_code_generator:
         options:
           input_folder: "swagger/"
-          output_folder: "lib/generated/api/"
+          output_folder: "lib/infrastructure/generated/api/"
           with_base_url: false
           separate_models: true
           enums_case_sensitive: false

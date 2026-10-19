@@ -1,21 +1,16 @@
 import 'dart:async';
 
 import 'package:cafe_analog_app/app/navigation_scaffolds.dart';
+import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
 import 'package:cafe_analog_app/app/splash_screen.dart';
-import 'package:cafe_analog_app/login/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/login/ui/authentication_navigator.dart';
-import 'package:cafe_analog_app/login/ui/email_sent_screen.dart';
-import 'package:cafe_analog_app/login/ui/login_screen.dart';
-import 'package:cafe_analog_app/login/ui/verify_magic_link_screen.dart';
-import 'package:cafe_analog_app/receipts/receipts_screen.dart';
-import 'package:cafe_analog_app/redeem_voucher/redeem_voucher_screen.dart';
-import 'package:cafe_analog_app/settings/settings_screen.dart';
-import 'package:cafe_analog_app/settings/your_profile_screen.dart';
-import 'package:cafe_analog_app/stats/view/stats_screen.dart';
-import 'package:cafe_analog_app/tickets/buy_tickets/buy_tickets_screen.dart';
-import 'package:cafe_analog_app/tickets/buy_tickets/product.dart';
-import 'package:cafe_analog_app/tickets/buy_tickets/ticket_detail_screen.dart';
-import 'package:cafe_analog_app/tickets/my_tickets/ui/tickets_screen.dart';
+import 'package:cafe_analog_app/core/snackbar.dart';
+import 'package:cafe_analog_app/features/login/login.dart';
+import 'package:cafe_analog_app/features/receipts/receipts.dart';
+import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher.dart';
+import 'package:cafe_analog_app/features/settings/settings.dart';
+import 'package:cafe_analog_app/features/statistics/statistics.dart';
+import 'package:cafe_analog_app/features/tickets/tickets.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +27,7 @@ class AnalogGoRouter {
     routes: routes,
     onEnter: onEnter,
     redirect: redirect,
+    observers: [RouteDebugObserver()],
   );
 
   late final routes = [
@@ -73,13 +69,6 @@ class AnalogGoRouter {
             ),
           ],
         ),
-        GoRoute(
-          path: '/verify-mobilepay/:id',
-          pageBuilder: (_, state) => MaterialPage(
-            // TODO(marfavi): Implement MobilePay verification screen
-            child: Container(),
-          ),
-        ),
         StatefulShellRoute.indexedStack(
           // fade in the main scaffold (doesn't affect branch transitions)
           pageBuilder: (_, _, shell) => CustomTransitionPage(
@@ -91,40 +80,109 @@ class AnalogGoRouter {
           branches: [
             StatefulShellBranch(
               routes: [
-                GoRoute(
-                  path: '/tickets',
-                  pageBuilder: (context, state) => const NoTransitionPage(
-                    child: TicketsScreen(),
-                  ),
+                ShellRoute(
+                  // provide TicketsRepository and cubits related
+                  // to all routes under /tickets
+                  // note: PurchaseFlowCubit is provided in DependenciesProvider
+                  builder: (context, state, child) {
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = OwnedTicketsCubit(
+                              repository: context.read(),
+                            );
+                            unawaited(cubit.loadOwnedTickets());
+                            return cubit;
+                          },
+                        ),
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = TicketCatalogCubit(
+                              repository: context.read(),
+                            );
+                            unawaited(cubit.loadProducts());
+                            return cubit;
+                          },
+                        ),
+                      ],
+                      child: PurchaseFlowCoordinator(child: child),
+                    );
+                  },
                   routes: [
                     GoRoute(
-                      path: 'buy',
-                      builder: (_, _) => const BuyTicketsScreen(),
+                      path: '/tickets',
+                      builder: (_, _) => const TicketsScreen(),
                       routes: [
                         GoRoute(
-                          path: 'ticket/:productid',
+                          path: 'view-purchasable',
+                          builder: (_, _) => const TicketCatalogScreen(),
+                          routes: [
+                            GoRoute(
+                              path: ':ticketGroupId',
+                              pageBuilder: (context, state) {
+                                final group = state.extra;
+                                const error =
+                                    'No ticket group data found. '
+                                    'Please go back and select a ticket '
+                                    'group again.';
+
+                                if (group is! PurchasableTicketGroup) {
+                                  return const MaterialPage(
+                                    child: Scaffold(
+                                      body: Padding(
+                                        padding: EdgeInsets.all(24),
+                                        child: Center(
+                                          child: Text(
+                                            error,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                return MaterialPage(
+                                  // fullscreenDialog: true,
+                                  child: TicketGroupDetailsScreen(
+                                    ticketGroup: group,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        GoRoute(
+                          path: 'verify-mobilepay-purchase',
+                          redirect: (context, state) {
+                            // Always redirect to /tickets but
+                            // trigger purchase verification as a side effect
+                            final _ = context
+                                .read<PurchaseFlowCubit>()
+                                .verifyPendingPurchase();
+                            return '/tickets';
+                          },
+                        ),
+                        GoRoute(
+                          path: 'redeem-voucher',
+                          pageBuilder: (context, state) => const MaterialPage(
+                            child: RedeemVoucherScreen(),
+                          ),
+                        ),
+                        GoRoute(
+                          path: 'redeem-voucher/:initialVoucherCode',
                           pageBuilder: (context, state) {
-                            // we don't use productid here, but in a real app
-                            // you might fetch the product details based on the
-                            // id; we pass the whole product via extra for now
-                            // TODO(marfavi): Get product details from id
-                            //  instead of passing via extra
-                            //
-                            // cast state.extra to Product
-                            final product = state.extra! as Product;
+                            final voucherCode =
+                                state.pathParameters['initialVoucherCode']!;
                             return MaterialPage(
-                              fullscreenDialog: true,
-                              child: TicketDetailScreen(product: product),
+                              child: RedeemVoucherDeepLinkFlow(
+                                voucherCode: voucherCode,
+                              ),
                             );
                           },
                         ),
                       ],
-                    ),
-                    GoRoute(
-                      path: 'redeem_voucher',
-                      pageBuilder: (context, state) => const MaterialPage(
-                        child: RedeemVoucherScreen(),
-                      ),
                     ),
                   ],
                 ),
@@ -163,15 +221,95 @@ class AnalogGoRouter {
             ),
             StatefulShellBranch(
               routes: [
-                GoRoute(
-                  path: '/settings',
-                  pageBuilder: (context, state) =>
-                      const NoTransitionPage(child: SettingsScreen()),
+                ShellRoute(
+                  // Provide the profile cubits to all routes under /settings
+                  builder: (context, state, child) {
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = ProfileCubit(
+                              repository: context.read(),
+                            );
+                            unawaited(cubit.loadProfile());
+                            return cubit;
+                          },
+                        ),
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = ProfilePictureCubit(
+                              repository: context.read(),
+                            );
+                            unawaited(cubit.loadProfilePicture());
+                            return cubit;
+                          },
+                        ),
+                      ],
+                      child: child,
+                    );
+                  },
                   routes: [
                     GoRoute(
-                      path: 'your-profile',
+                      path: '/settings',
                       pageBuilder: (context, state) =>
-                          const MaterialPage(child: YourProfileScreen()),
+                          const NoTransitionPage(child: SettingsScreen()),
+                      routes: [
+                        GoRoute(
+                          path: 'your-profile',
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: YourProfileScreen()),
+                        ),
+                        GoRoute(
+                          path: 'change-name',
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: ChangeNameScreen()),
+                        ),
+                        GoRoute(
+                          path: 'change-email',
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: ChangeEmailScreen()),
+                        ),
+                        GoRoute(
+                          path: 'change-occupation',
+                          builder: (context, state) {
+                            return BlocProvider(
+                              create: (context) {
+                                final cubit = ProgrammesCubit(
+                                  repository: context.read(),
+                                );
+                                unawaited(cubit.loadProgrammes());
+                                return cubit;
+                              },
+                              child: const ChangeOccupationScreen(),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'change-profile-picture',
+                          pageBuilder: (context, state) => const MaterialPage(
+                            child: ChangeProfilePictureScreen(),
+                          ),
+                        ),
+                        GoRoute(
+                          path: 'opening-hours',
+                          pageBuilder: (context, state) => const MaterialPage(
+                            child: OpeningHoursScreen(),
+                          ),
+                        ),
+                        GoRoute(
+                          path: 'credits',
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: CreditsScreen()),
+                        ),
+                        GoRoute(
+                          path: 'licenses',
+                          pageBuilder: (context, state) => const MaterialPage(
+                            child: LicensePage(
+                              applicationName: 'Café Analog',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -184,6 +322,12 @@ class AnalogGoRouter {
   ];
 
   FutureOr<String?> redirect(BuildContext context, GoRouterState state) {
+    _logRouteDebug(
+      'redirect check',
+      'uri=${state.uri} matched=${state.matchedLocation} '
+          'name=${state.name} fullPath=${state.fullPath}',
+    );
+
     final loc = state.matchedLocation;
     final isLoggedIn = context.read<AuthCubit>().state is AuthAuthenticated;
 
@@ -202,25 +346,34 @@ class AnalogGoRouter {
         !goingToLoginFlow &&
         !goingToAuthenticate &&
         !isStartingApp) {
-      if (kDebugMode) {
-        print('Redirecting to /login');
-      }
+      context.read<PendingLoginRedirectStore>().pendingRedirect = state.uri
+          .toString();
+      _logRouteDebug(
+        'redirect apply',
+        'from=${state.uri} to=/login reason=not_logged_in',
+      );
       return '/login';
     }
 
     // If logged in and accessing app via login deep link, redirect to main app
     if (isLoggedIn && goingToAuthenticate) {
+      _logRouteDebug(
+        'redirect apply',
+        'from=${state.uri} to=/tickets reason=already_logged_in_magic_link',
+      );
       // Show a snackbar after the frame is rendered
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('You are already logged in.')),
-        );
+        showSnackBar(context: context, message: 'You are already logged in.');
       });
       return '/tickets';
     }
 
     // If logged in and going to login, redirect to main app
     if (isLoggedIn && goingToLoginFlow) {
+      _logRouteDebug(
+        'redirect apply',
+        'from=${state.uri} to=/tickets reason=already_logged_in_login_flow',
+      );
       return '/tickets';
     }
 
@@ -238,6 +391,13 @@ class AnalogGoRouter {
     final nextLoc = nextState.matchedLocation;
     final isLoggedIn = context.read<AuthCubit>().state is AuthAuthenticated;
 
+    _logRouteDebug(
+      'onEnter',
+      'fromUri=${currentState.uri} from=$currentLoc '
+          'toUri=${nextState.uri} to=$nextLoc '
+          'isLoggedIn=$isLoggedIn',
+    );
+
     // User is going anywhere within [/login, /login/email-sent, /login/auth/]
     final goingToLoginFlow = nextLoc.startsWith('/login');
 
@@ -254,27 +414,82 @@ class AnalogGoRouter {
     // If the user is in the main app area and trying to go to the login flow
     // while already logged in, block the navigation and show a snackbar.
     if (isLoggedIn && goingToLoginFlow && isInMainArea) {
-      if (kDebugMode) {
-        print('Navigation to $nextLoc blocked: already logged in.');
-      }
+      _logRouteDebug(
+        'onEnter block',
+        'toUri=${nextState.uri} to=$nextLoc reason=already_logged_in',
+      );
       return Block.then(
-        () => ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('You are already logged in.')),
+        () => showSnackBar(
+          context: context,
+          message: 'You are already logged in.',
         ),
       );
     }
     // If the user is not logged in and trying to go to the main app area,
     // block the navigation and show a snackbar.
     if (!isLoggedIn && !goingToLoginFlow && !isStartingApp) {
-      if (kDebugMode) {
-        print('Navigation to $nextLoc blocked: not logged in.');
-      }
+      context.read<PendingLoginRedirectStore>().pendingRedirect = nextState.uri
+          .toString();
+      _logRouteDebug(
+        'onEnter block',
+        'toUri=${nextState.uri} to=$nextLoc reason=not_logged_in',
+      );
       return Block.then(
-        () => ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please log in to continue.')),
+        () => showSnackBar(
+          context: context,
+          message: 'Please log in to continue.',
         ),
       );
     }
     return const Allow();
+  }
+}
+
+void _logRouteDebug(String event, String message) {
+  if (!kDebugMode) {
+    return;
+  }
+  debugPrint('[ROUTER][$event] $message');
+}
+
+class RouteDebugObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    _logRouteDebug(
+      'didPush',
+      '${route.settings.name ?? route.runtimeType} '
+          'prev=${previousRoute?.settings.name ?? previousRoute?.runtimeType}',
+    );
+    super.didPush(route, previousRoute);
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    _logRouteDebug(
+      'didReplace',
+      '${oldRoute?.settings.name ?? oldRoute?.runtimeType} -> '
+          '${newRoute?.settings.name ?? newRoute?.runtimeType}',
+    );
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    _logRouteDebug(
+      'didPop',
+      '${route.settings.name ?? route.runtimeType} '
+          'next=${previousRoute?.settings.name ?? previousRoute?.runtimeType}',
+    );
+    super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    _logRouteDebug(
+      'didRemove',
+      '${route.settings.name ?? route.runtimeType} '
+          'prev=${previousRoute?.settings.name ?? previousRoute?.runtimeType}',
+    );
+    super.didRemove(route, previousRoute);
   }
 }

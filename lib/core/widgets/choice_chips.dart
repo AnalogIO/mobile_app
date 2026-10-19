@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// TODO(marfavi): Is it possible to give an enum to the `ChoiceChip` widget to
+//  avoid using an int for the selected index? This would be more type-safe.
 class AnalogChoiceChips extends StatelessWidget {
   const AnalogChoiceChips({
     required this.labels,

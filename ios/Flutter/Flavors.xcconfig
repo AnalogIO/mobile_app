@@ -3,17 +3,17 @@
 // and uses conditional variable expansion based on FLAVOR
 
 // Default values (production)
-DEEP_LINK_SCHEME = cafeanalog
+DEEP_LINK_SCHEME = analogcoffeecard
 FLAVOR_APP_NAME = Analog
 
 // Override for development
-DEEP_LINK_SCHEME[config=Debug-development] = cafeanalog-dev
-DEEP_LINK_SCHEME[config=Release-development] = cafeanalog-dev
+DEEP_LINK_SCHEME[config=Debug-development] = analogcoffeecard-dev
+DEEP_LINK_SCHEME[config=Release-development] = analogcoffeecard-dev
 FLAVOR_APP_NAME[config=Debug-development] = [DEV] Analog
 FLAVOR_APP_NAME[config=Release-development] = [DEV] Analog
 
 // Override for production
-DEEP_LINK_SCHEME[config=Debug-production] = cafeanalog
-DEEP_LINK_SCHEME[config=Release-production] = cafeanalog
+DEEP_LINK_SCHEME[config=Debug-production] = analogcoffeecard
+DEEP_LINK_SCHEME[config=Release-production] = analogcoffeecard
 FLAVOR_APP_NAME[config=Debug-production] = Analog
 FLAVOR_APP_NAME[config=Release-production] = Analog

@@ -1,7 +1,5 @@
-import 'package:cafe_analog_app/http/http.dart';
-import 'package:cafe_analog_app/login/bloc/auth_cubit_handle.dart';
-import 'package:cafe_analog_app/login/data/authentication_token_repository.dart';
-import 'package:cafe_analog_app/login/data/authentication_tokens.dart';
+import 'package:cafe_analog_app/features/login/login.dart';
+import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
