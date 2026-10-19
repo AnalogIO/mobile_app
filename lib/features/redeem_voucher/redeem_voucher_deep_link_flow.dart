@@ -25,6 +25,8 @@ class _RedeemVoucherDeepLinkFlowState extends State<RedeemVoucherDeepLinkFlow> {
   }
 
   Future<void> _handleDeepLink() async {
+    if (!mounted) return;
+
     final shouldRedeem = await showAnalogDialog<bool>(
       context: context,
       title: 'Redeem voucher?',
