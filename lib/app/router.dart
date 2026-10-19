@@ -221,15 +221,95 @@ class AnalogGoRouter {
             ),
             StatefulShellBranch(
               routes: [
-                GoRoute(
-                  path: '/settings',
-                  pageBuilder: (context, state) =>
-                      const NoTransitionPage(child: SettingsScreen()),
+                ShellRoute(
+                  // Provide the profile cubits to all routes under /settings
+                  builder: (context, state, child) {
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = ProfileCubit(
+                              repository: context.read(),
+                            );
+                            unawaited(cubit.loadProfile());
+                            return cubit;
+                          },
+                        ),
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = ProfilePictureCubit(
+                              repository: context.read(),
+                            );
+                            unawaited(cubit.loadProfilePicture());
+                            return cubit;
+                          },
+                        ),
+                      ],
+                      child: child,
+                    );
+                  },
                   routes: [
                     GoRoute(
-                      path: 'your-profile',
+                      path: '/settings',
                       pageBuilder: (context, state) =>
-                          const MaterialPage(child: YourProfileScreen()),
+                          const NoTransitionPage(child: SettingsScreen()),
+                      routes: [
+                        GoRoute(
+                          path: 'your-profile',
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: YourProfileScreen()),
+                        ),
+                        GoRoute(
+                          path: 'change-name',
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: ChangeNameScreen()),
+                        ),
+                        GoRoute(
+                          path: 'change-email',
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: ChangeEmailScreen()),
+                        ),
+                        GoRoute(
+                          path: 'change-occupation',
+                          builder: (context, state) {
+                            return BlocProvider(
+                              create: (context) {
+                                final cubit = ProgrammesCubit(
+                                  repository: context.read(),
+                                );
+                                unawaited(cubit.loadProgrammes());
+                                return cubit;
+                              },
+                              child: const ChangeOccupationScreen(),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: 'change-profile-picture',
+                          pageBuilder: (context, state) => const MaterialPage(
+                            child: ChangeProfilePictureScreen(),
+                          ),
+                        ),
+                        GoRoute(
+                          path: 'opening-hours',
+                          pageBuilder: (context, state) => const MaterialPage(
+                            child: OpeningHoursScreen(),
+                          ),
+                        ),
+                        GoRoute(
+                          path: 'credits',
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: CreditsScreen()),
+                        ),
+                        GoRoute(
+                          path: 'licenses',
+                          pageBuilder: (context, state) => const MaterialPage(
+                            child: LicensePage(
+                              applicationName: 'Café Analog',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

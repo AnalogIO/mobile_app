@@ -13,7 +13,7 @@ class LoginRepository {
   TaskEither<Failure, Unit> requestMagicLink(String email) {
     final request = UserLoginRequest(
       email: email,
-      loginType: LoginType.app.value,
+      loginType: LoginType.app,
     );
     return _executor
         .run((api) => api.v2.accountLoginPost(body: request))

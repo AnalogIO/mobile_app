@@ -70,7 +70,7 @@ class StatisticsRepository {
       int? weekDrinksConsumed;
 
       for (final dto in statDtos) {
-        switch (api.quickStatTypeFromJson(dto.key)) {
+        switch (dto.key) {
           case api.QuickStatType.totaldrinks:
             allTimeDrinksConsumed = dto.value;
           case api.QuickStatType.drinkstoday:

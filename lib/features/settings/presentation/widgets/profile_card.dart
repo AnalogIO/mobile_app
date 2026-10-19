@@ -1,19 +1,23 @@
+import 'package:cafe_analog_app/core/widgets/user_icon.dart';
+import 'package:cafe_analog_app/features/settings/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart' show none;
 import 'package:go_router/go_router.dart';
 
 class ProfileCard extends StatelessWidget {
-  const ProfileCard({
-    required this.name,
-    required this.occupation,
-    super.key,
-  });
+  const ProfileCard({required this.profile, super.key});
 
-  final String name;
-  final String occupation;
+  final UserProfile profile;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
+    final picture = switch (context.watch<ProfilePictureCubit>().state) {
+      ProfilePictureLoaded(:final picture) => picture,
+      _ => none<ProfilePicture>(),
+    }.toNullable();
 
     return Padding(
       padding: const .only(left: 16, right: 16, bottom: 24, top: 8),
@@ -23,10 +27,19 @@ class ProfileCard extends StatelessWidget {
         visualDensity: .compact,
         leading: CircleAvatar(
           backgroundColor: colorScheme.surfaceContainerLow,
-          child: Icon(Icons.person, color: colorScheme.onSurfaceVariant),
+          child: UserIcon.small(
+            id: profile.id,
+            icon: picture?.iconId,
+            background: picture?.backgroundColorId,
+          ),
         ),
-        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(occupation),
+        title: Text(
+          profile.name,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          profile.occupation.isEmpty ? profile.email : profile.occupation,
+        ),
         trailing: const Text('Edit profile'),
         onTap: () => context.go('/settings/your-profile'),
       ),

@@ -11,13 +11,13 @@ class LeaderboardApi {
     required LeaderboardPreset preset,
   }) {
     return _executor.run(
-      (api) => api.v2.leaderboardTopGet(preset: preset.value, top: 10),
+      (api) => api.v2.leaderboardTopGet(preset: preset, top: 10),
     );
   }
 
   TaskEither<Failure, LeaderboardEntry> fetchCurrentUserLeaderboardEntry({
     required LeaderboardPreset preset,
   }) {
-    return _executor.run((api) => api.v2.leaderboardGet(preset: preset.value));
+    return _executor.run((api) => api.v2.leaderboardGet(preset: preset));
   }
 }

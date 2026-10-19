@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
 import 'package:cafe_analog_app/features/login/login.dart';
 import 'package:cafe_analog_app/features/receipts/receipts.dart';
+import 'package:cafe_analog_app/features/settings/settings.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
@@ -94,6 +95,17 @@ class DependenciesProvider extends StatelessWidget {
             receiptsApi: ReceiptsApi(executor: context.read()),
           ),
         ),
+
+        // Settings repository
+        RepositoryProvider(
+          create: (context) => SettingsRepository(
+            accountApi: AccountApi(executor: context.read()),
+            programmesApi: ProgrammesApi(executor: context.read()),
+            profilePictureLocalStore: ProfilePictureLocalStore(
+              store: context.read(),
+            ),
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -107,6 +119,9 @@ class DependenciesProvider extends StatelessWidget {
                   await RememberedTicketDrinkLocalStore(
                     store: localStorage,
                   ).clear().run();
+                  await ProfilePictureLocalStore(store: localStorage)
+                      .clear()
+                      .run();
                 },
               );
               unawaited(authCubit.start());
