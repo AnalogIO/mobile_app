@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 ///   - navigates to `/tickets`, `/login/email-sent`, or `/login` based on state
 ///   - displays a [SnackBar] when [AuthFailure] occurs with the failure reason
 class AuthNavigator extends StatefulWidget {
-  const AuthNavigator({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 

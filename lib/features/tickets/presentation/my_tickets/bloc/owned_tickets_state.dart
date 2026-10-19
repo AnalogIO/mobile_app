@@ -1,18 +1,18 @@
 part of 'owned_tickets_cubit.dart';
 
 sealed class OwnedTicketsState extends Equatable {
-  const OwnedTicketsState();
+  const new();
 
   @override
   List<Object> get props => [];
 }
 
-final class OwnedTicketsInitial extends OwnedTicketsState {}
+final class OwnedTicketsInitial extends OwnedTicketsState;
 
-final class OwnedTicketsLoading extends OwnedTicketsState {}
+final class OwnedTicketsLoading extends OwnedTicketsState;
 
 final class OwnedTicketsLoaded extends OwnedTicketsState {
-  const OwnedTicketsLoaded({required this.ownedGroups});
+  const new({required this.ownedGroups});
 
   final List<OwnedTicketGroup> ownedGroups;
 
@@ -21,11 +21,11 @@ final class OwnedTicketsLoaded extends OwnedTicketsState {
 }
 
 final class OwnedTicketsRefreshing extends OwnedTicketsLoaded {
-  const OwnedTicketsRefreshing({required super.ownedGroups});
+  const new({required super.ownedGroups});
 }
 
 final class OwnedTicketsFailure extends OwnedTicketsState {
-  const OwnedTicketsFailure({required this.reason});
+  const new({required this.reason});
 
   final String reason;
 

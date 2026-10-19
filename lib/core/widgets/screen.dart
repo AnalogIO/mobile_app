@@ -6,7 +6,7 @@ import 'package:gap/gap.dart';
 class Screen extends StatelessWidget {
   /// Creates a Screen with a ListView body and optional
   /// pull-to-refresh functionality.
-  Screen.listView({
+  new listView({
     required this.name,
     required List<Widget> children,
     this.onRefresh,
@@ -17,11 +17,8 @@ class Screen extends StatelessWidget {
        );
 
   /// Creates a Screen with a custom body widget.
-  const Screen.withBody({
-    required this.name,
-    required this._body,
-    super.key,
-  }) : onRefresh = null;
+  const new withBody({required this.name, required this._body, super.key})
+    : onRefresh = null;
 
   final String name;
 
@@ -43,10 +40,7 @@ class Screen extends StatelessWidget {
         },
       ),
       body: onRefresh != null
-          ? RefreshIndicator(
-              onRefresh: onRefresh!,
-              child: _body,
-            )
+          ? RefreshIndicator(onRefresh: onRefresh!, child: _body)
           : _body,
     );
   }

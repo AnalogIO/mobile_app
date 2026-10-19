@@ -7,8 +7,7 @@ part 'programmes_state.dart';
 /// Cubit responsible for loading the list of available study programmes
 /// (occupations) shown in the change-occupation screen.
 class ProgrammesCubit extends Cubit<ProgrammesState> {
-  ProgrammesCubit({required this._repository})
-    : super(const ProgrammesInitial());
+  new({required this._repository}) : super(const ProgrammesInitial());
 
   final SettingsRepository _repository;
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppBrightnessProvider extends InheritedWidget {
-  const AppBrightnessProvider({
+  const new({
     required this.onBrightnessChanged,
     required super.child,
     super.key,

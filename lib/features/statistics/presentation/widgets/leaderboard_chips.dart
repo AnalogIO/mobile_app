@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LeaderboardChips extends StatelessWidget {
-  const LeaderboardChips({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

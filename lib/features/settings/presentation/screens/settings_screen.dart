@@ -22,7 +22,7 @@ const _privacyPolicyUrl = 'https://www.cafeanalog.dk/privacy-policy';
 const _termsOfServiceUrl = 'https://www.cafeanalog.dk/terms';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +39,11 @@ class SettingsScreen extends StatelessWidget {
                   child: AnalogCircularProgressIndicator(spinnerColor: .dark),
                 ),
               ),
-              ProfileFailure(:final reason) => _SettingsFailure(
-                reason: reason,
-              ),
+              ProfileFailure(:final reason) => _SettingsFailure(reason: reason),
               ProfileLoaded(:final profile) ||
-              ProfileRefreshing(:final profile) => _SettingsContent(
-                profile: profile,
-              ),
+              ProfileRefreshing(
+                :final profile,
+              ) => _SettingsContent(profile: profile),
             };
           },
         ),
@@ -55,7 +53,7 @@ class SettingsScreen extends StatelessWidget {
 }
 
 class _SettingsContent extends StatelessWidget {
-  const _SettingsContent({required this.profile});
+  const new({required this.profile});
 
   final UserProfile profile;
 
@@ -236,7 +234,7 @@ class _SettingsContent extends StatelessWidget {
 /// Keeps "Log out" reachable so a broken session (e.g. a stale JWT after an
 /// email change) can always recover by logging in again.
 class _SettingsFailure extends StatelessWidget {
-  const _SettingsFailure({required this.reason});
+  const new({required this.reason});
 
   final String reason;
 

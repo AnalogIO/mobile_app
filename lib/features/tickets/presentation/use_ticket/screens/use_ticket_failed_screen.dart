@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UseTicketFailedScreen extends StatelessWidget {
-  const UseTicketFailedScreen({required this.reason, super.key});
+  const new({required this.reason, super.key});
 
   final String reason;
 

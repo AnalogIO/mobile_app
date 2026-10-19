@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LeaderboardRankMedal extends StatelessWidget {
-  const LeaderboardRankMedal(this.rank, {super.key});
+  const new(this.rank, {super.key});
 
   final int rank;
 

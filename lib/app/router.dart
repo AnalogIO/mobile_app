@@ -17,7 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AnalogGoRouter {
-  AnalogGoRouter._internal();
+  new _internal();
 
   static final AnalogGoRouter instance = AnalogGoRouter._internal();
 
@@ -166,9 +166,8 @@ class AnalogGoRouter {
                         ),
                         GoRoute(
                           path: 'redeem-voucher',
-                          pageBuilder: (context, state) => const MaterialPage(
-                            child: RedeemVoucherScreen(),
-                          ),
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: RedeemVoucherScreen()),
                         ),
                         GoRoute(
                           path: 'redeem-voucher/:initialVoucherCode',
@@ -192,9 +191,8 @@ class AnalogGoRouter {
               routes: [
                 GoRoute(
                   path: '/receipts',
-                  pageBuilder: (context, state) => const NoTransitionPage(
-                    child: ReceiptsScreen(),
-                  ),
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: ReceiptsScreen()),
                   routes: [
                     GoRoute(
                       path: 'purchase_receipt/:id',
@@ -292,9 +290,8 @@ class AnalogGoRouter {
                         ),
                         GoRoute(
                           path: 'opening-hours',
-                          pageBuilder: (context, state) => const MaterialPage(
-                            child: OpeningHoursScreen(),
-                          ),
+                          pageBuilder: (context, state) =>
+                              const MaterialPage(child: OpeningHoursScreen()),
                         ),
                         GoRoute(
                           path: 'credits',
@@ -304,9 +301,7 @@ class AnalogGoRouter {
                         GoRoute(
                           path: 'licenses',
                           pageBuilder: (context, state) => const MaterialPage(
-                            child: LicensePage(
-                              applicationName: 'Café Analog',
-                            ),
+                            child: LicensePage(applicationName: 'Café Analog'),
                           ),
                         ),
                       ],

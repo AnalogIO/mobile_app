@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// Blank screen, only responsible for initiating the authentication
 /// process using the provided magic link token.
 class VerifyMagicLinkScreen extends StatefulWidget {
-  const VerifyMagicLinkScreen({required this.magicLinkToken, super.key});
+  const new({required this.magicLinkToken, super.key});
 
   final String magicLinkToken;
 
@@ -33,9 +33,6 @@ class _VerifyMagicLinkScreenState extends State<VerifyMagicLinkScreen> {
   @override
   Widget build(BuildContext context) {
     // Prevent back navigation during the authentication process
-    return const PopScope(
-      canPop: false,
-      child: Scaffold(),
-    );
+    return const PopScope(canPop: false, child: Scaffold());
   }
 }

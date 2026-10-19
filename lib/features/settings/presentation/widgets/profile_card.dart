@@ -6,7 +6,7 @@ import 'package:fpdart/fpdart.dart' show none;
 import 'package:go_router/go_router.dart';
 
 class ProfileCard extends StatelessWidget {
-  const ProfileCard({required this.profile, super.key});
+  const new({required this.profile, super.key});
 
   final UserProfile profile;
 

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class QuickStats extends Equatable {
-  const QuickStats({
+  const new({
     required this.allTimeDrinksConsumed,
     required this.todayDrinksConsumedITU,
     required this.allTimeFavouriteDrink,

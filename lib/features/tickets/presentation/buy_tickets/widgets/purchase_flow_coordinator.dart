@@ -15,7 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 /// changes and performing the necessary UI actions, such as showing loading
 /// indicators, navigating, and showing dialogs or snackbars.
 class PurchaseFlowCoordinator extends StatefulWidget {
-  const PurchaseFlowCoordinator({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 
@@ -95,18 +95,15 @@ class _PurchaseFlowCoordinatorState extends State<PurchaseFlowCoordinator> {
 
   TaskEither<Failure, Unit> _launchMobilePay(Uri mobilePayRedirectUri) {
     // launchUrl can either return false or throw an exception if it fails.
-    return TaskEither.tryCatch(
-      () async {
-        final didLaunch = await launchUrl(
-          mobilePayRedirectUri,
-          mode: LaunchMode.externalApplication,
-        );
-        if (!didLaunch) {
-          throw Exception('Failed to launch MobilePay');
-        }
-        return unit;
-      },
-      (error, _) => UnexpectedFailure(error.toString()),
-    );
+    return TaskEither.tryCatch(() async {
+      final didLaunch = await launchUrl(
+        mobilePayRedirectUri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!didLaunch) {
+        throw Exception('Failed to launch MobilePay');
+      }
+      return unit;
+    }, (error, _) => UnexpectedFailure(error.toString()));
   }
 }

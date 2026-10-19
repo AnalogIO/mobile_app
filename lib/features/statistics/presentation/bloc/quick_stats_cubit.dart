@@ -5,8 +5,7 @@ import 'package:equatable/equatable.dart';
 part 'quick_stats_state.dart';
 
 class QuickStatsCubit extends Cubit<QuickStatsState> {
-  QuickStatsCubit({required this._repository})
-    : super(const QuickStatsInitial());
+  new({required this._repository}) : super(const QuickStatsInitial());
 
   final StatisticsRepository _repository;
 

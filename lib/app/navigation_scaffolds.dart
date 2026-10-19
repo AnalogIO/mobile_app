@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ScaffoldWithNestedNavigation extends StatelessWidget {
-  const ScaffoldWithNestedNavigation({
-    required this.navigationShell,
-    super.key,
-  });
+  const new({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
@@ -35,7 +32,7 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
 }
 
 class ScaffoldWithNavigationBar extends StatelessWidget {
-  const ScaffoldWithNavigationBar({
+  const new({
     required this.body,
     required this.selectedIndex,
     required this.onDestinationSelected,

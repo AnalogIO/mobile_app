@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 
 class UserIcon extends StatelessWidget {
-  const UserIcon.large({
-    required this.id,
-    this.icon,
-    this.background,
-    super.key,
-  }) : size = 100;
+  const new large({required this.id, this.icon, this.background, super.key})
+    : size = 100;
 
-  const UserIcon.small({
-    required this.id,
-    this.icon,
-    this.background,
-    super.key,
-  }) : size = 40;
+  const new small({required this.id, this.icon, this.background, super.key})
+    : size = 40;
 
   /// The palette of profile picture background colors.
   static const colors = [
@@ -53,10 +45,7 @@ class UserIcon extends StatelessWidget {
         Container(
           width: size,
           height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
-          ),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: color),
         ),
         CoffeeImage.fromId(image: image, size: size),
       ],
@@ -65,11 +54,7 @@ class UserIcon extends StatelessWidget {
 }
 
 class CoffeeImage extends StatelessWidget {
-  const CoffeeImage.fromId({
-    required this.image,
-    required this.size,
-    super.key,
-  });
+  const new fromId({required this.image, required this.size, super.key});
 
   final int image;
   final double size;

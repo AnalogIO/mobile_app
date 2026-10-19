@@ -6,7 +6,7 @@ import 'package:fpdart/fpdart.dart';
 
 /// Handles data operations related to the user's profile.
 class SettingsRepository {
-  const SettingsRepository({
+  const new({
     required this._accountApi,
     required this._programmesApi,
     required this._profilePictureLocalStore,

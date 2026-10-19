@@ -28,7 +28,7 @@ import 'package:flutter/material.dart';
 /// Slider call to action component
 class SlideAction extends StatefulWidget {
   /// Create a new instance of the widget
-  const SlideAction({
+  const new({
     required this.text,
     super.key,
     this.sliderButtonIconSize = 24,
@@ -147,9 +147,7 @@ class SlideActionState extends State<SlideAction>
                         widget.onSubmit!();
                       }
                     },
-                    child: CircularNextButton(
-                      onPressed: () {},
-                    ),
+                    child: CircularNextButton(onPressed: () {}),
                   ),
                 ),
               ),
@@ -173,16 +171,12 @@ class SlideActionState extends State<SlideAction>
 
   Future<void> _cancelAnimation() async {
     _cancelAnimationController.reset();
-    final animation =
-        Tween<double>(
-          begin: 0,
-          end: 1,
-        ).animate(
-          CurvedAnimation(
-            parent: _cancelAnimationController,
-            curve: Curves.fastOutSlowIn,
-          ),
-        );
+    final animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _cancelAnimationController,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
 
     animation.addListener(() {
       if (mounted) {

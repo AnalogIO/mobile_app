@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyTicketsSection extends StatelessWidget {
-  const MyTicketsSection({required this.ownedTicketGroups, super.key});
+  const new({required this.ownedTicketGroups, super.key});
 
   final List<OwnedTicketGroup> ownedTicketGroups;
 

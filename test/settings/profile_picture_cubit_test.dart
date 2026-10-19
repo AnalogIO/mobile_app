@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class _MockSettingsRepository extends Mock implements SettingsRepository {}
+class _MockSettingsRepository extends Mock implements SettingsRepository;
 
 const _picture = ProfilePicture(iconId: 3, backgroundColorId: 5);
 
@@ -22,9 +22,8 @@ void main() {
     blocTest<ProfilePictureCubit, ProfilePictureState>(
       'loadProfilePicture: emits loading then loaded',
       build: () {
-        when(() => repository.getProfilePicture()).thenAnswer(
-          (_) => TaskEither.right(some(_picture)),
-        );
+        when(() => repository.getProfilePicture())
+            .thenAnswer((_) => TaskEither.right(some(_picture)));
         return ProfilePictureCubit(repository: repository);
       },
       act: (cubit) => cubit.loadProfilePicture(),
@@ -41,9 +40,9 @@ void main() {
     blocTest<ProfilePictureCubit, ProfilePictureState>(
       'loadProfilePicture: emits failure on error',
       build: () {
-        when(() => repository.getProfilePicture()).thenAnswer(
-          (_) => TaskEither.left(const UnexpectedFailure('boom')),
-        );
+        when(
+          () => repository.getProfilePicture(),
+        ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
         return ProfilePictureCubit(repository: repository);
       },
       act: (cubit) => cubit.loadProfilePicture(),
@@ -56,9 +55,8 @@ void main() {
     blocTest<ProfilePictureCubit, ProfilePictureState>(
       'setProfilePicture: emits loaded with the new picture',
       build: () {
-        when(() => repository.saveProfilePicture(_picture)).thenAnswer(
-          (_) => TaskEither.right(unit),
-        );
+        when(() => repository.saveProfilePicture(_picture))
+            .thenAnswer((_) => TaskEither.right(unit));
         return ProfilePictureCubit(repository: repository);
       },
       act: (cubit) => cubit.setProfilePicture(_picture),
@@ -74,9 +72,9 @@ void main() {
     test(
       'setProfilePicture: returns the failure and emits nothing on error',
       () async {
-        when(() => repository.saveProfilePicture(_picture)).thenAnswer(
-          (_) => TaskEither.left(const UnexpectedFailure('boom')),
-        );
+        when(
+          () => repository.saveProfilePicture(_picture),
+        ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
 
         final cubit = ProfilePictureCubit(repository: repository);
         final states = <ProfilePictureState>[];

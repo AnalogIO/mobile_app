@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class _MockTicketRepository extends Mock implements TicketsRepository {}
+class _MockTicketRepository extends Mock implements TicketsRepository;
 
 Stream<Either<Failure, List<OwnedTicketGroup>>> _ownedTicketsLoadResults(
   List<Either<Failure, List<OwnedTicketGroup>>> results,
@@ -200,9 +200,8 @@ void main() {
           ),
         ).thenReturn(TaskEither.right(refreshedTickets));
 
-        when(() => repository.getOwnedTickets()).thenAnswer(
-          (_) => _ownedTicketsLoadResults([]),
-        );
+        when(() => repository.getOwnedTickets())
+            .thenAnswer((_) => _ownedTicketsLoadResults([]));
 
         return OwnedTicketsCubit(repository: repository);
       },
@@ -307,9 +306,9 @@ void main() {
           _ticket(productId: 1, name: 'T1', ticketsLeft: 1),
         ];
 
-        when(() => repository.getOwnedTickets()).thenAnswer(
-          (_) => _ownedTicketsLoadResults([Right(fetchedTickets)]),
-        );
+        when(
+          () => repository.getOwnedTickets(),
+        ).thenAnswer((_) => _ownedTicketsLoadResults([Right(fetchedTickets)]));
 
         return OwnedTicketsCubit(repository: repository);
       },
@@ -360,18 +359,15 @@ void main() {
           _ticket(productId: 1, name: 'T1', ticketsLeft: 2),
         ];
 
-        when(() => repository.getOwnedTickets()).thenAnswer(
-          (_) => _ownedTicketsLoadResults([Right(fetchedTickets)]),
-        );
+        when(
+          () => repository.getOwnedTickets(),
+        ).thenAnswer((_) => _ownedTicketsLoadResults([Right(fetchedTickets)]));
 
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => const OwnedTicketsFailure(reason: 'Some previous failure'),
       act: (cubit) => cubit.loadOwnedTickets(),
-      expect: () => [
-        isA<OwnedTicketsLoading>(),
-        isA<OwnedTicketsLoaded>(),
-      ],
+      expect: () => [isA<OwnedTicketsLoading>(), isA<OwnedTicketsLoaded>()],
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
@@ -436,15 +432,10 @@ void main() {
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
-        ownedGroups: [
-          _ticket(productId: 1, name: 'T1', ticketsLeft: 2),
-        ],
+        ownedGroups: [_ticket(productId: 1, name: 'T1', ticketsLeft: 2)],
       ),
       act: (cubit) => cubit.loadOwnedTickets(),
-      expect: () => [
-        isA<OwnedTicketsRefreshing>(),
-        isA<OwnedTicketsFailure>(),
-      ],
+      expect: () => [isA<OwnedTicketsRefreshing>(), isA<OwnedTicketsFailure>()],
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
@@ -464,9 +455,7 @@ void main() {
         ownedGroups: [_ticket(productId: 1, name: 'T1', ticketsLeft: 1)],
       ),
       act: (cubit) => cubit.loadOwnedTickets(),
-      expect: () => [
-        isA<OwnedTicketsLoaded>(),
-      ],
+      expect: () => [isA<OwnedTicketsLoaded>()],
     );
 
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
@@ -476,9 +465,9 @@ void main() {
           _ticket(productId: 2, name: 'T2', ticketsLeft: 4),
         ];
 
-        when(() => repository.getOwnedTickets()).thenAnswer(
-          (_) => _ownedTicketsLoadResults([Right(fetchedTickets)]),
-        );
+        when(
+          () => repository.getOwnedTickets(),
+        ).thenAnswer((_) => _ownedTicketsLoadResults([Right(fetchedTickets)]));
 
         return OwnedTicketsCubit(repository: repository);
       },
@@ -508,9 +497,8 @@ void main() {
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
       'emits [Loaded(reordered)] when reorder succeeds',
       build: () {
-        when(() => repository.saveOwnedTicketsOrder(any())).thenReturn(
-          TaskEither.right(unit),
-        );
+        when(() => repository.saveOwnedTicketsOrder(any()))
+            .thenReturn(TaskEither.right(unit));
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(
@@ -601,9 +589,8 @@ void main() {
     blocTest<OwnedTicketsCubit, OwnedTicketsState>(
       'emits Loaded with updated list when dismiss succeeds',
       build: () {
-        when(() => repository.saveOwnedTicketsOrder(any())).thenReturn(
-          TaskEither.right(unit),
-        );
+        when(() => repository.saveOwnedTicketsOrder(any()))
+            .thenReturn(TaskEither.right(unit));
         return OwnedTicketsCubit(repository: repository);
       },
       seed: () => OwnedTicketsLoaded(

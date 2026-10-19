@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 /// A decorative background with rotating beans used by [SwipedTicketReceipt].
 class RotatingBeansBackground extends StatelessWidget {
-  const RotatingBeansBackground({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class RotatingBeansBackground extends StatelessWidget {
 }
 
 class _RotatingBeansDecoration extends StatefulWidget {
-  const _RotatingBeansDecoration({required this.size});
+  const new({required this.size});
 
   final double size;
 

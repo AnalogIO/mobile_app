@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 /// Represents the information about a spent ticket,
 /// including the drink name, ticket name, and the time it was spent.
 class SpentTicketInfo extends Equatable {
-  const SpentTicketInfo({
+  const new({
     required this.drinkName,
     required this.ticketName,
     required this.usedAt,

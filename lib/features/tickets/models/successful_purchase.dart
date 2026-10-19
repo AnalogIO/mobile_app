@@ -1,10 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class SuccessfulPurchase extends Equatable {
-  const SuccessfulPurchase({
-    required this.ticketName,
-    required this.amountOfTickets,
-  });
+  const new({required this.ticketName, required this.amountOfTickets});
 
   final String ticketName;
   final int amountOfTickets;

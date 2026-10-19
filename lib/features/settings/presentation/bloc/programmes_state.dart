@@ -1,22 +1,22 @@
 part of 'programmes_cubit.dart';
 
 sealed class ProgrammesState extends Equatable {
-  const ProgrammesState();
+  const new();
 
   @override
   List<Object?> get props => [];
 }
 
 final class ProgrammesInitial extends ProgrammesState {
-  const ProgrammesInitial();
+  const new();
 }
 
 final class ProgrammesLoading extends ProgrammesState {
-  const ProgrammesLoading();
+  const new();
 }
 
 final class ProgrammesLoaded extends ProgrammesState {
-  const ProgrammesLoaded(this.programmes);
+  const new(this.programmes);
 
   final List<Programme> programmes;
 
@@ -25,11 +25,11 @@ final class ProgrammesLoaded extends ProgrammesState {
 }
 
 final class ProgrammesRefreshing extends ProgrammesLoaded {
-  const ProgrammesRefreshing(super.programmes);
+  const new(super.programmes);
 }
 
 final class ProgrammesFailure extends ProgrammesState {
-  const ProgrammesFailure({required this.reason});
+  const new({required this.reason});
 
   final String reason;
 

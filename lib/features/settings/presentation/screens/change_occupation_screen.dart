@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ChangeOccupationScreen extends StatelessWidget {
-  const ChangeOccupationScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +31,9 @@ class ChangeOccupationScreen extends StatelessWidget {
                 onRetry: () => context.read<ProgrammesCubit>().loadProgrammes(),
               ),
               ProgrammesLoaded(:final programmes) ||
-              ProgrammesRefreshing(:final programmes) => _OccupationSelection(
-                programmes: programmes,
-              ),
+              ProgrammesRefreshing(
+                :final programmes,
+              ) => _OccupationSelection(programmes: programmes),
             };
           },
         ),
@@ -43,7 +43,7 @@ class ChangeOccupationScreen extends StatelessWidget {
 }
 
 class _OccupationSelection extends StatelessWidget {
-  const _OccupationSelection({required this.programmes});
+  const new({required this.programmes});
 
   final List<Programme> programmes;
 
@@ -74,9 +74,7 @@ class _OccupationSelection extends StatelessWidget {
               for (final (index, programme) in sorted.indexed) ...[
                 if (index > 0) const Divider(height: 1),
                 ListTile(
-                  title: Text(
-                    '${programme.fullName} (${programme.shortName})',
-                  ),
+                  title: Text('${programme.fullName} (${programme.shortName})'),
                   trailing: IgnorePointer(
                     child: Radio<int?>(
                       value: programme.id,

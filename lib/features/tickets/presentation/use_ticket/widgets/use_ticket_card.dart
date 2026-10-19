@@ -10,7 +10,7 @@ part 'swipe_ticket_content.dart';
 ///
 /// Transitions between states with a fade animation.
 class UseTicketCard extends StatefulWidget {
-  const UseTicketCard({
+  const new({
     required this.ticketId,
     required this.ticketName,
     required this.eligibleDrinks,

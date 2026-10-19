@@ -14,7 +14,7 @@ part 'authentication_state.dart';
 /// states based on the authentication status. These states are used by
 /// [AuthNavigator] to navigate the user through the app.
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit({
+  new({
     required AuthTokenRepository authTokenRepository,
     required this._loginRepository,
     required this._clearAuthenticatedUserContext,
@@ -31,7 +31,7 @@ class AuthCubit extends Cubit<AuthState> {
   /// Check current authentication status and emit appropriate state.
   Future<void> start() async {
     emit(const AuthLoading());
-    return _authRepository
+    return await _authRepository
         .getTokens()
         .match(
           (couldNotGetTokens) => AuthFailure(reason: couldNotGetTokens.reason),
@@ -48,7 +48,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logOut() async {
     emit(const AuthLoading());
 
-    return _authRepository
+    return await _authRepository
         .clearTokens()
         .match(
           (couldNotClearTokens) =>
@@ -63,7 +63,7 @@ class AuthCubit extends Cubit<AuthState> {
   /// The user has requested a login magic link to be sent.
   Future<void> sendLoginLink({required String email}) async {
     emit(const AuthLoading());
-    return _loginRepository
+    return await _loginRepository
         .requestMagicLink(email)
         .match(
           (didNotSendLink) => AuthFailure(reason: didNotSendLink.reason),
@@ -77,7 +77,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> authenticateWithToken({required String magicLinkToken}) async {
     emit(const AuthLoading());
 
-    return _loginRepository
+    return await _loginRepository
         .authenticateWithMagicLinkToken(magicLinkToken)
         // .chainFirst((_) => _clearUserContextTask)
         .flatMap(_authRepository.saveTokens)

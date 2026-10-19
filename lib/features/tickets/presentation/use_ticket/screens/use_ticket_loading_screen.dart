@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class UseTicketLoadingScreen extends StatelessWidget {
-  const UseTicketLoadingScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,8 @@ class UseTicketLoadingScreen extends StatelessWidget {
             delay: const Duration(milliseconds: 500),
             child: Text(
               'Using ticket... Please wait.',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.surface,
-              ),
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.surface),
             ),
           ),
         ],

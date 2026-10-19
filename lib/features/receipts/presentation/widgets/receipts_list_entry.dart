@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ReceiptsListEntry extends StatelessWidget {
-  const ReceiptsListEntry({
-    required this.receipt,
-    super.key,
-  });
+  const new({required this.receipt, super.key});
 
   final Receipt receipt;
 
@@ -62,10 +59,7 @@ class ReceiptsListEntry extends StatelessWidget {
     final date = _getDate();
 
     final trailing = trailingText != null
-        ? Text(
-            trailingText,
-            style: Theme.of(context).textTheme.bodySmall,
-          )
+        ? Text(trailingText, style: Theme.of(context).textTheme.bodySmall)
         : null;
 
     return ListTile(

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TicketsScreen extends StatelessWidget {
-  const TicketsScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

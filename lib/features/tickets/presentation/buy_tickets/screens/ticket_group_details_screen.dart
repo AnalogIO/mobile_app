@@ -10,20 +10,18 @@ import 'package:gap/gap.dart';
 /// [CustomScrollView] with slivers to achieve the large app bar with the
 /// background graphic.
 class TicketGroupDetailsScreen extends StatelessWidget {
-  const TicketGroupDetailsScreen({required this.ticketGroup, super.key});
+  const new({required this.ticketGroup, super.key});
 
   final PurchasableTicketGroup ticketGroup;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _TicketGroupDetailsContent(ticketGroup: ticketGroup),
-    );
+    return Scaffold(body: _TicketGroupDetailsContent(ticketGroup: ticketGroup));
   }
 }
 
 class _TicketGroupDetailsContent extends StatelessWidget {
-  const _TicketGroupDetailsContent({required this.ticketGroup});
+  const new({required this.ticketGroup});
 
   final PurchasableTicketGroup ticketGroup;
 
@@ -47,7 +45,7 @@ class _TicketGroupDetailsContent extends StatelessWidget {
 /// The large header with the background image for
 /// the ticket group details screen.
 class _TicketGroupHeader extends StatelessWidget {
-  const _TicketGroupHeader({required this.title});
+  const new({required this.title});
 
   final String title;
 
@@ -98,7 +96,7 @@ class _TicketGroupHeader extends StatelessWidget {
 }
 
 class _TicketGroupDetails extends StatelessWidget {
-  const _TicketGroupDetails({required this.ticketGroup});
+  const new({required this.ticketGroup});
 
   final PurchasableTicketGroup ticketGroup;
 
@@ -116,10 +114,7 @@ class _TicketGroupDetails extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              ticketGroup.description,
-              style: textTheme.bodyLarge,
-            ),
+            Text(ticketGroup.description, style: textTheme.bodyLarge),
             if (ticketGroup.eligibleDrinks.isNotEmpty) ...[
               const Gap(24),
               Text(
@@ -137,10 +132,7 @@ class _TicketGroupDetails extends StatelessWidget {
 
 /// The purchase button, which is fixed at the bottom of the screen.
 class _PurchaseButtonSection extends StatelessWidget {
-  const _PurchaseButtonSection({
-    required this.ticketGroup,
-    required this.onPressed,
-  });
+  const new({required this.ticketGroup, required this.onPressed});
 
   final PurchasableTicketGroup ticketGroup;
   final VoidCallback onPressed;

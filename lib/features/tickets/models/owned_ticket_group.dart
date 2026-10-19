@@ -8,7 +8,7 @@ import 'package:equatable/equatable.dart';
 //  fields in certain contexts.
 // FIXME(marfavi): rename fields
 class OwnedTicketGroup extends Equatable {
-  const OwnedTicketGroup({
+  const new({
     required this.productId,
     required this.ticketName,
     required this.ticketsLeft,
@@ -16,7 +16,7 @@ class OwnedTicketGroup extends Equatable {
   });
 
   // FIXME(marfavi): Use json_serializable instead?
-  factory OwnedTicketGroup.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     return OwnedTicketGroup(
       productId: json['productId'] as int,
       ticketName: json['ticketName'] as String,

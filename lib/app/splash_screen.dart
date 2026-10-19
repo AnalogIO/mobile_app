@@ -3,7 +3,7 @@ import 'package:cafe_analog_app/core/widgets/delayed_fade_in.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

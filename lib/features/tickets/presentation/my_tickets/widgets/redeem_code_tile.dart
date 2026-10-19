@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class RedeemCodeTile extends StatelessWidget {
-  const RedeemCodeTile({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

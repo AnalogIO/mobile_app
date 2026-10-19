@@ -10,11 +10,7 @@ import 'package:go_router/go_router.dart';
 enum _DebugAction { overlay, toggleTheme, invalidateJwt }
 
 class AnalogAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const AnalogAppBar({
-    required this.title,
-    this.onBrightnessChanged,
-    super.key,
-  });
+  const new({required this.title, this.onBrightnessChanged, super.key});
 
   final String title;
   final void Function(Brightness)? onBrightnessChanged;
@@ -28,10 +24,8 @@ class AnalogAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       title: Text(title),
-      titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.w800,
-        fontSize: 25,
-      ),
+      titleTextStyle: Theme.of(context).textTheme.titleLarge
+          ?.copyWith(fontWeight: FontWeight.w800, fontSize: 25),
       centerTitle: false,
       actions: [
         if (kDebugMode)

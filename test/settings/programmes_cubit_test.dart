@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class _MockSettingsRepository extends Mock implements SettingsRepository {}
+class _MockSettingsRepository extends Mock implements SettingsRepository;
 
 void main() {
   late _MockSettingsRepository repository;
@@ -48,9 +48,9 @@ void main() {
     blocTest<ProgrammesCubit, ProgrammesState>(
       'loadProgrammes: emits failure on error',
       build: () {
-        when(() => repository.getProgrammes()).thenAnswer(
-          (_) => TaskEither.left(const UnexpectedFailure('boom')),
-        );
+        when(
+          () => repository.getProgrammes(),
+        ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
         return ProgrammesCubit(repository: repository);
       },
       act: (cubit) => cubit.loadProgrammes(),

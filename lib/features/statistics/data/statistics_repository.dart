@@ -5,10 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:fpdart/fpdart.dart';
 
 class StatisticsRepository {
-  const StatisticsRepository({
-    required this._leaderboardApi,
-    required this._quickStatsApi,
-  });
+  const new({required this._leaderboardApi, required this._quickStatsApi});
 
   final LeaderboardApi _leaderboardApi;
   final QuickStatsApi _quickStatsApi;
@@ -32,32 +29,30 @@ class StatisticsRepository {
         .flatMap(
           (topEntries) => _leaderboardApi
               .fetchCurrentUserLeaderboardEntry(preset: preset)
-              .map(
-                (currentUserEntry) {
-                  final currentUserId = currentUserEntry.id;
-                  final currentUserInTop = topEntries.any(
-                    (entry) => entry.id == currentUserId,
-                  );
+              .map((currentUserEntry) {
+                final currentUserId = currentUserEntry.id;
+                final currentUserInTop = topEntries.any(
+                  (entry) => entry.id == currentUserId,
+                );
 
-                  // If the current user's entry is not in the top entries,
-                  // we add it to the list.
-                  final allEntries = currentUserInTop
-                      ? topEntries
-                      : [...topEntries, currentUserEntry];
+                // If the current user's entry is not in the top entries,
+                // we add it to the list.
+                final allEntries = currentUserInTop
+                    ? topEntries
+                    : [...topEntries, currentUserEntry];
 
-                  return allEntries
-                      .map(
-                        (entry) => LeaderboardUserEntry(
-                          userId: entry.id,
-                          name: entry.name ?? 'Anonymous',
-                          rank: entry.rank,
-                          drinksConsumed: entry.score,
-                          isCurrentUser: entry.id == currentUserId,
-                        ),
-                      )
-                      .sortedBy((entry) => entry.rank);
-                },
-              ),
+                return allEntries
+                    .map(
+                      (entry) => LeaderboardUserEntry(
+                        userId: entry.id,
+                        name: entry.name ?? 'Anonymous',
+                        rank: entry.rank,
+                        drinksConsumed: entry.score,
+                        isCurrentUser: entry.id == currentUserId,
+                      ),
+                    )
+                    .sortedBy((entry) => entry.rank);
+              }),
         );
   }
 

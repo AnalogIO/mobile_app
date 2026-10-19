@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// `profileBackgroundColor` (as in the old app's `feature/change-profile-pic`
 /// branch), swap this store for API calls in `SettingsRepository`.
 class ProfilePictureLocalStore {
-  const ProfilePictureLocalStore({required this._store});
+  const new({required this._store});
 
   final SharedPreferencesWithCache _store;
 
@@ -30,24 +30,18 @@ class ProfilePictureLocalStore {
   }
 
   TaskEither<Failure, Unit> saveProfilePicture(ProfilePicture picture) {
-    return TaskEither.tryCatch(
-      () async {
-        await _store.setInt(iconKey, picture.iconId);
-        await _store.setInt(backgroundColorKey, picture.backgroundColorId);
-        return unit;
-      },
-      (error, _) => LocalStorageFailure(error.toString()),
-    );
+    return TaskEither.tryCatch(() async {
+      await _store.setInt(iconKey, picture.iconId);
+      await _store.setInt(backgroundColorKey, picture.backgroundColorId);
+      return unit;
+    }, (error, _) => LocalStorageFailure(error.toString()));
   }
 
   TaskEither<Failure, Unit> clear() {
-    return TaskEither.tryCatch(
-      () async {
-        await _store.remove(iconKey);
-        await _store.remove(backgroundColorKey);
-        return unit;
-      },
-      (error, _) => LocalStorageFailure(error.toString()),
-    );
+    return TaskEither.tryCatch(() async {
+      await _store.remove(iconKey);
+      await _store.remove(backgroundColorKey);
+      return unit;
+    }, (error, _) => LocalStorageFailure(error.toString()));
   }
 }

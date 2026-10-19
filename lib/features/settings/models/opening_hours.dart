@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 /// A period of time with a start and end, expressed as minutes since
 /// midnight. For example, 08:00-15:30 becomes `Timeslot(480, 930)`.
 class Timeslot extends Equatable {
-  const Timeslot(this.startMinute, this.endMinute);
+  const new(this.startMinute, this.endMinute);
 
   final int startMinute;
   final int endMinute;

@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 class StatsScreen extends StatelessWidget {
-  const StatsScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +15,7 @@ class StatsScreen extends StatelessWidget {
         context.read<QuickStatsCubit>().loadQuickStats(),
         context.read<LeaderboardCubit>().loadLeaderboard(),
       ]),
-      children: const [
-        QuickStatsSection(),
-        Gap(16),
-        LeaderboardSection(),
-      ],
+      children: const [QuickStatsSection(), Gap(16), LeaderboardSection()],
     );
   }
 }

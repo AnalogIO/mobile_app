@@ -2,10 +2,7 @@ part of 'use_ticket_card.dart';
 
 /// Content shown when the user can swipe to use the ticket.
 class _SwipeTicketContent extends StatelessWidget {
-  const _SwipeTicketContent({
-    required this.ticketName,
-    required this.onTicketUsed,
-  });
+  const new({required this.ticketName, required this.onTicketUsed});
 
   final String ticketName;
   final VoidCallback onTicketUsed;

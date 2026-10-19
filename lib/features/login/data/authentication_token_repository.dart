@@ -6,10 +6,7 @@ import 'package:fpdart/fpdart.dart';
 
 /// Handles storing and retrieving JWT and refresh tokens securely.
 class AuthTokenRepository {
-  AuthTokenRepository({
-    required this._secureStorage,
-    required this._authTokenStore,
-  });
+  new({required this._secureStorage, required this._authTokenStore});
 
   final FlutterSecureStorage _secureStorage;
   final AuthTokenStore _authTokenStore;
@@ -21,20 +18,14 @@ class AuthTokenRepository {
   ///
   /// Returns the saved tokens on success.
   TaskEither<Failure, AuthTokens> saveTokens(AuthTokens tokens) {
-    return TaskEither.tryCatch(
-      () async {
-        await Future.wait([
-          _secureStorage.write(key: _jwtKey, value: tokens.jwt),
-          _secureStorage.write(
-            key: _refreshTokenKey,
-            value: tokens.refreshToken,
-          ),
-        ]);
-        _authTokenStore.token = tokens.jwt;
-        return tokens;
-      },
-      (error, _) => LocalStorageFailure('Failed to save auth tokens: $error'),
-    );
+    return TaskEither.tryCatch(() async {
+      await Future.wait([
+        _secureStorage.write(key: _jwtKey, value: tokens.jwt),
+        _secureStorage.write(key: _refreshTokenKey, value: tokens.refreshToken),
+      ]);
+      _authTokenStore.token = tokens.jwt;
+      return tokens;
+    }, (error, _) => LocalStorageFailure('Failed to save auth tokens: $error'));
   }
 
   /// Retrieves the authentication tokens, if they exist.

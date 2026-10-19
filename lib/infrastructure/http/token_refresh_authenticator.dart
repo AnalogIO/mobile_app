@@ -6,7 +6,7 @@ import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:chopper/chopper.dart';
 
 class TokenRefreshAuthenticator extends Authenticator {
-  TokenRefreshAuthenticator({
+  new({
     required this._authTokenRepository,
     required this._tokenRefreshApi,
     required this._authCubitHandle,
@@ -56,7 +56,9 @@ class TokenRefreshAuthenticator extends Authenticator {
   }
 
   Future<AuthTokens?> _refreshTokens() async {
-    if (_refreshCompleter != null) return _refreshCompleter!.future;
+    if (_refreshCompleter != null) {
+      return await _refreshCompleter!.future;
+    }
 
     final completer = Completer<AuthTokens?>();
     _refreshCompleter = completer;
@@ -65,10 +67,7 @@ class TokenRefreshAuthenticator extends Authenticator {
       final tokensEither = await _authTokenRepository.getTokens().run();
       final existingTokens = tokensEither.match(
         (_) => null,
-        (maybeTokens) => maybeTokens.match(
-          () => null,
-          (tokens) => tokens,
-        ),
+        (maybeTokens) => maybeTokens.match(() => null, (tokens) => tokens),
       );
 
       if (existingTokens == null) {
@@ -111,7 +110,7 @@ class TokenRefreshAuthenticator extends Authenticator {
     } on Exception catch (e) {
       log('Token refresh failed with exception: $e.');
       completer.complete(null);
-      return completer.future;
+      return await completer.future;
     } finally {
       _refreshCompleter = null;
     }

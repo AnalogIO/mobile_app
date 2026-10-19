@@ -5,8 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'ticket_catalog_state.dart';
 
 class TicketCatalogCubit extends Cubit<TicketCatalogState> {
-  TicketCatalogCubit({required this._repository})
-    : super(const TicketCatalogInitial());
+  new({required this._repository}) : super(const TicketCatalogInitial());
 
   final TicketsRepository _repository;
 
@@ -27,7 +26,7 @@ class TicketCatalogCubit extends Cubit<TicketCatalogState> {
       emit(const TicketCatalogLoading());
     }
 
-    return _repository
+    return await _repository
         .getPurchasableTickets()
         .match(
           (failure) => TicketCatalogFailure(reason: failure.reason),

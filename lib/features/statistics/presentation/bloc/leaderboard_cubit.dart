@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 part 'leaderboard_state.dart';
 
 class LeaderboardCubit extends Cubit<LeaderboardState> {
-  LeaderboardCubit({required this._repository})
+  new({required this._repository})
     : super(const LeaderboardInitial(filter: LeaderboardFilter.month));
 
   final StatisticsRepository _repository;

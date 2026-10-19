@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 /// A screen that wraps [RedeemVoucherScreen] to handle redeeming a voucher
 /// from a deep link.
 class RedeemVoucherDeepLinkFlow extends StatefulWidget {
-  const RedeemVoucherDeepLinkFlow({required this.voucherCode, super.key});
+  const new({required this.voucherCode, super.key});
 
   final String voucherCode;
 
@@ -53,10 +53,7 @@ class _RedeemVoucherDeepLinkFlowState extends State<RedeemVoucherDeepLinkFlow> {
         title: 'Failed to redeem voucher',
         content: reason,
         actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text('OK'),
-          ),
+          TextButton(onPressed: () => context.pop(), child: const Text('OK')),
         ],
       ),
     );
