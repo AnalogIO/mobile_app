@@ -48,10 +48,10 @@ class StatisticsRepository {
                   return allEntries
                       .map(
                         (entry) => LeaderboardUserEntry(
-                          userId: entry.id!,
-                          name: entry.name!,
-                          rank: entry.rank!,
-                          drinksConsumed: entry.score!,
+                          userId: entry.id,
+                          name: entry.name ?? 'Anonymous',
+                          rank: entry.rank,
+                          drinksConsumed: entry.score,
                           isCurrentUser: entry.id == currentUserId,
                         ),
                       )
@@ -70,7 +70,7 @@ class StatisticsRepository {
       int? weekDrinksConsumed;
 
       for (final dto in statDtos) {
-        switch (api.quickStatTypeFromJson(dto.key)) {
+        switch (dto.key) {
           case api.QuickStatType.totaldrinks:
             allTimeDrinksConsumed = dto.value;
           case api.QuickStatType.drinkstoday:

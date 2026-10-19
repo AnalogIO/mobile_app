@@ -127,17 +127,13 @@ class TicketsRepository {
         .flatMap(
           (response) {
             return TaskEither(() async {
-              final purchaseStatus = purchaseStatusFromJson(
-                response.purchaseStatus,
-              );
-
-              if (purchaseStatus == PurchaseStatus.cancelled) {
+              if (response.purchaseStatus == PurchaseStatus.cancelled) {
                 return const Left(PurchaseCancelledByUser());
               }
-              if (purchaseStatus == PurchaseStatus.pendingpayment) {
+              if (response.purchaseStatus == PurchaseStatus.pendingpayment) {
                 return const Left(PurchasePending());
               }
-              if (purchaseStatus != PurchaseStatus.completed) {
+              if (response.purchaseStatus != PurchaseStatus.completed) {
                 return const Left(PurchaseUnexpectedFailure());
               }
 

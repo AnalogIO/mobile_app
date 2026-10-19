@@ -65,15 +65,13 @@ class ReceiptsRepository {
       return true;
     }
 
-    final status = api.purchaseStatusFromJson(
-      api.PurchaseReceipt.fromJson(json).status,
-    );
+    final status = api.PurchaseReceipt.fromJson(json).status;
     if (status == api.PurchaseStatus.completed) {
       return true;
     }
     if (status == api.PurchaseStatus.swaggerGeneratedUnknown) {
       throw FormatException('Unknown purchase status: ${json['status']}');
     }
-    return false;
+    return false; // Exclude non-completed purchases
   }
 }

@@ -52,7 +52,7 @@ class TicketsApi {
       (api) => api.v2.purchasesPost(
         body: InitiatePurchaseRequest(
           productId: ticketGroupId,
-          paymentType: PaymentType.mobilepay.value,
+          paymentType: PaymentType.mobilepay,
         ),
       ),
     );
