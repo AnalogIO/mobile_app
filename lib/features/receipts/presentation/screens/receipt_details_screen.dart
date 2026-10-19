@@ -24,7 +24,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
         [
           _Detail('Tickets', '$numberOfTickets'),
           _Detail('Price', '$priceDKK DKK'),
-          _Detail('Status', status),
+          _Detail('Status', status.label),
           _Detail('Order ID', orderId),
         ],
       VoucherReceipt(:final numberOfTickets) => [

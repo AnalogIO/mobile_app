@@ -12,7 +12,7 @@ void main() {
   final purchase = PurchaseReceipt(
     ticketName: 'Coffee',
     numberOfTickets: 10,
-    status: 'completed',
+    status: PurchaseStatus.completed,
     priceDKK: 300,
     orderDate: DateTime(2026, 1, 2),
     orderId: 'order-1',

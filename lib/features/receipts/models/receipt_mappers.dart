@@ -8,15 +8,10 @@ Receipt receiptFromJson(Map<String, dynamic> json) {
   switch (api.receiptTypeFromJson(json['Type'])) {
     case api.ReceiptType.purchase:
       final purchase = api.PurchaseReceipt.fromJson(json);
-      final status = api.purchaseStatusFromJson(purchase.status);
       return PurchaseReceipt(
         ticketName: purchase.productName,
         numberOfTickets: purchase.quantity,
-        // TODO(marfavi): The status should be a domain-level enum,
-        // not the generated `api.PurchaseStatus` and not a String. Left as a
-        // String while the receipts feature is in development.
-        // See CONTRIBUTING.md for how API enums should be handled.
-        status: status.value ?? status.name,
+        status: purchaseStatusFrom(api.purchaseStatusFromJson(purchase.status)),
         orderDate: purchase.orderDate,
         priceDKK: purchase.price,
         orderId: purchase.orderId,
@@ -43,4 +38,17 @@ Receipt receiptFromJson(Map<String, dynamic> json) {
       // See CONTRIBUTING.md.
       throw FormatException('Unknown receipt type: ${json['Type']}');
   }
+}
+
+PurchaseStatus purchaseStatusFrom(api.PurchaseStatus status) {
+  return switch (status) {
+    api.PurchaseStatus.completed => PurchaseStatus.completed,
+    api.PurchaseStatus.cancelled => PurchaseStatus.cancelled,
+    api.PurchaseStatus.pendingpayment => PurchaseStatus.pendingPayment,
+    api.PurchaseStatus.refunded => PurchaseStatus.refunded,
+    api.PurchaseStatus.expired => PurchaseStatus.expired,
+    api.PurchaseStatus.swaggerGeneratedUnknown => throw const FormatException(
+      'Unknown purchase status',
+    ),
+  };
 }
