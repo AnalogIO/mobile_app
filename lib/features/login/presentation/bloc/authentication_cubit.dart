@@ -90,6 +90,36 @@ class AuthCubit extends Cubit<AuthState> {
         .run();
   }
 
+  /// Silently exchanges the stored refresh token for a fresh token pair.
+  ///
+  /// The backend resolves the account from the JWT's email claim. Changing
+  /// the user's email therefore invalidates the current JWT, so after an
+  /// email update the app must obtain new tokens (which carry the new email)
+  /// to keep the session working.
+  ///
+  /// Unlike the other auth flows, this emits **no** states: [AuthNavigator]
+  /// navigates on every `AuthAuthenticated`/`AuthUnauthenticated` emission,
+  /// which would yank the user out of the screen they are on. The caller
+  /// decides how to react based on the returned value.
+  ///
+  /// Returns `true` when the tokens were successfully refreshed.
+  Future<bool> refreshSession() async {
+    final tokensEither = await _authRepository.getTokens().run();
+    final maybeTokens = tokensEither.getOrElse((_) => none());
+    final refreshToken = maybeTokens.match(
+      () => null,
+      (tokens) => tokens.refreshToken,
+    );
+    if (refreshToken == null) return false;
+
+    final refreshEither = await _loginRepository
+        .authenticateWithMagicLinkToken(refreshToken)
+        .flatMap(_authRepository.saveTokens)
+        .run();
+
+    return refreshEither.isRight();
+  }
+
   /// A task that attempts to clear user context via
   /// the supplied [_clearAuthenticatedUserContext] callback.
   ///
