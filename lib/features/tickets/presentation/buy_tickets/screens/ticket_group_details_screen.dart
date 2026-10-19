@@ -132,10 +132,7 @@ class _TicketGroupDetails extends StatelessWidget {
 
 /// The purchase button, which is fixed at the bottom of the screen.
 class _PurchaseButtonSection extends StatelessWidget {
-  const new({
-    required this.ticketGroup,
-    required this.onPressed,
-  });
+  const new({required this.ticketGroup, required this.onPressed});
 
   final PurchasableTicketGroup ticketGroup;
   final VoidCallback onPressed;

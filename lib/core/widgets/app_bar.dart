@@ -10,11 +10,7 @@ import 'package:go_router/go_router.dart';
 enum _DebugAction { overlay, toggleTheme, invalidateJwt }
 
 class AnalogAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const new({
-    required this.title,
-    this.onBrightnessChanged,
-    super.key,
-  });
+  const new({required this.title, this.onBrightnessChanged, super.key});
 
   final String title;
   final void Function(Brightness)? onBrightnessChanged;

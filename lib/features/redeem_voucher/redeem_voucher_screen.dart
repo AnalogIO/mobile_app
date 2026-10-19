@@ -6,10 +6,7 @@ import 'package:flutter/material.dart';
 class RedeemVoucherScreen extends StatelessWidget {
   const new({super.key}) : initialVoucherCode = '';
 
-  const new prefilled({
-    required this.initialVoucherCode,
-    super.key,
-  });
+  const new prefilled({required this.initialVoucherCode, super.key});
 
   final String initialVoucherCode;
 

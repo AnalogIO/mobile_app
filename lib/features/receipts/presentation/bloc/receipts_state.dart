@@ -16,10 +16,7 @@ final class ReceiptsLoading extends ReceiptsState {
 }
 
 final class ReceiptsLoaded extends ReceiptsState {
-  const new({
-    required this.receipts,
-    required this.continuationToken,
-  });
+  const new({required this.receipts, required this.continuationToken});
 
   /// List of receipts (purchases, swipes, vouchers)
   /// sorted by date (newest first)
@@ -33,10 +30,7 @@ final class ReceiptsLoaded extends ReceiptsState {
 }
 
 final class ReceiptsRefreshing extends ReceiptsLoaded {
-  const new({
-    required super.receipts,
-    required super.continuationToken,
-  });
+  const new({required super.receipts, required super.continuationToken});
 }
 
 final class ReceiptsFailure extends ReceiptsState {

@@ -11,8 +11,7 @@ part 'profile_picture_state.dart';
 ///
 /// The picture is persisted locally for now, until the backend supports it.
 class ProfilePictureCubit extends Cubit<ProfilePictureState> {
-  new({required this._repository})
-    : super(const ProfilePictureInitial());
+  new({required this._repository}) : super(const ProfilePictureInitial());
 
   final SettingsRepository _repository;
 

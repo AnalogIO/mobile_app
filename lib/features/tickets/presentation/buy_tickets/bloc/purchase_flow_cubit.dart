@@ -5,8 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'purchase_flow_state.dart';
 
 class PurchaseFlowCubit extends Cubit<PurchaseFlowState> {
-  new({required this._repository})
-    : super(const PurchaseFlowIdle());
+  new({required this._repository}) : super(const PurchaseFlowIdle());
 
   final TicketsRepository _repository;
 

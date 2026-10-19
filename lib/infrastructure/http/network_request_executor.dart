@@ -5,11 +5,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:logger/logger.dart';
 
 class NetworkRequestExecutor {
-  const new({
-    required this.logger,
-    required this.apiV1,
-    required this.apiV2,
-  });
+  const new({required this.logger, required this.apiV1, required this.apiV2});
 
   final Logger logger;
   final CoffeecardApiV1 apiV1;

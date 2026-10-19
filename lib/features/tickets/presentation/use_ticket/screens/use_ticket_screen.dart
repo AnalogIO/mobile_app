@@ -10,10 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// user taps on a ticket they own to use it.
 class UseTicketScreen extends StatelessWidget {
   /// Private constructor. Use the static method [show] to show this screen.
-  const new _({
-    required this.ticket,
-    required this.onTicketUsedSuccessfully,
-  });
+  const new _({required this.ticket, required this.onTicketUsedSuccessfully});
 
   final OwnedTicketGroup ticket;
   final Future<void> Function() onTicketUsedSuccessfully;

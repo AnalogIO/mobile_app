@@ -5,10 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:fpdart/fpdart.dart';
 
 class StatisticsRepository {
-  const new({
-    required this._leaderboardApi,
-    required this._quickStatsApi,
-  });
+  const new({required this._leaderboardApi, required this._quickStatsApi});
 
   final LeaderboardApi _leaderboardApi;
   final QuickStatsApi _quickStatsApi;
