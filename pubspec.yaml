@@ -26,7 +26,6 @@ dependencies:
   shared_preferences: ^2.5.4
   url_launcher: ^6.3.2
   confetti: ^0.8.0
-  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   bloc_test: ^10.0.0
