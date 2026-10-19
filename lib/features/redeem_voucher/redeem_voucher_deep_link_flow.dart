@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cafe_analog_app/core/dialog.dart';
 import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +18,22 @@ class RedeemVoucherDeepLinkFlow extends StatefulWidget {
 }
 
 class _RedeemVoucherDeepLinkFlowState extends State<RedeemVoucherDeepLinkFlow> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
     // Needs to be wrapped in a delayed future to ensure the dialog is shown
     // after the screen is built: https://stackoverflow.com/a/52062540
-    Future.delayed(Duration.zero, _handleDeepLink);
+    _timer = Timer(Duration.zero, () {
+      unawaited(_handleDeepLink());
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   Future<void> _handleDeepLink() async {

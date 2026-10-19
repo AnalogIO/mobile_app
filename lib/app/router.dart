@@ -21,7 +21,13 @@ class AnalogGoRouter {
 
   static final AnalogGoRouter instance = AnalogGoRouter._internal();
 
-  late final goRouter = GoRouter(
+  late final GoRouter goRouter = createRouter();
+
+  /// Builds a fresh router with the app's routes and guards.
+  ///
+  /// Tests use this instead of [goRouter] so navigation state is not shared
+  /// between test cases.
+  GoRouter createRouter() => GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: kDebugMode,
     routes: routes,
