@@ -17,6 +17,19 @@
       ]
     },
     {
+      "name": "Debug mode (local backend)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--flavor",
+        "development",
+        "--target",
+        "lib/main.dart",
+        "--dart-define=API_BASE_URL=http://localhost:8080"
+      ]
+    },
+    {
       "name": "Release mode (development flavor)",
       "request": "launch",
       "type": "dart",
