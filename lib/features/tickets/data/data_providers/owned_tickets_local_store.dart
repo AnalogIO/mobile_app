@@ -33,4 +33,16 @@ class OwnedTicketsLocalStore {
           .toList(growable: false);
     }, (error, _) => LocalStorageFailure(error.toString()));
   }
+
+  /// Removes the cached tickets.
+  ///
+  /// This must run when the authenticated user changes: the cache is used to
+  /// keep depleted ticket groups visible for the same user, so carrying it
+  /// across accounts would show another user's ticket names and counts.
+  TaskEither<Failure, Unit> clear() {
+    return TaskEither.tryCatch(() async {
+      await _store.remove(storageKey);
+      return unit;
+    }, (error, _) => LocalStorageFailure(error.toString()));
+  }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
+import 'package:cafe_analog_app/app/user_context_cleaner.dart';
 import 'package:cafe_analog_app/features/login/login.dart';
 import 'package:cafe_analog_app/features/receipts/receipts.dart';
 import 'package:cafe_analog_app/features/settings/settings.dart';
@@ -111,14 +112,9 @@ class DependenciesProvider extends StatelessWidget {
               final authCubit = AuthCubit(
                 authTokenRepository: context.read(),
                 loginRepository: context.read(),
-                clearAuthenticatedUserContext: () async {
-                  await RememberedTicketDrinkLocalStore(store: localStorage)
-                      .clear()
-                      .run();
-                  await ProfilePictureLocalStore(store: localStorage)
-                      .clear()
-                      .run();
-                },
+                clearAuthenticatedUserContext: UserContextCleaner(
+                  localStorage: localStorage,
+                ).clear,
               );
               unawaited(authCubit.start());
               context.read<AuthCubitHandle>().bind(authCubit);
