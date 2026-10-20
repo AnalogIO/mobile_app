@@ -51,7 +51,7 @@ class QuickStatsSection extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        child: QuickStatCard(
+                        child: QuickStatCard.favouriteDrink(
                           description: 'Your favourite drink',
                           number: quickStats.allTimeFavouriteDrink.$1,
                           extraText: quickStats.allTimeFavouriteDrink.$2,
