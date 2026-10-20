@@ -46,19 +46,22 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   /// Log the user out and clear stored tokens.
+  ///
+  /// User-scoped caches are cleared before [AuthUnauthenticated] is emitted, so
+  /// the next account can never observe the previous account's data.
   Future<void> logOut() async {
     emit(const AuthLoading());
 
-    return await _authRepository
-        .clearTokens()
-        .match(
-          (couldNotClearTokens) =>
-              AuthFailure(reason: couldNotClearTokens.reason),
-          (_) => const AuthUnauthenticated(),
-        )
-        .map(emit)
-        .andThen(() => _clearUserContextTask)
-        .run();
+    final result = await _authRepository.clearTokens().run();
+    await _clearUserContextTask.run();
+
+    emit(
+      result.match(
+        (couldNotClearTokens) =>
+            AuthFailure(reason: couldNotClearTokens.reason),
+        (_) => const AuthUnauthenticated(),
+      ),
+    );
   }
 
   /// The user has requested a login magic link to be sent.
@@ -75,20 +78,26 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   /// Authenticate the user with the token provided from the magic link.
+  ///
+  /// The previous account's caches are cleared before [AuthAuthenticated] is
+  /// emitted, so the tickets shell cannot read them while loading the new
+  /// account.
   Future<void> authenticateWithToken({required String magicLinkToken}) async {
     emit(const AuthLoading());
 
-    return await _loginRepository
+    final result = await _loginRepository
         .authenticateWithMagicLinkToken(magicLinkToken)
-        // .chainFirst((_) => _clearUserContextTask)
         .flatMap(_authRepository.saveTokens)
-        .match(
-          (failure) => AuthFailure(reason: failure.reason),
-          (savedTokens) => AuthAuthenticated(tokens: savedTokens),
-        )
-        .map(emit)
-        .andThen(() => _clearUserContextTask)
         .run();
+
+    await _clearUserContextTask.run();
+
+    emit(
+      result.match(
+        (failure) => AuthFailure(reason: failure.reason),
+        (savedTokens) => AuthAuthenticated(tokens: savedTokens),
+      ),
+    );
   }
 
   /// Completes the account registration started by the welcome email.

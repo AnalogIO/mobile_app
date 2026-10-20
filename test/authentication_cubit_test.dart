@@ -142,6 +142,63 @@ void main() {
       expect: () => [isA<AuthLoading>(), isA<AuthUnauthenticated>()],
     );
 
+    test(
+      'logOut clears user context before emitting Unauthenticated',
+      () async {
+        when(() => authTokenRepository.clearTokens())
+            .thenReturn(TaskEither.right(unit));
+
+        final events = <String>[];
+        final cubit = AuthCubit(
+          authTokenRepository: authTokenRepository,
+          loginRepository: loginRepository,
+          clearAuthenticatedUserContext: () async {
+            events.add('clear-context');
+          },
+        );
+        final subscription = cubit.stream.listen(
+          (state) => events.add(state.runtimeType.toString()),
+        );
+        addTearDown(subscription.cancel);
+        addTearDown(cubit.close);
+
+        await cubit.logOut();
+        await pumpEventQueue();
+
+        expect(events, ['AuthLoading', 'clear-context', 'AuthUnauthenticated']);
+      },
+    );
+
+    test(
+      'authenticateWithToken clears user context before emitting Authenticated',
+      () async {
+        const tokens = AuthTokens(jwt: 'JWT', refreshToken: 'REFRESH');
+        when(() => loginRepository.authenticateWithMagicLinkToken('TOKEN'))
+            .thenReturn(TaskEither.right(tokens));
+        when(() => authTokenRepository.saveTokens(tokens))
+            .thenReturn(TaskEither.right(tokens));
+
+        final events = <String>[];
+        final cubit = AuthCubit(
+          authTokenRepository: authTokenRepository,
+          loginRepository: loginRepository,
+          clearAuthenticatedUserContext: () async {
+            events.add('clear-context');
+          },
+        );
+        final subscription = cubit.stream.listen(
+          (state) => events.add(state.runtimeType.toString()),
+        );
+        addTearDown(subscription.cancel);
+        addTearDown(cubit.close);
+
+        await cubit.authenticateWithToken(magicLinkToken: 'TOKEN');
+        await pumpEventQueue();
+
+        expect(events, ['AuthLoading', 'clear-context', 'AuthAuthenticated']);
+      },
+    );
+
     group('refreshSession', () {
       test('emits nothing and returns true when refresh succeeds', () async {
         when(() => authTokenRepository.getTokens()).thenReturn(
