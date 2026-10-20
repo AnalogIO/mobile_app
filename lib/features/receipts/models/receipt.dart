@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/features/receipts/models/purchase_status.dart';
 import 'package:equatable/equatable.dart';
 
 /// Base class for all receipt types.
@@ -25,7 +26,7 @@ final class PurchaseReceipt extends Receipt {
   final int numberOfTickets;
 
   /// The status of the purchase.
-  final String status;
+  final PurchaseStatus status;
 
   /// The total price of the purchase in kr.
   final int priceDKK;

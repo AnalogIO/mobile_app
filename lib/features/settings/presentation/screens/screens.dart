@@ -3,6 +3,7 @@ export 'change_name_screen.dart';
 export 'change_occupation_screen.dart';
 export 'change_profile_picture_screen.dart';
 export 'credits_screen.dart';
+export 'faq_screen.dart';
 export 'opening_hours_screen.dart';
 export 'settings_screen.dart';
 export 'your_profile_screen.dart';

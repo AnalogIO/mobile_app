@@ -79,7 +79,7 @@ class _EmailSentScreenState extends State<EmailSentScreen> {
                 ),
                 const Gap(12),
                 Text(
-                  'We sent a magic link to',
+                  'We sent a link to',
                   style: textTheme.bodyLarge,
                   textAlign: .center,
                 ),

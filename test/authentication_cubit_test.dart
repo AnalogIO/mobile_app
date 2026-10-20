@@ -20,6 +20,12 @@ void main() {
     clearUserContextCalls = 0;
   });
 
+  setUpAll(() {
+    registerFallbackValue(
+      const AuthTokens(jwt: 'fallback-jwt', refreshToken: 'fallback-refresh'),
+    );
+  });
+
   group('AuthCubit', () {
     blocTest<AuthCubit, AuthState>(
       'emits [Loading, Authenticated] when started '
@@ -229,6 +235,78 @@ void main() {
         expect(result, isFalse);
         expect(states, isEmpty);
       });
+    });
+  });
+
+  group('AuthCubit.completeRegistration', () {
+    test('saves tokens, emits Authenticated and clears user context', () async {
+      const tokens = AuthTokens(jwt: 'NEW-JWT', refreshToken: 'NEW-REF');
+      when(
+        () => loginRepository.completeRegistration(
+          registrationToken: 'REGISTRATION-TOKEN',
+          name: 'New User',
+          programmeId: 7,
+        ),
+      ).thenReturn(TaskEither.right(tokens));
+      when(() => authTokenRepository.saveTokens(tokens))
+          .thenReturn(TaskEither.right(tokens));
+
+      final cubit = AuthCubit(
+        authTokenRepository: authTokenRepository,
+        loginRepository: loginRepository,
+        clearAuthenticatedUserContext: () async {
+          clearUserContextCalls += 1;
+        },
+      );
+      addTearDown(cubit.close);
+
+      final result = await cubit.completeRegistration(
+        registrationToken: 'REGISTRATION-TOKEN',
+        name: 'New User',
+        programmeId: 7,
+      );
+
+      expect(result.isRight(), isTrue);
+      expect(cubit.state, isA<AuthAuthenticated>());
+      expect(clearUserContextCalls, 1);
+      verify(
+        () => loginRepository.completeRegistration(
+          registrationToken: 'REGISTRATION-TOKEN',
+          name: 'New User',
+          programmeId: 7,
+        ),
+      ).called(1);
+      verify(() => authTokenRepository.saveTokens(tokens)).called(1);
+    });
+
+    test('returns Left and keeps the state when registration fails', () async {
+      when(
+        () => loginRepository.completeRegistration(
+          registrationToken: 'EXPIRED',
+          name: 'New User',
+          programmeId: 7,
+        ),
+      ).thenReturn(TaskEither.left(const UnexpectedFailure('expired')));
+
+      final cubit = AuthCubit(
+        authTokenRepository: authTokenRepository,
+        loginRepository: loginRepository,
+        clearAuthenticatedUserContext: () async {
+          clearUserContextCalls += 1;
+        },
+      );
+      addTearDown(cubit.close);
+
+      final result = await cubit.completeRegistration(
+        registrationToken: 'EXPIRED',
+        name: 'New User',
+        programmeId: 7,
+      );
+
+      expect(result.isLeft(), isTrue);
+      expect(cubit.state, isA<AuthInitial>());
+      expect(clearUserContextCalls, 0);
+      verifyNever(() => authTokenRepository.saveTokens(any()));
     });
   });
 }

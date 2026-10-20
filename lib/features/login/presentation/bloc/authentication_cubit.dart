@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/core/failures.dart';
 import 'package:cafe_analog_app/features/login/data/authentication_token_repository.dart';
 import 'package:cafe_analog_app/features/login/data/login_repository.dart';
 import 'package:cafe_analog_app/features/login/models/authentication_tokens.dart';
@@ -88,6 +89,39 @@ class AuthCubit extends Cubit<AuthState> {
         .map(emit)
         .andThen(() => _clearUserContextTask)
         .run();
+  }
+
+  /// Completes the account registration started by the welcome email.
+  ///
+  /// Unlike the other auth flows, failures are returned to the caller instead
+  /// of being emitted as [AuthFailure]: the registration screen must stay open
+  /// so the user can correct their details or request a new link.
+  Future<Either<Failure, Unit>> completeRegistration({
+    required String registrationToken,
+    required String name,
+    required int programmeId,
+  }) async {
+    final result = await _loginRepository
+        .completeRegistration(
+          registrationToken: registrationToken,
+          name: name,
+          programmeId: programmeId,
+        )
+        .flatMap(_authRepository.saveTokens)
+        .run();
+
+    return switch (result) {
+      Left(value: final failure) => Left(failure),
+      Right(value: final tokens) => await _onRegistrationCompleted(tokens),
+    };
+  }
+
+  Future<Either<Failure, Unit>> _onRegistrationCompleted(
+    AuthTokens tokens,
+  ) async {
+    await _clearUserContextTask.run();
+    emit(AuthAuthenticated(tokens: tokens));
+    return const Right(unit);
   }
 
   /// Silently exchanges the stored refresh token for a fresh token pair.

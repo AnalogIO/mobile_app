@@ -16,10 +16,10 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Legal documents are hosted on the Café Analog website (single source of
+/// External documents are hosted on the Café Analog website (single source of
 /// truth, also referenced from App Store Connect / Play Console).
 const _privacyPolicyUrl = 'https://www.cafeanalog.dk/privacy-policy';
-const _termsOfServiceUrl = 'https://www.cafeanalog.dk/terms';
+const _feedbackFormUrl = 'https://www.cognitoforms.com/CafeAnalog1/BugReport';
 
 class SettingsScreen extends StatelessWidget {
   const new({super.key});
@@ -93,10 +93,20 @@ class _SettingsContent extends StatelessWidget {
           ),
           onTap: () => context.go('/settings/opening-hours'),
         ),
-        const ListTile(
-          leading: Icon(Icons.chat_outlined),
-          title: Text('Contact us'),
-          subtitle: Text('Report a bug or give us feedback'),
+        ListTile(
+          leading: const Icon(Icons.chat_outlined),
+          title: const Text('Contact us'),
+          subtitle: const Text('Report a bug or give us feedback'),
+          onTap: () => _openExternalPage(
+            context,
+            url: _feedbackFormUrl,
+            documentName: 'feedback form',
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.help_outline),
+          title: const Text('FAQ'),
+          onTap: () => context.go('/settings/faq'),
         ),
         ListTile(
           leading: const Icon(Icons.favorite_outline),
@@ -108,19 +118,10 @@ class _SettingsContent extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.article_outlined),
           title: const Text('Privacy policy'),
-          onTap: () => _openLegalPage(
+          onTap: () => _openExternalPage(
             context,
             url: _privacyPolicyUrl,
             documentName: 'privacy policy',
-          ),
-        ),
-        ListTile(
-          leading: const Icon(Icons.gavel_outlined),
-          title: const Text('Terms of service'),
-          onTap: () => _openLegalPage(
-            context,
-            url: _termsOfServiceUrl,
-            documentName: 'terms of service',
           ),
         ),
         ListTile(
@@ -147,7 +148,7 @@ class _SettingsContent extends StatelessWidget {
     showSnackBar(context: context, message: 'User ID copied to clipboard');
   }
 
-  Future<void> _openLegalPage(
+  Future<void> _openExternalPage(
     BuildContext context, {
     required String url,
     required String documentName,
