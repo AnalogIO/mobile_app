@@ -35,7 +35,7 @@ dev_dependencies:
   very_good_analysis: ^11.0.0
   build_runner: ^2.11.0 # swagger generator
   chopper_generator: ^8.6.0 # swagger generator
-  json_serializable: ^6.8.0 # swagger generator
+  json_serializable: ^6.15.2 # swagger generator
   swagger_dart_code_generator: ^4.1.1 # swagger generator
   build_verify: ^3.1.1
   http: ^1.6.0
