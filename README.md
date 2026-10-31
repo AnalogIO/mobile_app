@@ -39,7 +39,9 @@ flutter run --flavor development --dart-define=API_BASE_URL=http://192.168.1.10:
 | ---------------------------- | ------------------------------------------------------------------------------------------------ |
 | `make` / `make help`         | Show the help message listing all targets (default target)                                       |
 | `make get`                   | Install dependencies (`flutter pub get`)                                                         |
-| `make api`                   | Regenerate the Tonik API client from `swagger/coffeecard_api_v2.json`                            |
+| `make api`                   | Regenerate the Tonik API client from the committed v2 spec                                      |
+| `make api-update`            | Fetch the latest v2 spec, then regenerate the client                                             |
+| `make api-check`             | Regenerate and fail if the committed client drifted (used by CI)                                 |
 | `make swagger`               | Fetch the latest v2 OpenAPI spec from the backend into `swagger/`                                |
 | `make clean`                 | Reset the project: `flutter clean`, then `flutter pub get`                                       |
 | `make upgrade-flutter`       | Upgrade Flutter/Dart and pin the new versions in `pubspec.yaml` and the CI workflow              |
@@ -71,8 +73,9 @@ make coverage    # with coverage report
 The HTTP API client in `packages/analog_api/` is generated from `swagger/coffeecard_api_v2.json` with [Tonik](https://pub.dev/packages/tonik) and **is** checked into git.
 
 ```sh
-make swagger     # Fetch the latest v2 spec from the backend
-make api         # Regenerate the Tonik client
+make api         # Regenerate from the committed spec
+make api-update  # Fetch the latest spec and regenerate (intentional updates)
+make api-check   # Verify the committed client is up to date (CI)
 ```
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the generated-client conventions.

@@ -6,7 +6,7 @@ else
 	SED_INPLACE := sed -i -E
 endif
 
-.PHONY: help upgrade-flutter upgrade-deps api clean get swagger coverage fix
+.PHONY: help upgrade-flutter upgrade-deps api api-check api-update clean get swagger coverage fix
 
 .DEFAULT_GOAL := help
 
@@ -38,10 +38,19 @@ upgrade-flutter: ## Upgrade Flutter/Dart and pin versions in config files
 upgrade-deps: ## Upgrade all dependencies to latest versions
 	flutter pub upgrade --major-versions
 
-api: ## Generate the Tonik API client from the v2 spec
+api: ## Generate the Tonik API client from the committed v2 spec
 	dart run tonik --package-name=analog_api --spec=swagger/coffeecard_api_v2.json --output-dir=packages --backend=dio --overwrite
 	$(SED_INPLACE) "s/tonik_util: \^0.10.0/tonik_util: ^0.11.0/" packages/analog_api/pubspec.yaml
 	dart format packages/analog_api/lib
+
+api-check: api ## Regenerate the client and fail if the committed output drifted
+	@if ! git diff --quiet -- packages/analog_api || [ -n "$$(git ls-files --others --exclude-standard packages/analog_api)" ]; then \
+		echo "Generated API client is out of date. Run 'make api' and commit the result."; \
+		git status --short -- packages/analog_api; \
+		exit 1; \
+	fi
+
+api-update: swagger api ## Fetch the latest v2 spec, then regenerate the client
 
 clean: ## Clean build artifacts and reset dependencies
 	flutter clean

@@ -25,6 +25,27 @@ jobs:
       # just above 20% (mostly auth and router tests).
       min_coverage: 20
 
+  api-drift:
+    name: API client drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.7
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Regenerate and check
+        run: make api-check
+      - name: Analyze generated package
+        working-directory: packages/analog_api
+        run: |
+          dart pub get
+          dart analyze
+
   android-build:
     name: Build Android
     runs-on: ubuntu-latest
