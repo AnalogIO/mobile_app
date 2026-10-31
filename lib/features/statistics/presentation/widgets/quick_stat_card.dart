@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class QuickStatCard extends StatelessWidget {
-  const new({
+  new({required this.description, required int number, super.key})
+    : count = number.toString(),
+      extraText = null;
+
+  /// Hides the [count] and [extraText] when [number] is zero.
+  new favouriteDrink({
     required this.description,
-    required this.number,
-    this.extraText,
+    required int number,
+    required String extraText,
     super.key,
-  });
+  }) : extraText = number == 0 ? '' : extraText,
+       count = number == 0 ? '-' : number.toString();
 
   final String description;
-  final int number;
+  final String count;
   final String? extraText;
 
   @override
@@ -43,7 +49,7 @@ class QuickStatCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: Text(
-              number.toString(),
+              count,
               textAlign: TextAlign.right,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontSize: 32,
