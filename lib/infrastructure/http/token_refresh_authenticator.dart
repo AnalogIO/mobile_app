@@ -34,11 +34,15 @@ class TokenRefreshAuthenticator extends Interceptor {
       return;
     }
 
-    final retried = await _retry(response.requestOptions);
-    if (retried == null) {
-      handler.next(response);
-    } else {
-      handler.resolve(retried);
+    try {
+      final retried = await _retry(response.requestOptions);
+      if (retried == null) {
+        handler.next(response);
+      } else {
+        handler.resolve(retried);
+      }
+    } on DioException catch (retryError) {
+      handler.reject(retryError);
     }
   }
 
@@ -52,11 +56,15 @@ class TokenRefreshAuthenticator extends Interceptor {
       return;
     }
 
-    final retried = await _retry(err.requestOptions);
-    if (retried == null) {
-      handler.next(err);
-    } else {
-      handler.resolve(retried);
+    try {
+      final retried = await _retry(err.requestOptions);
+      if (retried == null) {
+        handler.next(err);
+      } else {
+        handler.resolve(retried);
+      }
+    } on DioException catch (retryError) {
+      handler.next(retryError);
     }
   }
 
@@ -86,7 +94,7 @@ class TokenRefreshAuthenticator extends Interceptor {
       return await _dio.fetch<dynamic>(options);
     } on DioException catch (retryError) {
       log('Retried request failed: ${retryError.message}');
-      return null;
+      rethrow;
     }
   }
 
