@@ -10,7 +10,7 @@ Run `make` (or `make help`) to see all available commands.
 
 ```sh
 make get        # Install dependencies
-make generate   # Generate the API client (see Code generation)
+make api        # Regenerate the API client (see Code generation)
 ```
 
 Then launch the app from your editor (see Editors below), or:
@@ -39,9 +39,9 @@ flutter run --flavor development --dart-define=API_BASE_URL=http://192.168.1.10:
 | ---------------------------- | ------------------------------------------------------------------------------------------------ |
 | `make` / `make help`         | Show the help message listing all targets (default target)                                       |
 | `make get`                   | Install dependencies (`flutter pub get`)                                                         |
-| `make generate` / `make gen` | Regenerate the API client from `swagger/` (`dart run build_runner build`)                        |
-| `make swagger`               | Fetch the latest Swagger API specs (`v1`, `v2`) from the backend into `swagger/`                 |
-| `make clean`                 | Reset the project: `build_runner clean`, `flutter clean`, then `flutter pub get`                 |
+| `make api`                   | Regenerate the Tonik API client from `swagger/coffeecard_api_v2.json`                            |
+| `make swagger`               | Fetch the latest v2 OpenAPI spec from the backend into `swagger/`                                |
+| `make clean`                 | Reset the project: `flutter clean`, then `flutter pub get`                                       |
 | `make upgrade-flutter`       | Upgrade Flutter/Dart and pin the new versions in `pubspec.yaml` and the CI workflow              |
 | `make upgrade-deps`          | Upgrade all dependencies to their latest major versions (`flutter pub upgrade --major-versions`) |
 | `make coverage`              | Run `flutter test --coverage` and generate an HTML report in `coverage/html/`                    |
@@ -54,7 +54,7 @@ flutter run --flavor development --dart-define=API_BASE_URL=http://192.168.1.10:
 
 ## Architecture
 
-The app is organised by feature under `lib/features/`, with shared code in `lib/core/` and the HTTP layer (plus generated API client) in `lib/infrastructure/`.
+The app is organised by feature under `lib/features/`, with shared code in `lib/core/`, the HTTP layer in `lib/infrastructure/`, and the generated API package in `packages/analog_api/`.
 
 Before working on the codebase, read [`CONTRIBUTING.md`](CONTRIBUTING.md). It documents the architecture and the conventions every feature follows. Each feature folder also has its own `README.md` describing the caveats specific to that feature.
 
@@ -68,13 +68,13 @@ make coverage    # with coverage report
 
 ## Code generation
 
-The HTTP API client in `lib/infrastructure/generated/` is generated from the Swagger specs in `swagger/` and is **not** checked into git.
+The HTTP API client in `packages/analog_api/` is generated from `swagger/coffeecard_api_v2.json` with [Tonik](https://pub.dev/packages/tonik) and **is** checked into git.
 
 ```sh
-make swagger     # Fetch the latest API specs from the backend
-make generate    # Regenerate the client (dart run build_runner build)
+make swagger     # Fetch the latest v2 spec from the backend
+make api         # Regenerate the Tonik client
 ```
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the quirks of the generated code (especially how API enums are decoded).
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the generated-client conventions.
 
 [coverage_badge]: coverage_badge.svg

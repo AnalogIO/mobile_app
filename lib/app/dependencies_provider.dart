@@ -8,7 +8,6 @@ import 'package:cafe_analog_app/features/settings/settings.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
-import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -40,21 +39,12 @@ class DependenciesProvider extends StatelessWidget {
         ),
 
         // Http
-        RepositoryProvider(create: makeHttpClient),
-        RepositoryProvider(
-          create: (context) =>
-              context.read<ChopperClient>().getService<CoffeecardApiV1>(),
-        ),
-        RepositoryProvider(
-          create: (context) =>
-              context.read<ChopperClient>().getService<CoffeecardApiV2>(),
-        ),
+        RepositoryProvider(create: makeApiClient),
         RepositoryProvider(create: (_) => Logger()),
         RepositoryProvider(
           create: (context) => NetworkRequestExecutor(
             logger: context.read(),
-            apiV1: context.read(),
-            apiV2: context.read(),
+            api: context.read<TonikApiClient>(),
           ),
         ),
 

@@ -3,12 +3,10 @@ import 'dart:async';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
 import 'package:cafe_analog_app/app/router.dart';
-import 'package:cafe_analog_app/core/failures.dart';
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/features/login/login.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
-import 'package:chopper/chopper.dart' show Response;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,11 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _MockAuthCubit extends Mock implements AuthCubit;
 
-class _MockExecutor extends Mock implements NetworkRequestExecutor {
-  @override
-  TaskEither<Failure, B> run<B>(Future<Response<B>> Function(ApiClients _) _) =>
-      TaskEither.left(const ConnectionFailure());
-}
+class _MockExecutor extends Mock implements NetworkRequestExecutor;
 
 class _MockTicketsRepository extends Mock implements TicketsRepository;
 

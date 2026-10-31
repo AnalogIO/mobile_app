@@ -6,7 +6,7 @@ else
 	SED_INPLACE := sed -i -E
 endif
 
-.PHONY: help upgrade-flutter upgrade-deps generate gen clean get swagger coverage fix
+.PHONY: help upgrade-flutter upgrade-deps api clean get swagger coverage fix
 
 .DEFAULT_GOAL := help
 
@@ -38,22 +38,19 @@ upgrade-flutter: ## Upgrade Flutter/Dart and pin versions in config files
 upgrade-deps: ## Upgrade all dependencies to latest versions
 	flutter pub upgrade --major-versions
 
-generate: ## Run build_runner to generate code
-	dart run build_runner build
-
-gen: ## Alias for generate
-	dart run build_runner build
+api: ## Generate the Tonik API client from the v2 spec
+	dart run tonik --package-name=analog_api --spec=swagger/coffeecard_api_v2.json --output-dir=packages --backend=dio --overwrite
+	$(SED_INPLACE) "s/tonik_util: \^0.10.0/tonik_util: ^0.11.0/" packages/analog_api/pubspec.yaml
+	dart format packages/analog_api/lib
 
 clean: ## Clean build artifacts and reset dependencies
-	dart run build_runner clean
 	flutter clean
 	flutter pub get
 
 get: ## Get dependencies
 	flutter pub get
 
-swagger: ## Fetch latest Swagger API specs
-	curl -o swagger/coffeecard_api_v1.json https://core.dev.analogio.dk/swagger/v1/swagger.json
+swagger: ## Fetch the latest v2 OpenAPI spec
 	curl -o swagger/coffeecard_api_v2.json https://core.dev.analogio.dk/swagger/v2/swagger.json
 
 coverage: ## Run tests with coverage and generate report

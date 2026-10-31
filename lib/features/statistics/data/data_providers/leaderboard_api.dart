@@ -11,13 +11,20 @@ class LeaderboardApi {
     required LeaderboardPreset preset,
   }) {
     return _executor.run(
-      (api) => api.v2.leaderboardTopGet(preset: preset, top: 10),
+      (api) => api.leaderboard.leaderboardGetTopEntries(preset: preset),
+      (entries) => entries,
     );
   }
 
   TaskEither<Failure, LeaderboardEntry> fetchCurrentUserLeaderboardEntry({
     required LeaderboardPreset preset,
   }) {
-    return _executor.run((api) => api.v2.leaderboardGet(preset: preset));
+    return _executor.run(
+      (api) => api.leaderboard.leaderboardGet(preset: preset),
+      (response) => switch (response) {
+        LeaderboardGetResponse200(:final body) => body,
+        LeaderboardGetResponse401() => throwTonikHttp(401),
+      },
+    );
   }
 }

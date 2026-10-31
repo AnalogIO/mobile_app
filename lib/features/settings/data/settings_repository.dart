@@ -73,12 +73,12 @@ class SettingsRepository {
   /// Fetches the list of available study programmes (occupations).
   TaskEither<Failure, List<Programme>> getProgrammes() {
     return _programmesApi.fetchProgrammes().map(
-      (dtos) => dtos
+      (programmes) => programmes
           .map(
-            (dto) => Programme(
-              id: dto.id,
-              shortName: dto.shortName,
-              fullName: dto.fullName,
+            (programme) => Programme(
+              id: programme.id,
+              shortName: programme.shortName,
+              fullName: programme.fullName,
             ),
           )
           .toList(),
@@ -86,43 +86,17 @@ class SettingsRepository {
   }
 
   /// Maps a generated [api.UserResponse] to a domain [UserProfile].
-  ///
-  /// The generated decoder leaves `role` and `programme` as `dynamic` because
-  /// the Swagger spec models them with `oneOf`, so the `programme` field is
-  /// decoded defensively rather than assumed to be a particular type.
   UserProfile _mapToProfile(api.UserResponse response) {
-    final programme = _programmeFrom(response.programme);
+    final programme = response.programme;
     return UserProfile(
       id: response.id,
       name: response.name,
       email: response.email,
-      occupation: programme == null
-          ? ''
-          : programme.fullName.isNotEmpty
+      occupation: programme.fullName.isNotEmpty
           ? programme.fullName
           : programme.shortName,
-      programmeId: programme?.id,
+      programmeId: programme.id,
       appearAnonymous: response.privacyActivated,
     );
-  }
-
-  /// Decodes the raw `programme` field into a [Programme], if recognizable.
-  ///
-  /// The backend returns the programme as a `ProgrammeResponse` object. The
-  /// field is also modelled to allow a plain integer id or string; those are
-  /// accepted defensively, but without enough data to build a full label.
-  Programme? _programmeFrom(dynamic raw) {
-    if (raw is Map<String, dynamic>) {
-      final programme = api.ProgrammeResponse.fromJson(raw);
-      return Programme(
-        id: programme.id,
-        shortName: programme.shortName,
-        fullName: programme.fullName,
-      );
-    }
-    if (raw is num) {
-      return Programme(id: raw.toInt(), shortName: '', fullName: '');
-    }
-    return null;
   }
 }
