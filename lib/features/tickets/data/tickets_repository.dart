@@ -85,17 +85,28 @@ class TicketsRepository {
         .initiateMobilePayPurchase(ticketGroupId: ticketGroupId)
         // map Left type from Failure to PurchaseInitiationFailure
         .mapLeft((failure) => PurchaseInitiationFailure(failure.reason))
-        .map((response) {
-          final details = switch (response.paymentDetails) {
-            _MobilePayDetails(:final value) =>
-              value.mobilePayPaymentDetailsModel,
-            _ => throw const FormatException(
-              'Expected MobilePay payment details',
+        .flatMap((response) {
+          final details = response.paymentDetails;
+          final uri = details is _MobilePayDetails
+              ? Uri.tryParse(
+                  details
+                      .value
+                      .mobilePayPaymentDetailsModel
+                      .mobilePayAppRedirectUri,
+                )
+              : null;
+          if (uri == null) {
+            return TaskEither.left(
+              const PurchaseInitiationFailure(
+                'Expected a valid MobilePay payment redirect URI',
+              ),
+            );
+          }
+          return TaskEither.right(
+            InitiatedMobilePayPayment(
+              orderId: response.id,
+              mobilePayRedirectUri: uri,
             ),
-          };
-          return InitiatedMobilePayPayment(
-            orderId: response.id,
-            mobilePayRedirectUri: Uri.parse(details.mobilePayAppRedirectUri),
           );
         });
   }

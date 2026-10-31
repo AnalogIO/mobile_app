@@ -40,7 +40,6 @@ upgrade-deps: ## Upgrade all dependencies to latest versions
 
 api: ## Generate the Tonik API client from the committed v2 spec
 	dart run tonik --package-name=analog_api --spec=swagger/coffeecard_api_v2.json --output-dir=packages --backend=dio --overwrite
-	$(SED_INPLACE) "s/tonik_util: \^0.10.0/tonik_util: ^0.11.0/" packages/analog_api/pubspec.yaml
 	dart format packages/analog_api/lib
 
 api-check: api ## Regenerate the client and fail if the committed output drifted

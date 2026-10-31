@@ -37,8 +37,18 @@ class NetworkRequestExecutor {
         final result = await request(api);
         return switch (result) {
           TonikSuccess(:final value) => decode(value),
-          TonikError(:final error, :final type, :final stackTrace) =>
-            throw _TonikCallFailure(error, type, stackTrace),
+          TonikError(
+            :final error,
+            :final type,
+            :final stackTrace,
+            :final response,
+          ) =>
+            throw _TonikCallFailure(
+              error,
+              type,
+              stackTrace,
+              response?.statusCode,
+            ),
         };
       },
       (error, stackTrace) {
@@ -53,6 +63,13 @@ class NetworkRequestExecutor {
           if (error.type == TonikErrorType.network) {
             return const ConnectionFailure();
           }
+          final statusCode = error.statusCode;
+          if (statusCode != null && statusCode >= 400) {
+            return ServerFailure(
+              'An unknown error occurred ($statusCode)',
+              statusCode,
+            );
+          }
           return UnexpectedFailure(error.error.toString());
         }
         if (error is DioException) {
@@ -65,11 +82,12 @@ class NetworkRequestExecutor {
 }
 
 class _TonikCallFailure implements Exception {
-  const new(this.error, this.type, this.stackTrace);
+  const new(this.error, this.type, this.stackTrace, [this.statusCode]);
 
   final Object error;
   final TonikErrorType type;
   final StackTrace stackTrace;
+  final int? statusCode;
 
   @override
   String toString() => error.toString();
