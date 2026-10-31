@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cafe_analog_app/core/failures.dart';
 import 'package:cafe_analog_app/infrastructure/http/tonik_api_client.dart';
 import 'package:dio/dio.dart';
@@ -36,19 +38,18 @@ class NetworkRequestExecutor {
       () async {
         final result = await request(api);
         return switch (result) {
-          TonikSuccess(:final value) => decode(value),
+          TonikSuccess(:final value, :final response) => _decode<T, R>(
+            decode,
+            value,
+            response,
+          ),
           TonikError(
             :final error,
             :final type,
             :final stackTrace,
             :final response,
           ) =>
-            throw _TonikCallFailure(
-              error,
-              type,
-              stackTrace,
-              response?.statusCode,
-            ),
+            throw _TonikCallFailure(error, type, stackTrace, response),
         };
       },
       (error, stackTrace) {
@@ -66,7 +67,8 @@ class NetworkRequestExecutor {
           final statusCode = error.statusCode;
           if (statusCode != null && statusCode >= 400) {
             return ServerFailure(
-              'An unknown error occurred ($statusCode)',
+              _serverErrorMessage(error.response) ??
+                  'An unknown error occurred ($statusCode)',
               statusCode,
             );
           }
@@ -79,15 +81,71 @@ class NetworkRequestExecutor {
       },
     );
   }
+
+  /// Runs [decode], enriching failures thrown for a decoded error variant with
+  /// the server's message and the real HTTP status code.
+  T _decode<T, R extends Object>(
+    T Function(R response) decode,
+    R response,
+    Response<Object?> httpResponse,
+  ) {
+    try {
+      return decode(response);
+    } on TonikHttpException catch (error) {
+      final statusCode = httpResponse.statusCode;
+      throw TonikHttpException(
+        statusCode != null && statusCode >= 400 ? statusCode : error.statusCode,
+        error.message ?? _serverErrorMessage(httpResponse),
+      );
+    }
+  }
+
+  /// Extracts the `message` field from the backend's JSON error body.
+  ///
+  /// The API reports errors as `{"message": "..."}` even for status codes that
+  /// are not described by the OpenAPI document, and Tonik only decodes bodies
+  /// for documented response variants.
+  String? _serverErrorMessage(Response<Object?>? response) {
+    final data = response?.data;
+    if (data == null) return null;
+
+    final String text;
+    if (data is List<int>) {
+      try {
+        text = utf8.decode(data);
+      } on FormatException {
+        return null;
+      }
+    } else if (data is String) {
+      text = data;
+    } else {
+      return null;
+    }
+
+    try {
+      final decoded = jsonDecode(text);
+      if (decoded is Map<String, Object?>) {
+        final message = decoded['message'] ?? decoded['Message'];
+        if (message is String && message.trim().isNotEmpty) {
+          return message;
+        }
+      }
+    } on FormatException {
+      return null;
+    }
+    return null;
+  }
 }
 
 class _TonikCallFailure implements Exception {
-  const new(this.error, this.type, this.stackTrace, [this.statusCode]);
+  const new(this.error, this.type, this.stackTrace, [this.response]);
 
   final Object error;
   final TonikErrorType type;
   final StackTrace stackTrace;
-  final int? statusCode;
+  final Response<Object?>? response;
+
+  int? get statusCode => response?.statusCode;
 
   @override
   String toString() => error.toString();
