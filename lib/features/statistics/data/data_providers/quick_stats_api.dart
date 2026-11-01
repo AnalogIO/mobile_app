@@ -8,6 +8,15 @@ class QuickStatsApi {
   final NetworkRequestExecutor _executor;
 
   TaskEither<Failure, List<QuickStatResponse>> fetchQuickStats() {
-    return _executor.run((api) => api.v2.statisticsQuickGet());
+    return _executor.run(
+      (api) => api.statistics.statisticsGetQuickStats(),
+      (response) => switch (response) {
+        StatisticsGetQuickStatsResponse200(:final body) => body,
+        StatisticsGetQuickStatsResponse401(:final body) => throwTonikHttp(
+          401,
+          body.message,
+        ),
+      },
+    );
   }
 }

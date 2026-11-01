@@ -13,15 +13,11 @@ Profile card, account information, about, legal and logout.
   and `programmeId` (via `ChangeOccupationScreen`). The change screens reuse
   the shared `AnalogForm` with the current value pre-filled; the occupation
   screen is a list picker with the current programme marked.
-- The list of programmes comes from the v1 API (`GET /api/v1/Programmes`),
-  while the update goes through the v2 API — the endpoints are split across
-  versions. `ProgrammesCubit` is scoped to the `/settings/change-occupation`
-  route (in `app/router.dart`).
-- `UserResponse.programme` and `role` are modelled as `oneOf` in the Swagger
-  spec, so the generated client decodes them as `dynamic`.
-  `SettingsRepository` defensively decodes `programme` (int id, object or
-  string) into the `UserProfile.occupation` label and treats an unrecognized
-  value as empty rather than crashing.
+- The list of programmes comes from `GET /api/v2/programmes`.
+  `ProgrammesCubit` is scoped to the `/settings/change-occupation` route
+  (in `app/router.dart`).
+- `UserResponse.programme` is a typed `ProgrammeResponse` in the Tonik client;
+  `SettingsRepository` maps it directly to the `UserProfile.occupation` label.
 - Update methods (`updateName`, `updateEmail`, `updateAppearAnonymous`) never
   emit a failure state: they return `Either<Failure, UserProfile>` and only
   emit `ProfileLoaded` on success. Callers surface errors locally (the form's

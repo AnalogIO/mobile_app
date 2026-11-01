@@ -45,7 +45,7 @@ class StatisticsRepository {
                     .map(
                       (entry) => LeaderboardUserEntry(
                         userId: entry.id,
-                        name: entry.name ?? 'Anonymous',
+                        name: entry.name,
                         rank: entry.rank,
                         drinksConsumed: entry.score,
                         isCurrentUser: entry.id == currentUserId,
@@ -66,18 +66,14 @@ class StatisticsRepository {
 
       for (final dto in statDtos) {
         switch (dto.key) {
-          case api.QuickStatType.totaldrinks:
+          case api.QuickStatType.totalDrinks:
             allTimeDrinksConsumed = dto.value;
-          case api.QuickStatType.drinkstoday:
+          case api.QuickStatType.drinksToday:
             todayDrinksConsumed = dto.value;
-          case api.QuickStatType.favouritedrink:
+          case api.QuickStatType.favouriteDrink:
             allTimeFavouriteDrink = (dto.value, dto.supportingText ?? '');
-          case api.QuickStatType.drinksthisweek:
+          case api.QuickStatType.drinksThisWeek:
             weekDrinksConsumed = dto.value;
-          case api.QuickStatType.swaggerGeneratedUnknown:
-            return TaskEither.left(
-              const UnexpectedFailure('Received an unknown quick statistic'),
-            );
         }
       }
 

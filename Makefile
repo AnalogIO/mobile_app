@@ -6,7 +6,7 @@ else
 	SED_INPLACE := sed -i -E
 endif
 
-.PHONY: help upgrade-flutter upgrade-deps generate gen clean get swagger coverage fix
+.PHONY: help upgrade-flutter upgrade-deps api api-check api-update clean get swagger coverage fix
 
 .DEFAULT_GOAL := help
 
@@ -38,22 +38,27 @@ upgrade-flutter: ## Upgrade Flutter/Dart and pin versions in config files
 upgrade-deps: ## Upgrade all dependencies to latest versions
 	flutter pub upgrade --major-versions
 
-generate: ## Run build_runner to generate code
-	dart run build_runner build
+api: ## Generate the Tonik API client from the committed v2 spec
+	dart run tonik --package-name=analog_api --spec=swagger/coffeecard_api_v2.json --output-dir=packages --backend=dio --overwrite
+	dart format packages/analog_api/lib
 
-gen: ## Alias for generate
-	dart run build_runner build
+api-check: api ## Regenerate the client and fail if the committed output drifted
+	@if ! git diff --quiet -- packages/analog_api || [ -n "$$(git ls-files --others --exclude-standard packages/analog_api)" ]; then \
+		echo "Generated API client is out of date. Run 'make api' and commit the result."; \
+		git status --short -- packages/analog_api; \
+		exit 1; \
+	fi
+
+api-update: swagger api ## Fetch the latest v2 spec, then regenerate the client
 
 clean: ## Clean build artifacts and reset dependencies
-	dart run build_runner clean
 	flutter clean
 	flutter pub get
 
 get: ## Get dependencies
 	flutter pub get
 
-swagger: ## Fetch latest Swagger API specs
-	curl -o swagger/coffeecard_api_v1.json https://core.dev.analogio.dk/swagger/v1/swagger.json
+swagger: ## Fetch the latest v2 OpenAPI spec
 	curl -o swagger/coffeecard_api_v2.json https://core.dev.analogio.dk/swagger/v2/swagger.json
 
 coverage: ## Run tests with coverage and generate report

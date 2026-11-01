@@ -9,29 +9,60 @@ class TicketsApi {
 
   /// Fetches the list of owned tickets for the current user.
   TaskEither<Failure, List<GroupedTicketsResponse>> fetchOwnedTickets() {
-    return _executor.run((api) => api.v2.ticketsGroupedGet());
+    return _executor.run(
+      (api) => api.tickets.ticketsGetGroupedOwnedTickets(),
+      (response) => switch (response) {
+        TicketsGetGroupedOwnedTicketsResponse200(:final body) => body,
+        TicketsGetGroupedOwnedTicketsResponse401() => throwTonikHttp(401),
+      },
+    );
   }
 
   /// Fetches products available for the user.
   TaskEither<Failure, List<ProductResponse>> fetchPurchasableTickets() {
-    return _executor.run((api) => api.v2.productsGet());
+    return _executor.run(
+      (api) => api.products.productsGetProducts(),
+      (response) => switch (response) {
+        ProductsGetProductsResponse200(:final body) => body,
+        ProductsGetProductsResponse401() => throwTonikHttp(401),
+      },
+    );
   }
 
   /// Fetches all menu items available for the user.
   TaskEither<Failure, List<MenuItemResponse>> fetchMenuItems() {
-    return _executor.run((api) => api.v2.menuitemsGet());
+    return _executor.run(
+      (api) => api.menuItems.menuItemsGetAllMenuItems(),
+      (response) => switch (response) {
+        MenuItemsGetAllMenuItemsResponse200(:final body) => body,
+        MenuItemsGetAllMenuItemsResponse401() => throwTonikHttp(401),
+        MenuItemsGetAllMenuItemsResponse403() => throwTonikHttp(403),
+      },
+    );
   }
 
-  /// Spend a ticket with the given [ticketId]
-  /// on a drink with the given [drinkId].
+  /// Spend a ticket with the given [ticketId] on a drink with the given
+  /// [drinkId].
   TaskEither<Failure, UsedTicketResponse> useTicket({
     required int ticketId,
     required int drinkId,
   }) {
     return _executor.run(
-      (api) => api.v2.ticketsUsePost(
+      (api) => api.tickets.ticketsUseTicket(
         body: UseTicketRequest(productId: ticketId, menuItemId: drinkId),
       ),
+      (response) => switch (response) {
+        TicketsUseTicketResponse200(:final body) => body,
+        TicketsUseTicketResponse401() => throwTonikHttp(401),
+        TicketsUseTicketResponse403(:final body) => throwTonikHttp(
+          403,
+          body.message,
+        ),
+        TicketsUseTicketResponse404(:final body) => throwTonikHttp(
+          404,
+          body.message,
+        ),
+      },
     );
   }
 
@@ -40,7 +71,19 @@ class TicketsApi {
     required String voucherCode,
   }) {
     return _executor.run(
-      (api) => api.v2.vouchersVoucherCodeRedeemPost(voucherCode: voucherCode),
+      (api) => api.vouchers.vouchersRedeemVoucher(voucherCode: voucherCode),
+      (response) => switch (response) {
+        VouchersRedeemVoucherResponse200(:final body) => body,
+        VouchersRedeemVoucherResponse400(:final body) => throwTonikHttp(
+          400,
+          body.message,
+        ),
+        VouchersRedeemVoucherResponse401() => throwTonikHttp(401),
+        VouchersRedeemVoucherResponse404(:final body) => throwTonikHttp(
+          404,
+          body.message,
+        ),
+      },
     );
   }
 
@@ -49,12 +92,17 @@ class TicketsApi {
     required int ticketGroupId,
   }) {
     return _executor.run(
-      (api) => api.v2.purchasesPost(
+      (api) => api.purchases.purchasesInitiatePurchase(
         body: InitiatePurchaseRequest(
           productId: ticketGroupId,
-          paymentType: PaymentType.mobilepay,
+          paymentType: PaymentType.mobilePay,
         ),
       ),
+      (response) => switch (response) {
+        PurchasesInitiatePurchaseResponse200(:final body) => body,
+        PurchasesInitiatePurchaseResponse401() => throwTonikHttp(401),
+        PurchasesInitiatePurchaseResponse403() => throwTonikHttp(403),
+      },
     );
   }
 
@@ -62,6 +110,16 @@ class TicketsApi {
   TaskEither<Failure, SinglePurchaseResponse> verifyPurchase({
     required int orderId,
   }) {
-    return _executor.run((api) => api.v2.purchasesIdGet(id: orderId));
+    return _executor.run(
+      (api) => api.purchases.purchasesGetPurchase(id: orderId),
+      (response) => switch (response) {
+        PurchasesGetPurchaseResponse200(:final body) => body,
+        PurchasesGetPurchaseResponse401() => throwTonikHttp(401),
+        PurchasesGetPurchaseResponse404(:final body) => throwTonikHttp(
+          404,
+          body.message,
+        ),
+      },
+    );
   }
 }

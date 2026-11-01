@@ -1,291 +1,298 @@
+import 'dart:async';
+
+import 'package:analog_api/analog_api.dart';
+import 'package:cafe_analog_app/core/failures.dart';
 import 'package:cafe_analog_app/features/login/login.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
-import 'package:chopper/chopper.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
+import 'package:tonik_util/tonik_util.dart';
+
+import 'fake_http_client_adapter.dart';
 
 class _MockAuthTokenRepository extends Mock implements AuthTokenRepository;
 
-class _MockCoffeecardApiV2 extends Mock implements CoffeecardApiV2;
-
 class _MockAuthCubitHandle extends Mock implements AuthCubitHandle;
 
-/// Builds a minimal Chopper [Request] for the given path.
-Request _buildRequest(String path, {Map<String, String> headers = const {}}) {
-  return Request(
-    'GET',
-    Uri.parse('https://core.dev.analogio.dk$path'),
-    Uri.parse('https://core.dev.analogio.dk'),
-    headers: headers,
-  );
-}
-
-/// Builds a Chopper [Response] with the given status code.
-Response<dynamic> _buildResponse(int statusCode) {
-  return Response(
-    http.StreamedResponse(const Stream.empty(), statusCode),
-    null,
-  );
-}
-
-/// Builds a successful [Response<UserLoginResponse>].
-Response<UserLoginResponse> _buildRefreshSuccessResponse({
-  required String jwt,
-  required String refreshToken,
-}) {
-  final body = UserLoginResponse(jwt: jwt, refreshToken: refreshToken);
-  return Response(http.StreamedResponse(const Stream.empty(), 200), body);
-}
-
-/// Builds a failed [Response<UserLoginResponse>].
-Response<UserLoginResponse> _buildRefreshFailureResponse(int statusCode) {
-  return Response(
-    http.StreamedResponse(const Stream.empty(), statusCode),
-    null,
-  );
-}
+const _baseUrl = 'https://example.test';
+const _existingTokens = AuthTokens(jwt: 'OLD-JWT', refreshToken: 'OLD-REF');
+const _newTokens = AuthTokens(jwt: 'NEW-JWT', refreshToken: 'NEW-REF');
 
 void main() {
   late _MockAuthTokenRepository authTokenRepository;
-  late _MockCoffeecardApiV2 tokenRefreshApi;
   late _MockAuthCubitHandle authCubitHandle;
-  late TokenRefreshAuthenticator authenticator;
-
-  const existingTokens = AuthTokens(jwt: 'old-jwt', refreshToken: 'old-ref');
-  const newTokens = AuthTokens(jwt: 'new-jwt', refreshToken: 'new-ref');
+  late Dio dio;
+  late FakeHttpClientAdapter adapter;
+  late FakeHttpClientAdapter refreshAdapter;
 
   setUp(() {
     authTokenRepository = _MockAuthTokenRepository();
-    tokenRefreshApi = _MockCoffeecardApiV2();
     authCubitHandle = _MockAuthCubitHandle();
+    when(() => authCubitHandle.logOut()).thenAnswer((_) async {});
+    when(() => authTokenRepository.getTokens())
+        .thenReturn(TaskEither.right(some(_existingTokens)));
+    when(() => authTokenRepository.saveTokens(_newTokens))
+        .thenReturn(TaskEither.right(_newTokens));
 
-    authenticator = TokenRefreshAuthenticator(
-      authTokenRepository: authTokenRepository,
-      tokenRefreshApi: tokenRefreshApi,
-      authCubitHandle: authCubitHandle,
+    final refreshDio = Dio(BaseOptions(baseUrl: _baseUrl));
+    refreshAdapter = FakeHttpClientAdapter(
+      (options) async => jsonResponse({
+        'jwt': _newTokens.jwt,
+        'refreshToken': _newTokens.refreshToken,
+      }, 200),
+    );
+    refreshDio.httpClientAdapter = refreshAdapter;
+    final refreshServer = CustomServer(
+      baseUrl: _baseUrl,
+      serverConfig: ServerConfig.client(refreshDio),
+    );
+
+    dio = Dio(BaseOptions(baseUrl: _baseUrl));
+    adapter = FakeHttpClientAdapter(
+      (options) async => jsonResponse({'message': 'expired'}, 401),
+    );
+    dio.httpClientAdapter = adapter;
+    dio.interceptors.add(
+      TokenRefreshAuthenticator(
+        dio: dio,
+        authTokenRepository: authTokenRepository,
+        tokenRefreshApi: AccountApi(refreshServer),
+        authCubitHandle: authCubitHandle,
+      ),
     );
   });
 
-  group('TokenRefreshAuthenticator', () {
-    group('ignores non-401 responses', () {
-      for (final code in [200, 400, 403, 500]) {
-        test('returns null for $code', () async {
-          final result = await authenticator.authenticate(
-            _buildRequest('/api/v2/tickets'),
-            _buildResponse(code),
-          );
-          expect(result, isNull);
-          verifyZeroInteractions(authTokenRepository);
-          verifyZeroInteractions(tokenRefreshApi);
-          verifyZeroInteractions(authCubitHandle);
-        });
+  /// A main-client handler that answers 401 once and 200 after the retry.
+  FakeHttpHandler successfulRetryHandler() {
+    return (options) async {
+      if (options.headers['X-Auth-Retry'] == 'true') {
+        return jsonResponse({'ok': true}, 200);
       }
+      return jsonResponse({'message': 'expired'}, 401);
+    };
+  }
+
+  group('TokenRefreshAuthenticator', () {
+    test('passes non-401 responses through without refreshing', () async {
+      adapter.handler = (options) async => jsonResponse({'ok': true}, 200);
+
+      final response = await dio.get<dynamic>('/api/v2/account');
+
+      expect(response.statusCode, 200);
+      expect(refreshAdapter.requests, isEmpty);
+      verifyNever(() => authTokenRepository.getTokens());
+      verifyNever(() => authCubitHandle.logOut());
     });
 
-    test('ignores requests already marked with retry header', () async {
-      final result = await authenticator.authenticate(
-        _buildRequest('/api/v2/tickets', headers: {'X-Auth-Retry': 'true'}),
-        _buildResponse(401),
+    test('passes non-401 errors through without refreshing', () async {
+      adapter.handler = (options) async =>
+          jsonResponse({'message': 'boom'}, 500);
+
+      await expectLater(
+        dio.get<dynamic>('/api/v2/account'),
+        throwsA(isA<DioException>()),
       );
-      expect(result, isNull);
-      verifyZeroInteractions(authTokenRepository);
+      expect(refreshAdapter.requests, isEmpty);
+      verifyNever(() => authTokenRepository.getTokens());
     });
 
-    test('ignores auth endpoint to prevent refresh loops', () async {
-      final result = await authenticator.authenticate(
-        _buildRequest('/api/v2/account/auth'),
-        _buildResponse(401),
+    test('refreshes and retries a 401 response', () async {
+      adapter.handler = successfulRetryHandler();
+
+      final response = await dio.get<dynamic>(
+        '/api/v2/account',
+        options: Options(validateStatus: (_) => true),
       );
-      expect(result, isNull);
-      verifyZeroInteractions(authTokenRepository);
+
+      expect(response.statusCode, 200);
+      expect(adapter.requests, hasLength(2));
+      expect(adapter.requests.last.headers['Authorization'], 'Bearer NEW-JWT');
+      expect(adapter.requests.last.headers['X-Auth-Retry'], 'true');
+      expect(refreshAdapter.requests, hasLength(1));
+      verify(() => authTokenRepository.saveTokens(_newTokens)).called(1);
+      verifyNever(() => authCubitHandle.logOut());
     });
 
-    group('on 401 with successful token refresh', () {
-      setUp(() {
-        when(() => authTokenRepository.getTokens())
-            .thenReturn(TaskEither.right(some(existingTokens)));
+    test('refreshes and retries a 401 error', () async {
+      adapter.handler = successfulRetryHandler();
 
-        when(
-          () => tokenRefreshApi.accountAuthPost(
-            body: TokenLoginRequest(token: existingTokens.refreshToken),
-          ),
-        ).thenAnswer(
-          (_) async => _buildRefreshSuccessResponse(
-            jwt: newTokens.jwt,
-            refreshToken: newTokens.refreshToken,
-          ),
+      final response = await dio.get<dynamic>('/api/v2/account');
+
+      expect(response.statusCode, 200);
+      expect(adapter.requests, hasLength(2));
+      expect(adapter.requests.last.headers['Authorization'], 'Bearer NEW-JWT');
+      expect(adapter.requests.last.headers['X-Auth-Retry'], 'true');
+      expect(refreshAdapter.requests, hasLength(1));
+      verify(() => authTokenRepository.saveTokens(_newTokens)).called(1);
+      verifyNever(() => authCubitHandle.logOut());
+    });
+
+    test(
+      'does not retry a request that already has the retry header',
+      () async {
+        adapter.handler = (options) async =>
+            jsonResponse({'message': 'expired'}, 401);
+
+        final response = await dio.get<dynamic>(
+          '/api/v2/account',
+          options: Options(validateStatus: (_) => true),
         );
 
-        when(() => authTokenRepository.saveTokens(newTokens))
-            .thenReturn(TaskEither.right(newTokens));
-      });
-
-      test('retries the request with the new JWT', () async {
-        final original = _buildRequest('/api/v2/tickets');
-        final result = await authenticator.authenticate(
-          original,
-          _buildResponse(401),
-        );
-
-        expect(result, isNotNull);
-        expect(result!.headers['Authorization'], 'Bearer ${newTokens.jwt}');
-      });
-
-      test('adds retry header to prevent infinite loops', () async {
-        final result = await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-
-        expect(result!.headers['X-Auth-Retry'], 'true');
-      });
-
-      test('saves the new tokens', () async {
-        await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-
-        verify(() => authTokenRepository.saveTokens(newTokens)).called(1);
-      });
-
-      test('does not call logOut', () async {
-        await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-
+        expect(response.statusCode, 401);
+        expect(adapter.requests, hasLength(2));
+        expect(refreshAdapter.requests, hasLength(1));
+        verify(() => authTokenRepository.saveTokens(_newTokens)).called(1);
         verifyNever(() => authCubitHandle.logOut());
-      });
+      },
+    );
+
+    test('does not refresh the auth endpoint', () async {
+      adapter.handler = (options) async =>
+          jsonResponse({'message': 'invalid'}, 401);
+
+      final response = await dio.post<dynamic>(
+        '/api/v2/account/auth',
+        data: {'token': 'bad'},
+        options: Options(validateStatus: (_) => true),
+      );
+
+      expect(response.statusCode, 401);
+      expect(refreshAdapter.requests, isEmpty);
+      verifyNever(() => authTokenRepository.getTokens());
+      verifyNever(() => authCubitHandle.logOut());
     });
 
-    group('on 401 with no stored tokens', () {
-      setUp(() {
-        when(() => authTokenRepository.getTokens())
-            .thenReturn(TaskEither.right(none()));
+    test('logs out when no tokens are stored', () async {
+      when(() => authTokenRepository.getTokens())
+          .thenReturn(TaskEither.right(none()));
+      adapter.handler = (options) async =>
+          jsonResponse({'message': 'expired'}, 401);
 
-        when(() => authCubitHandle.logOut()).thenAnswer((_) async {});
-      });
+      final response = await dio.get<dynamic>(
+        '/api/v2/account',
+        options: Options(validateStatus: (_) => true),
+      );
 
-      test('returns null', () async {
-        final result = await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-        expect(result, isNull);
-      });
-
-      test('calls logOut on the cubit handle', () async {
-        await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-        verify(() => authCubitHandle.logOut()).called(1);
-      });
-
-      test('does not call the refresh API', () async {
-        await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-        verifyZeroInteractions(tokenRefreshApi);
-      });
+      expect(response.statusCode, 401);
+      expect(refreshAdapter.requests, isEmpty);
+      verify(() => authCubitHandle.logOut()).called(1);
+      verifyNever(() => authTokenRepository.saveTokens(_newTokens));
     });
 
-    group('on 401 with failed refresh response from server', () {
-      setUp(() {
-        when(() => authTokenRepository.getTokens())
-            .thenReturn(TaskEither.right(some(existingTokens)));
+    test('logs out when the refresh request is rejected', () async {
+      refreshAdapter.handler = (options) async =>
+          jsonResponse({'message': 'invalid'}, 401);
+      adapter.handler = (options) async =>
+          jsonResponse({'message': 'expired'}, 401);
 
-        when(() => tokenRefreshApi.accountAuthPost(body: any(named: 'body')))
-            .thenAnswer((_) async => _buildRefreshFailureResponse(401));
+      final response = await dio.get<dynamic>(
+        '/api/v2/account',
+        options: Options(validateStatus: (_) => true),
+      );
 
-        when(() => authCubitHandle.logOut()).thenAnswer((_) async {});
-      });
-
-      test('returns null', () async {
-        final result = await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-        expect(result, isNull);
-      });
-
-      test('calls logOut on the cubit handle', () async {
-        await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-        verify(() => authCubitHandle.logOut()).called(1);
-      });
+      expect(response.statusCode, 401);
+      expect(refreshAdapter.requests, hasLength(1));
+      verify(() => authCubitHandle.logOut()).called(1);
+      verifyNever(() => authTokenRepository.saveTokens(_newTokens));
     });
 
-    group('on 401 with exception during token refresh', () {
-      setUp(() {
-        when(() => authTokenRepository.getTokens())
-            .thenReturn(TaskEither.right(some(existingTokens)));
+    test('logs out when the refresh request throws', () async {
+      refreshAdapter.handler = (options) async => throw DioException(
+        requestOptions: options,
+        type: DioExceptionType.connectionError,
+      );
+      adapter.handler = (options) async =>
+          jsonResponse({'message': 'expired'}, 401);
 
-        when(() => tokenRefreshApi.accountAuthPost(body: any(named: 'body')))
-            .thenThrow(Exception('Network error'));
+      final response = await dio.get<dynamic>(
+        '/api/v2/account',
+        options: Options(validateStatus: (_) => true),
+      );
 
-        when(() => authCubitHandle.logOut()).thenAnswer((_) async {});
-      });
-
-      test('returns null', () async {
-        final result = await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-        expect(result, isNull);
-      });
-
-      test('calls logOut on the cubit handle', () async {
-        await authenticator.authenticate(
-          _buildRequest('/api/v2/tickets'),
-          _buildResponse(401),
-        );
-        verify(() => authCubitHandle.logOut()).called(1);
-      });
+      expect(response.statusCode, 401);
+      verify(() => authCubitHandle.logOut()).called(1);
+      verifyNever(() => authTokenRepository.saveTokens(_newTokens));
     });
 
-    group('concurrent 401 responses', () {
-      test('only calls the refresh API once', () async {
-        when(() => authTokenRepository.getTokens())
-            .thenReturn(TaskEither.right(some(existingTokens)));
+    test('logs out when saving refreshed tokens fails', () async {
+      when(() => authTokenRepository.saveTokens(_newTokens))
+          .thenReturn(TaskEither.left(const LocalStorageFailure('disk full')));
+      adapter.handler = successfulRetryHandler();
 
-        when(() => tokenRefreshApi.accountAuthPost(body: any(named: 'body')))
-            .thenAnswer((_) async {
-              // Simulate network latency so second call arrives while first is
-              // in-flight.
-              await Future<void>.delayed(const Duration(milliseconds: 10));
-              return _buildRefreshSuccessResponse(
-                jwt: newTokens.jwt,
-                refreshToken: newTokens.refreshToken,
-              );
-            });
+      final response = await dio.get<dynamic>(
+        '/api/v2/account',
+        options: Options(validateStatus: (_) => true),
+      );
 
-        when(() => authTokenRepository.saveTokens(newTokens))
-            .thenReturn(TaskEither.right(newTokens));
+      expect(response.statusCode, 401);
+      verify(() => authCubitHandle.logOut()).called(1);
+    });
 
-        final request = _buildRequest('/api/v2/tickets');
-        final response = _buildResponse(401);
+    test('shares one refresh between concurrent 401s', () async {
+      final refreshGate = Completer<void>();
+      refreshAdapter.handler = (options) async {
+        await refreshGate.future;
+        return jsonResponse({
+          'jwt': _newTokens.jwt,
+          'refreshToken': _newTokens.refreshToken,
+        }, 200);
+      };
 
-        // Fire two authenticate calls without awaiting the first.
-        final results = await Future.wait([
-          Future.value(authenticator.authenticate(request, response)),
-          Future.value(authenticator.authenticate(request, response)),
-        ]);
+      final bothRequestsSeen = Completer<void>();
+      adapter.handler = (options) async {
+        if (options.headers['X-Auth-Retry'] == 'true') {
+          return jsonResponse({'ok': true}, 200);
+        }
+        if (adapter.requests.length >= 2 && !bothRequestsSeen.isCompleted) {
+          bothRequestsSeen.complete();
+        }
+        return jsonResponse({'message': 'expired'}, 401);
+      };
 
-        // Both requests should succeed with the new JWT.
-        expect(results[0]!.headers['Authorization'], 'Bearer ${newTokens.jwt}');
-        expect(results[1]!.headers['Authorization'], 'Bearer ${newTokens.jwt}');
+      final first = dio.get<dynamic>(
+        '/api/v2/account',
+        options: Options(validateStatus: (_) => true),
+      );
+      final second = dio.get<dynamic>(
+        '/api/v2/account',
+        options: Options(validateStatus: (_) => true),
+      );
 
-        // Refresh endpoint called exactly once despite two concurrent 401s.
-        verify(() => tokenRefreshApi.accountAuthPost(body: any(named: 'body')))
-            .called(1);
-      });
+      await bothRequestsSeen.future;
+      // Let the second 401 reach the interceptor and join the in-flight
+      // refresh before the refresh is allowed to complete.
+      await pumpEventQueue();
+      refreshGate.complete();
+
+      final responses = await Future.wait([first, second]);
+
+      expect(responses.map((response) => response.statusCode), [200, 200]);
+      expect(refreshAdapter.requests, hasLength(1));
+      verify(() => authTokenRepository.saveTokens(_newTokens)).called(1);
+    });
+
+    test('surfaces a network failure from the retried request', () async {
+      adapter.handler = (options) async {
+        if (options.headers['X-Auth-Retry'] == 'true') {
+          throw DioException(
+            requestOptions: options,
+            type: DioExceptionType.connectionError,
+          );
+        }
+        return jsonResponse({'message': 'expired'}, 401);
+      };
+
+      await expectLater(
+        dio.get<dynamic>(
+          '/api/v2/account',
+          options: Options(validateStatus: (_) => true),
+        ),
+        throwsA(isA<DioException>()),
+      );
+      expect(refreshAdapter.requests, hasLength(1));
+      verify(() => authTokenRepository.saveTokens(_newTokens)).called(1);
     });
   });
 }

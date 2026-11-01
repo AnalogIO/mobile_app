@@ -1,13 +1,11 @@
 import 'dart:async';
 
 import 'package:cafe_analog_app/features/login/presentation/bloc/authentication_cubit.dart';
-import 'package:cafe_analog_app/infrastructure/http/http.dart';
-import 'package:chopper/chopper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Breaks the dependency cycle between the HTTP layer and the auth cubit.
 ///
-/// [ChopperClient] (that contains [TokenRefreshAuthenticator]) is wired up in
+/// Dio (that contains the token refresh interceptor) is wired up in
 /// a [RepositoryProvider] that runs before the [BlocProvider] for [AuthCubit].
 /// This means the authenticator is constructed before a cubit instance exists,
 /// so it cannot receive the cubit directly.

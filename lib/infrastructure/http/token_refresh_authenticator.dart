@@ -1,41 +1,84 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:analog_api/analog_api.dart';
 import 'package:cafe_analog_app/features/login/login.dart';
-import 'package:cafe_analog_app/infrastructure/http/http.dart';
-import 'package:chopper/chopper.dart';
+import 'package:dio/dio.dart';
+import 'package:tonik_util/tonik_util.dart';
 
-class TokenRefreshAuthenticator extends Authenticator {
+/// Refreshes the JWT on a 401 response and retries the original request once.
+class TokenRefreshAuthenticator extends Interceptor {
   new({
+    required this._dio,
     required this._authTokenRepository,
     required this._tokenRefreshApi,
     required this._authCubitHandle,
   });
 
-  /// This header is added to requests that have already been retried after a
-  /// token refresh. Prevents infinite retry loops in case the new token is also
-  /// invalid for some reason.
+  /// Marks a request that has already been retried after a token refresh.
   static const _retryHeader = 'X-Auth-Retry';
 
+  final Dio _dio;
   final AuthTokenRepository _authTokenRepository;
-  final CoffeecardApiV2 _tokenRefreshApi;
+  final AccountApi _tokenRefreshApi;
   final AuthCubitHandle _authCubitHandle;
   Completer<AuthTokens?>? _refreshCompleter;
 
   @override
-  FutureOr<Request?> authenticate(
-    Request request,
-    Response<dynamic> response, [
-    Request? _,
-  ]) async {
-    if (response.statusCode != 401) return null;
-    if (request.headers[_retryHeader] == 'true') return null;
-    if (request.url.path.endsWith('/api/v2/account/auth')) return null;
+  Future<void> onResponse(
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) async {
+    if (response.statusCode != 401) {
+      handler.next(response);
+      return;
+    }
+
+    try {
+      final retried = await _retry(response.requestOptions);
+      if (retried == null) {
+        handler.next(response);
+      } else {
+        handler.resolve(retried);
+      }
+    } on DioException catch (retryError) {
+      handler.reject(retryError);
+    }
+  }
+
+  @override
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    if (err.response?.statusCode != 401) {
+      handler.next(err);
+      return;
+    }
+
+    try {
+      final retried = await _retry(err.requestOptions);
+      if (retried == null) {
+        handler.next(err);
+      } else {
+        handler.resolve(retried);
+      }
+    } on DioException catch (retryError) {
+      handler.next(retryError);
+    }
+  }
+
+  Future<Response<dynamic>?> _retry(RequestOptions options) async {
+    if (options.headers[_retryHeader] == 'true') {
+      return null;
+    }
+    if (options.path.endsWith('/api/v2/account/auth')) {
+      return null;
+    }
 
     log(
-      'Received 401 response for request: ${request.url}, '
-      'attempting to refresh tokens...\n'
-      '-- Headers: ${request.headers}',
+      'Received 401 response for request: ${options.uri}, '
+      'attempting to refresh tokens...',
     );
 
     final refreshedTokens = await _refreshTokens();
@@ -44,15 +87,15 @@ class TokenRefreshAuthenticator extends Authenticator {
       return null;
     }
 
-    final updatedRequest = applyHeader(
-      request,
-      'Authorization',
-      'Bearer ${refreshedTokens.jwt}',
-    );
+    options.headers['Authorization'] = 'Bearer ${refreshedTokens.jwt}';
+    options.headers[_retryHeader] = 'true';
 
-    return updatedRequest.copyWith(
-      headers: {...updatedRequest.headers, _retryHeader: 'true'},
-    );
+    try {
+      return await _dio.fetch<dynamic>(options);
+    } on DioException catch (retryError) {
+      log('Retried request failed: ${retryError.message}');
+      rethrow;
+    }
   }
 
   Future<AuthTokens?> _refreshTokens() async {
@@ -64,11 +107,11 @@ class TokenRefreshAuthenticator extends Authenticator {
     _refreshCompleter = completer;
 
     try {
-      final tokensEither = await _authTokenRepository.getTokens().run();
-      final existingTokens = tokensEither.match(
-        (_) => null,
-        (maybeTokens) => maybeTokens.match(() => null, (tokens) => tokens),
-      );
+      final existingTokens = (await _authTokenRepository.getTokens().run())
+          .match(
+            (_) => null,
+            (maybeTokens) => maybeTokens.match(() => null, (tokens) => tokens),
+          );
 
       if (existingTokens == null) {
         log('Token refresh aborted: no tokens found in storage.');
@@ -76,23 +119,25 @@ class TokenRefreshAuthenticator extends Authenticator {
         return await completer.future;
       }
 
-      final refreshResponse = await _tokenRefreshApi.accountAuthPost(
+      final result = await _tokenRefreshApi.accountAuthenticate(
         body: TokenLoginRequest(token: existingTokens.refreshToken),
       );
-      final responseBody = refreshResponse.body;
 
-      if (!refreshResponse.isSuccessful || responseBody == null) {
-        log(
-          'Token refresh failed: server responded with '
-          '${refreshResponse.statusCode}.',
-        );
+      final response = switch (result) {
+        TonikSuccess(value: AccountAuthenticateResponse200(:final body)) =>
+          body,
+        _ => null,
+      };
+
+      if (response == null) {
+        log('Token refresh failed.');
         completer.complete(null);
         return await completer.future;
       }
 
       final newTokens = AuthTokens(
-        jwt: responseBody.jwt,
-        refreshToken: responseBody.refreshToken,
+        jwt: response.jwt,
+        refreshToken: response.refreshToken,
       );
 
       final savedTokens = await _authTokenRepository

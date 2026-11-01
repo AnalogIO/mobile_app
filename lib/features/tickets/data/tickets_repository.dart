@@ -4,6 +4,9 @@ import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:collection/collection.dart';
 import 'package:fpdart/fpdart.dart';
 
+typedef _MobilePayDetails =
+    InitiatePurchaseResponsePaymentDetailsOneOfModelMobilePayPaymentDetails;
+
 class TicketsRepository {
   const new({
     required this._ticketsApi,
@@ -82,16 +85,30 @@ class TicketsRepository {
         .initiateMobilePayPurchase(ticketGroupId: ticketGroupId)
         // map Left type from Failure to PurchaseInitiationFailure
         .mapLeft((failure) => PurchaseInitiationFailure(failure.reason))
-        .map(
-          (response) => InitiatedMobilePayPayment(
-            orderId: response.id,
-            mobilePayRedirectUri: Uri.parse(
-              MobilePayPaymentDetails.fromJson(
-                response.paymentDetails as Map<String, dynamic>,
-              ).mobilePayAppRedirectUri,
+        .flatMap((response) {
+          final details = response.paymentDetails;
+          final uri = details is _MobilePayDetails
+              ? Uri.tryParse(
+                  details
+                      .value
+                      .mobilePayPaymentDetailsModel
+                      .mobilePayAppRedirectUri,
+                )
+              : null;
+          if (uri == null) {
+            return TaskEither.left(
+              const PurchaseInitiationFailure(
+                'Expected a valid MobilePay payment redirect URI',
+              ),
+            );
+          }
+          return TaskEither.right(
+            InitiatedMobilePayPayment(
+              orderId: response.id,
+              mobilePayRedirectUri: uri,
             ),
-          ),
-        );
+          );
+        });
   }
 
   /// Verify the status of a purchase flow for a ticket group.
@@ -107,10 +124,7 @@ class TicketsRepository {
         // It's a band-aid fix to give time for the backend to update the status
         // (especially happens on cancelled purchases)
         .flatMap((response) {
-          final purchaseStatus = purchaseStatusFromJson(
-            response.purchaseStatus,
-          );
-          if (purchaseStatus == PurchaseStatus.pendingpayment) {
+          if (response.purchaseStatus == PurchaseStatus.pendingPayment) {
             return _ticketsApi
                 .verifyPurchase(orderId: orderId)
                 .delay(const Duration(seconds: 1));
@@ -127,7 +141,7 @@ class TicketsRepository {
             if (response.purchaseStatus == PurchaseStatus.cancelled) {
               return const Left(PurchaseCancelledByUser());
             }
-            if (response.purchaseStatus == PurchaseStatus.pendingpayment) {
+            if (response.purchaseStatus == PurchaseStatus.pendingPayment) {
               return const Left(PurchasePending());
             }
             if (response.purchaseStatus != PurchaseStatus.completed) {
@@ -182,14 +196,10 @@ class TicketsRepository {
                     description: response.description,
                     numberOfTickets: response.numberOfTickets,
                     priceDKK: response.price,
-                    eligibleDrinks:
-                        response.eligibleMenuItems
-                            ?.where((item) => item.active)
-                            .map((item) => Drink(id: item.id, name: item.name))
-                            .toList() ??
-                        // use an empty list is eligibleMenuItems is null
-                        //  - it can be null for backwards compatibility reasons
-                        [],
+                    eligibleDrinks: response.eligibleMenuItems
+                        .where((item) => item.active)
+                        .map((item) => Drink(id: item.id, name: item.name))
+                        .toList(),
                   ),
                 )
                 .toList(),

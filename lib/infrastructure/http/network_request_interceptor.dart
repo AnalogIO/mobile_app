@@ -1,24 +1,18 @@
-import 'dart:async';
-
 import 'package:cafe_analog_app/features/login/data/auth_token_store.dart';
-import 'package:chopper/chopper.dart';
+import 'package:dio/dio.dart';
 
-/// An interceptor that adds the Authorization header with the JWT token
-/// to outgoing HTTP requests if a token is available in the [AuthTokenStore].
-class NetworkRequestInterceptor implements Interceptor {
+/// Adds the current JWT to outgoing requests.
+class NetworkRequestInterceptor extends Interceptor {
   new({required this._authTokenStore});
 
   final AuthTokenStore _authTokenStore;
 
   @override
-  FutureOr<Response<BodyType>> intercept<BodyType>(Chain<BodyType> chain) {
-    return chain.proceed(switch (_authTokenStore.token) {
-      null => chain.request,
-      final token => applyHeader(
-        chain.request,
-        'Authorization',
-        'Bearer $token',
-      ),
-    });
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    final token = _authTokenStore.token;
+    if (token != null) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
+    handler.next(options);
   }
 }

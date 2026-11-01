@@ -21,63 +21,72 @@ class ReceiptsRepository {
     String? continuationToken,
   }) {
     final receiptType = switch (type) {
-      GetReceiptsType.ticketSwipes => api.ReceiptType.usedticket,
+      GetReceiptsType.ticketSwipes => api.ReceiptType.usedTicket,
       GetReceiptsType.purchases => api.ReceiptType.purchase,
       GetReceiptsType.vouchers => api.ReceiptType.voucher,
       GetReceiptsType.all => api.ReceiptType.all,
     };
 
     return _receiptsApi
-        .fetchReceiptsRaw(
+        .fetchReceipts(
           receiptType: receiptType,
           continuationToken: continuationToken,
         )
-        .flatMap((raw) {
-          final receiptsList =
-              (raw['receipts'] as List<dynamic>?) ?? <dynamic>[];
-          final nextToken = (raw['continuationToken'] as String?) ?? '';
-          try {
-            final receipts = receiptsList
-                .map((e) => e as Map<String, dynamic>)
-                .where(_isCompletedPurchaseReceipt)
-                .map(receiptFromJson)
-                .toList();
-            return TaskEither.right(
-              ReceiptsBatch(
-                receipts: receipts,
-                continuationToken: nextToken,
-                hasMore: receiptsList.isNotEmpty,
-              ),
-            );
-          } on FormatException catch (error) {
-            // The generated enum decoders (e.g. `receiptTypeFromJson`) return
-            // `swaggerGeneratedUnknown` for unrecognized values instead of
-            // null.
-            // Receipt decoding throws when it encounters one; converting that
-            // into a Failure makes the cubit emit a failure state instead of
-            // the app crashing. See CONTRIBUTING.md.
-            return TaskEither.left(UnexpectedFailure(error.message));
-          }
-        });
+        .map(
+          (response) => ReceiptsBatch(
+            receipts: response.receipts
+                .map(_toDomainReceipt)
+                .whereType<Receipt>()
+                .toList(),
+            continuationToken: response.continuationToken,
+            hasMore: response.receipts.isNotEmpty,
+          ),
+        );
   }
 
-  /// Whether the given receipt JSON should be included in the list.
+  /// Maps a generated receipt union variant to the domain model.
   ///
-  /// Only completed purchases are included; other receipt types are always
-  /// included. Throws an [UnsupportedError] for unrecognized purchase
-  /// statuses, which [fetchReceipts] converts into a failure.
-  bool _isCompletedPurchaseReceipt(Map<String, dynamic> json) {
-    if (api.receiptTypeFromJson(json['Type']) != api.ReceiptType.purchase) {
-      return true;
-    }
-
-    final status = api.PurchaseReceipt.fromJson(json).status;
-    if (status == api.PurchaseStatus.completed) {
-      return true;
-    }
-    if (status == api.PurchaseStatus.swaggerGeneratedUnknown) {
-      throw FormatException('Unknown purchase status: ${json['status']}');
-    }
-    return false; // Exclude non-completed purchases
+  /// Non-completed purchases are excluded, matching the old receipts list.
+  Receipt? _toDomainReceipt(
+    api.ReceiptResponseReceiptsArrayOneOfModel receipt,
+  ) {
+    return switch (receipt) {
+      api.ReceiptResponseReceiptsArrayOneOfModelPurchaseReceipt(:final value)
+          when value.purchaseReceiptModel.status ==
+              api.PurchaseStatus.completed =>
+        PurchaseReceipt(
+          ticketName: value.receiptBase.productName,
+          numberOfTickets: value.purchaseReceiptModel.quantity,
+          status: purchaseStatusFrom(value.purchaseReceiptModel.status),
+          orderDate: value.purchaseReceiptModel.orderDate,
+          priceDKK: value.purchaseReceiptModel.price,
+          orderId: value.purchaseReceiptModel.orderId,
+        ),
+      api.ReceiptResponseReceiptsArrayOneOfModelPurchaseReceipt() => null,
+      api.ReceiptResponseReceiptsArrayOneOfModelVoucherReceipt(:final value) =>
+        VoucherReceipt(
+          ticketName: value.receiptBase.productName,
+          redeemDate: value.voucherReceiptModel.redeemDate,
+          numberOfTickets: value.voucherReceiptModel.quantity,
+        ),
+      api.ReceiptResponseReceiptsArrayOneOfModelUsedTicketReceipt(
+        :final value,
+      ) =>
+        UsedTicketReceipt(
+          ticketName: value.receiptBase.productName,
+          drinkName: value.usedTicketReceiptModel.menuItemName,
+          swipeDate: value.usedTicketReceiptModel.swipeDate,
+        ),
+    };
   }
+}
+
+PurchaseStatus purchaseStatusFrom(api.PurchaseStatus status) {
+  return switch (status) {
+    api.PurchaseStatus.completed => PurchaseStatus.completed,
+    api.PurchaseStatus.cancelled => PurchaseStatus.cancelled,
+    api.PurchaseStatus.pendingPayment => PurchaseStatus.pendingPayment,
+    api.PurchaseStatus.refunded => PurchaseStatus.refunded,
+    api.PurchaseStatus.expired => PurchaseStatus.expired,
+  };
 }

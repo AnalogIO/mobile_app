@@ -9,7 +9,10 @@ class ProgrammesApi {
   final NetworkRequestExecutor _executor;
 
   /// Fetches the list of available study programmes.
-  TaskEither<Failure, List<ProgrammeDto>> fetchProgrammes() {
-    return _executor.run((api) => api.v1.programmesGet());
+  TaskEither<Failure, List<ProgrammeResponse>> fetchProgrammes() {
+    return _executor.run(
+      (api) => api.programmes.programmesGet(),
+      (programmes) => programmes,
+    );
   }
 }

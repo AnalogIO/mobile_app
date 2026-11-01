@@ -1,31 +1,41 @@
+import 'package:analog_api/analog_api.dart';
 import 'package:cafe_analog_app/core/environment.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
-import 'package:chopper/chopper.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tonik_util/tonik_util.dart';
 
-/// Creates and configures the [ChopperClient]s used for network requests.
-ChopperClient makeHttpClient(BuildContext context) {
+/// Creates and configures the Tonik API client and its Dio interceptors.
+TonikApiClient makeApiClient(BuildContext context) {
   final baseUrl = Uri.parse(apiBaseUrl);
+  final base = baseUrl.toString();
 
-  // Separate http client only used to refresh token requests.
-  // Calls done from this client won't trigger the authenticator
-  // (token refresh logic) or interceptor (injecting jwt token in auth header).
-  final tokenRefreshClient = ChopperClient(
-    baseUrl: baseUrl,
-    converter: $JsonSerializableConverter(),
-    services: [CoffeecardApiV2.create()],
+  // This client is only used for token refresh, so it must not run the
+  // refresh interceptor (which would recurse on a failed refresh).
+  final refreshDio = Dio(BaseOptions(baseUrl: base));
+  final refreshServer = CustomServer(
+    baseUrl: base,
+    serverConfig: ServerConfig.client(refreshDio),
+  );
+  final refreshAccountApi = AccountApi(refreshServer);
+
+  final dio = Dio(BaseOptions(baseUrl: base));
+  final tokenRefresh = TokenRefreshAuthenticator(
+    dio: dio,
+    authTokenRepository: context.read(),
+    tokenRefreshApi: refreshAccountApi,
+    authCubitHandle: context.read(),
   );
 
-  return ChopperClient(
-    baseUrl: baseUrl,
-    converter: $JsonSerializableConverter(),
-    services: [CoffeecardApiV1.create(), CoffeecardApiV2.create()],
-    interceptors: [NetworkRequestInterceptor(authTokenStore: context.read())],
-    authenticator: TokenRefreshAuthenticator(
-      authTokenRepository: context.read(),
-      tokenRefreshApi: tokenRefreshClient.getService<CoffeecardApiV2>(),
-      authCubitHandle: context.read(),
-    ),
+  dio.interceptors.addAll([
+    NetworkRequestInterceptor(authTokenStore: context.read()),
+    tokenRefresh,
+  ]);
+
+  final server = CustomServer(
+    baseUrl: base,
+    serverConfig: ServerConfig.client(dio),
   );
+  return TonikApiClient(server: server);
 }

@@ -8,23 +8,38 @@ class AccountApi {
 
   final NetworkRequestExecutor _executor;
 
-  /// Fetches the current user's account data.
   TaskEither<Failure, UserResponse> getUser() {
-    return _executor.run((api) => api.v2.accountGet());
+    return _executor.run(
+      (api) => api.account.accountGet(),
+      (response) => switch (response) {
+        AccountGetResponse200(:final body) => body,
+        AccountGetResponse401() => throwTonikHttp(401),
+      },
+    );
   }
 
-  /// Updates the current user's account using the given [request].
-  ///
-  /// Returns the updated account data.
   TaskEither<Failure, UserResponse> updateUser(UpdateUserRequest request) {
-    return _executor.run((api) => api.v2.accountPut(body: request));
+    return _executor.run(
+      (api) => api.account.accountUpdate(body: request),
+      (response) => switch (response) {
+        AccountUpdateResponse200(:final body) => body,
+        AccountUpdateResponse401() => throwTonikHttp(401),
+      },
+    );
   }
 
-  /// Requests deletion of the current user's account.
-  ///
-  /// The backend responds with `202` and sends a verification email; the
-  /// account is only actually deleted when the link in that email is opened.
   TaskEither<Failure, Unit> requestAccountDeletion() {
-    return _executor.run((api) => api.v2.accountDelete()).map((_) => unit);
+    return _executor.run(
+      (api) => api.account.accountDelete(),
+      (response) => switch (response) {
+        AccountDeleteResponse202() => unit,
+        AccountDeleteResponse401() => throwTonikHttp(401),
+        AccountDeleteResponse404() => throwTonikHttp(404),
+        AccountDeleteResponse429(:final body) => throwTonikHttp(
+          429,
+          body.message,
+        ),
+      },
+    );
   }
 }
