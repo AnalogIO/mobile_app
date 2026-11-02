@@ -10,6 +10,8 @@ class QuickStatsCubit extends Cubit<QuickStatsState> {
   final StatisticsRepository _repository;
 
   Future<void> loadQuickStats() async {
+    if (isClosed) return;
+
     final currentState = state;
     if (currentState is QuickStatsLoading ||
         currentState is QuickStatsRefreshing) {
@@ -22,12 +24,15 @@ class QuickStatsCubit extends Cubit<QuickStatsState> {
       emit(const QuickStatsLoading());
     }
 
-    await _repository
-        .getQuickStats()
-        .match(
-          (error) => emit(QuickStatsFailure(error.reason)),
-          (quickStats) => emit(QuickStatsLoaded(quickStats)),
-        )
-        .run();
+    final result = await _repository.getQuickStats().run();
+
+    // The cubit is closed when the user logs out, which disposes the shell
+    // while the request may still be in flight.
+    if (isClosed) return;
+
+    result.match(
+      (error) => emit(QuickStatsFailure(error.reason)),
+      (quickStats) => emit(QuickStatsLoaded(quickStats)),
+    );
   }
 }

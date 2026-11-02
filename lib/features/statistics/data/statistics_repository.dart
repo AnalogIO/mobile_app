@@ -35,23 +35,28 @@ class StatisticsRepository {
                   (entry) => entry.id == currentUserId,
                 );
 
-                // If the current user's entry is not in the top entries,
-                // we add it to the list.
-                final allEntries = currentUserInTop
-                    ? topEntries
-                    : [...topEntries, currentUserEntry];
+                LeaderboardUserEntry toDomain(api.LeaderboardEntry entry) {
+                  return LeaderboardUserEntry(
+                    userId: entry.id,
+                    name: entry.name,
+                    rank: entry.rank,
+                    drinksConsumed: entry.score,
+                    isCurrentUser: entry.id == currentUserId,
+                  );
+                }
 
-                return allEntries
-                    .map(
-                      (entry) => LeaderboardUserEntry(
-                        userId: entry.id,
-                        name: entry.name,
-                        rank: entry.rank,
-                        drinksConsumed: entry.score,
-                        isCurrentUser: entry.id == currentUserId,
-                      ),
-                    )
+                final top = topEntries
+                    .map(toDomain)
                     .sortedBy((entry) => entry.rank);
+
+                // The current user may not be in the top 10 (for example with
+                // zero cups). Keep them visible at the bottom of the list, not
+                // sorted by their rank: their rank is often 0, which would put
+                // them above the #1 entry.
+                if (currentUserInTop) {
+                  return top;
+                }
+                return [...top, toDomain(currentUserEntry)];
               }),
         );
   }

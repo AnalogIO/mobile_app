@@ -115,23 +115,10 @@ class DependenciesProvider extends StatelessWidget {
           BlocProvider(
             create: (context) => PurchaseFlowCubit(repository: context.read()),
           ),
-          // Statistics cubits
-          BlocProvider(
-            create: (context) =>
-                LeaderboardCubit(repository: context.read())
-                  ..loadLeaderboard().ignore(),
-          ),
-          BlocProvider(
-            create: (context) =>
-                QuickStatsCubit(repository: context.read())
-                  ..loadQuickStats().ignore(),
-          ),
-          // Receipts cubit
-          BlocProvider(
-            create: (context) =>
-                ReceiptsCubit(repository: context.read())
-                  ..loadReceipts().ignore(),
-          ),
+          // Note: the receipts and statistics cubits live in the authenticated
+          // shell (see AnalogGoRouter), so they are disposed on logout and
+          // recreated for the next session instead of leaking the previous
+          // account's data.
         ],
         child: child,
       ),

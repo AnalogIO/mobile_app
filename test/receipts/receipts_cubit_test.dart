@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cafe_analog_app/core/failures.dart';
 import 'package:cafe_analog_app/features/receipts/receipts.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -148,5 +150,20 @@ void main() {
         continuationToken: 'next',
       ),
     );
+  });
+
+  test('ignores a response that arrives after the cubit is closed', () async {
+    final response = Completer<Either<Failure, ReceiptsBatch>>();
+    when(() => repository.fetchReceipts(type: GetReceiptsType.all)).thenAnswer(
+      (_) => TaskEither<Failure, ReceiptsBatch>(() => response.future),
+    );
+
+    final cubit = ReceiptsCubit(repository: repository);
+
+    final load = cubit.loadReceipts();
+    await cubit.close();
+    response.complete(left<Failure, ReceiptsBatch>(const ConnectionFailure()));
+
+    await expectLater(load, completes);
   });
 }
