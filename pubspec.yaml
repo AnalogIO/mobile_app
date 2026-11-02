@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
-  go_router: ^18.1.1
+  go_router: ^18.1.2
   intl: ^0.20.2
   analog_api:
     path: packages/analog_api
