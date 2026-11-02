@@ -16,6 +16,8 @@ class ReceiptsCubit extends Cubit<ReceiptsState> {
 
   /// Loads the first page of receipts, or refreshes an already loaded list.
   Future<void> loadReceipts() async {
+    if (isClosed) return;
+
     final currentState = state;
     if (currentState is ReceiptsLoading ||
         currentState is ReceiptsRefreshing ||
@@ -35,19 +37,24 @@ class ReceiptsCubit extends Cubit<ReceiptsState> {
       emit(const ReceiptsLoading());
     }
 
-    await _repository
+    final result = await _repository
         .fetchReceipts(type: GetReceiptsType.all)
-        .match(
-          (failure) => emit(ReceiptsFailure(reason: failure.reason)),
-          (batch) => emit(
-            ReceiptsLoaded(
-              receipts: batch.receipts,
-              continuationToken: batch.continuationToken,
-              hasMore: batch.hasMore,
-            ),
-          ),
-        )
         .run();
+
+    // The cubit is closed when the user logs out, which disposes the shell
+    // while the request may still be in flight.
+    if (isClosed) return;
+
+    result.match(
+      (failure) => emit(ReceiptsFailure(reason: failure.reason)),
+      (batch) => emit(
+        ReceiptsLoaded(
+          receipts: batch.receipts,
+          continuationToken: batch.continuationToken,
+          hasMore: batch.hasMore,
+        ),
+      ),
+    );
   }
 
   /// Loads the next page and appends it to the receipts already on screen.
@@ -55,6 +62,8 @@ class ReceiptsCubit extends Cubit<ReceiptsState> {
   /// A failed page keeps the current receipts visible and exposes
   /// [ReceiptsLoaded.loadMoreError] so the list can offer a retry.
   Future<void> loadMoreReceipts() async {
+    if (isClosed) return;
+
     final currentState = state;
     if (currentState is! ReceiptsLoaded ||
         currentState is ReceiptsRefreshing ||
@@ -71,28 +80,33 @@ class ReceiptsCubit extends Cubit<ReceiptsState> {
       ),
     );
 
-    await _repository
+    final result = await _repository
         .fetchReceipts(
           type: GetReceiptsType.all,
           continuationToken: currentState.continuationToken,
         )
-        .match(
-          (failure) => emit(
-            ReceiptsLoaded(
-              receipts: currentState.receipts,
-              continuationToken: currentState.continuationToken,
-              hasMore: currentState.hasMore,
-              loadMoreError: failure.reason,
-            ),
-          ),
-          (batch) => emit(
-            ReceiptsLoaded(
-              receipts: [...currentState.receipts, ...batch.receipts],
-              continuationToken: batch.continuationToken,
-              hasMore: batch.hasMore,
-            ),
-          ),
-        )
         .run();
+
+    // The cubit is closed when the user logs out, which disposes the shell
+    // while the request may still be in flight.
+    if (isClosed) return;
+
+    result.match(
+      (failure) => emit(
+        ReceiptsLoaded(
+          receipts: currentState.receipts,
+          continuationToken: currentState.continuationToken,
+          hasMore: currentState.hasMore,
+          loadMoreError: failure.reason,
+        ),
+      ),
+      (batch) => emit(
+        ReceiptsLoaded(
+          receipts: [...currentState.receipts, ...batch.receipts],
+          continuationToken: batch.continuationToken,
+          hasMore: batch.hasMore,
+        ),
+      ),
+    );
   }
 }

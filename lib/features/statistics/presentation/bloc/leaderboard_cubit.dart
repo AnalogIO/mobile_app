@@ -15,6 +15,8 @@ class LeaderboardCubit extends Cubit<LeaderboardState> {
   /// Behaves as both an initial load and a refresh: if data is already
   /// loaded, it is kept on screen while fresh data is fetched.
   Future<void> loadLeaderboard() async {
+    if (isClosed) return;
+
     final currentState = state;
     if (currentState is LeaderboardLoading ||
         currentState is LeaderboardRefreshing) {
@@ -40,6 +42,8 @@ class LeaderboardCubit extends Cubit<LeaderboardState> {
   /// Unlike [loadLeaderboard], this drops any currently loaded data and
   /// shows a loading state, since the data about to be shown is different.
   Future<void> setFilter(LeaderboardFilter filter) async {
+    if (isClosed) return;
+
     if (state is LeaderboardLoading) {
       return;
     }
@@ -47,13 +51,16 @@ class LeaderboardCubit extends Cubit<LeaderboardState> {
     await _fetchLeaderboard(filter);
   }
 
-  Future<void> _fetchLeaderboard(LeaderboardFilter filter) {
-    return _repository
-        .getLeaderboard(filter: filter)
-        .match(
-          (failure) => emit(LeaderboardFailure(failure.reason, filter: filter)),
-          (leaderboard) => emit(LeaderboardLoaded(leaderboard, filter: filter)),
-        )
-        .run();
+  Future<void> _fetchLeaderboard(LeaderboardFilter filter) async {
+    final result = await _repository.getLeaderboard(filter: filter).run();
+
+    // The cubit is closed when the user logs out, which disposes the shell
+    // while the request may still be in flight.
+    if (isClosed) return;
+
+    result.match(
+      (failure) => emit(LeaderboardFailure(failure.reason, filter: filter)),
+      (leaderboard) => emit(LeaderboardLoaded(leaderboard, filter: filter)),
+    );
   }
 }
