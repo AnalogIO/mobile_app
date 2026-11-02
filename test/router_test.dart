@@ -9,7 +9,8 @@ import 'package:cafe_analog_app/features/login/login.dart';
 import 'package:cafe_analog_app/features/receipts/receipts.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:cafe_analog_app/infrastructure/http/http.dart';
+import 'package:cafe_analog_app/infrastructure/http/http.dart'
+    hide PurchaseReceipt, PurchaseStatus;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -348,6 +349,29 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
     }
 
+    // Give each session its own receipt, so stale data would be visible.
+    var receiptsLoaded = 0;
+    when(() => mockReceiptsRepository.fetchReceipts(type: GetReceiptsType.all))
+        .thenAnswer((_) {
+          receiptsLoaded++;
+          return TaskEither<Failure, ReceiptsBatch>.right(
+            ReceiptsBatch(
+              receipts: [
+                PurchaseReceipt(
+                  ticketName: 'Session $receiptsLoaded',
+                  numberOfTickets: 1,
+                  status: PurchaseStatus.completed,
+                  priceDKK: 20,
+                  orderDate: DateTime(2026, 1, receiptsLoaded),
+                  orderId: 'order-$receiptsLoaded',
+                ),
+              ],
+              continuationToken: '',
+              hasMore: false,
+            ),
+          );
+        });
+
     await tester.pumpWidget(buildApp(router: goRouter));
 
     // Nothing user-scoped is loaded while signed out.
@@ -387,6 +411,7 @@ void main() {
     verify(
       () => mockReceiptsRepository.fetchReceipts(type: GetReceiptsType.all),
     ).called(1);
+    expect(find.text('Purchased 1 Session 1 tickets'), findsOneWidget);
 
     // Logging out leaves the shell, so the next session gets fresh cubits and
     // refetches instead of reusing the previous account's data.
@@ -402,6 +427,15 @@ void main() {
         filter: LeaderboardFilter.month,
       ),
     ).called(1);
+
+    goRouter.go('/receipts');
+    await pumpNavigation(tester);
+
+    verify(
+      () => mockReceiptsRepository.fetchReceipts(type: GetReceiptsType.all),
+    ).called(1);
+    expect(find.text('Purchased 1 Session 2 tickets'), findsOneWidget);
+    expect(find.text('Purchased 1 Session 1 tickets'), findsNothing);
 
     await ctl.close();
     await tester.pump(const Duration(seconds: 1));

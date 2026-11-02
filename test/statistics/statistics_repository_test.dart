@@ -63,12 +63,12 @@ void main() {
   );
 
   test(
-    'does not duplicate the current user when they are in the top',
+    'sorts the top entries and does not duplicate the current user',
     () async {
       const currentUserInTop = api.LeaderboardEntry(
         id: 99,
         name: 'You',
-        rank: 1,
+        rank: 2,
         profileIcon: api.ProfileIcon.teabag,
         profileBackgroundColor: api.ProfileBackgroundColor.aqua,
         score: 25,
@@ -89,7 +89,8 @@ void main() {
           .run();
 
       final entries = result.getOrElse((_) => fail('Expected a leaderboard'));
-      expect(entries.map((entry) => entry.userId), unorderedEquals([1, 99]));
+      // The API returns the current user first, but rank 1 must come first.
+      expect(entries.map((entry) => entry.userId), [1, 99]);
       expect(entries.where((entry) => entry.isCurrentUser), hasLength(1));
     },
   );
