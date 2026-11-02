@@ -98,7 +98,32 @@ class AnalogGoRouter {
         StatefulShellRoute.indexedStack(
           // fade in the main scaffold (doesn't affect branch transitions)
           pageBuilder: (_, _, shell) => CustomTransitionPage(
-            child: ScaffoldWithNestedNavigation(navigationShell: shell),
+            // Cubits that hold data belonging to the signed-in user live here:
+            // inside the authenticated shell, but above the branches, so every
+            // branch can read them (a ticket being used refreshes the receipts
+            // and the stats, renaming refreshes the leaderboard). Because they
+            // belong to the shell, they are disposed on logout and recreated
+            // (and reloaded) for the next session.
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) =>
+                      ReceiptsCubit(repository: context.read())
+                        ..loadReceipts().ignore(),
+                ),
+                BlocProvider(
+                  create: (context) =>
+                      QuickStatsCubit(repository: context.read())
+                        ..loadQuickStats().ignore(),
+                ),
+                BlocProvider(
+                  create: (context) =>
+                      LeaderboardCubit(repository: context.read())
+                        ..loadLeaderboard().ignore(),
+                ),
+              ],
+              child: ScaffoldWithNestedNavigation(navigationShell: shell),
+            ),
             transitionsBuilder: (_, animation, _, child) {
               return FadeTransition(opacity: animation, child: child);
             },
