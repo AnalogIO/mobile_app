@@ -52,7 +52,7 @@ class _RotatingBeansDecoration extends StatefulWidget {
 
 class _RotatingBeansDecorationState extends State<_RotatingBeansDecoration>
     with SingleTickerProviderStateMixin {
-  static const _rotationDuration = Duration(seconds: 48);
+  static const _rotationDuration = Duration(seconds: 30);
   static const _opacity = 0.05;
 
   late final AnimationController _controller;
