@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cafe_analog_app/core/loading_overlay.dart';
 import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/core/widgets/failure_message.dart';
@@ -5,47 +8,35 @@ import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/core/widgets/section_title.dart';
 import 'package:cafe_analog_app/core/widgets/user_icon.dart';
 import 'package:cafe_analog_app/features/settings/settings.dart';
+import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/fpdart.dart' show Option;
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 class ChangeProfilePictureScreen extends StatelessWidget {
   const new({super.key});
 
-  int _userIdOf(BuildContext context) {
-    return switch (context.read<ProfileCubit>().state) {
-      ProfileLoaded(:final profile) ||
-      ProfileRefreshing(:final profile) => profile.id,
-      _ => 0,
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     return Screen.listView(
       name: 'Change profile picture',
       children: [
-        BlocBuilder<ProfilePictureCubit, ProfilePictureState>(
+        BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
             return switch (state) {
-              ProfilePictureInitial() ||
-              ProfilePictureLoading() => const Padding(
+              ProfileInitial() || ProfileLoading() => const Padding(
                 padding: .all(32),
                 child: Center(
                   child: AnalogCircularProgressIndicator(spinnerColor: .dark),
                 ),
               ),
-              ProfilePictureFailure(:final reason) => FailureMessage(
+              ProfileFailure(:final reason) => FailureMessage(
                 message: 'Failed to load profile picture: $reason',
-                onRetry: () =>
-                    context.read<ProfilePictureCubit>().loadProfilePicture(),
+                onRetry: () => context.read<ProfileCubit>().loadProfile(),
               ),
-              ProfilePictureLoaded(:final picture) ||
-              ProfilePictureRefreshing(:final picture) => _ProfilePicturePicker(
-                userId: _userIdOf(context),
-                current: picture,
+              ProfileLoaded(:final profile) => _ProfilePicturePicker(
+                profile: profile,
               ),
             };
           },
@@ -56,13 +47,9 @@ class ChangeProfilePictureScreen extends StatelessWidget {
 }
 
 class _ProfilePicturePicker extends StatefulWidget {
-  const new({required this.userId, required this.current});
+  const new({required this.profile});
 
-  final int userId;
-
-  /// The currently stored picture, or `none()` when the user has not chosen
-  /// one yet (in which case the id-derived defaults are shown).
-  final Option<ProfilePicture> current;
+  final UserProfile profile;
 
   @override
   State<_ProfilePicturePicker> createState() => _ProfilePicturePickerState();
@@ -75,34 +62,29 @@ class _ProfilePicturePickerState extends State<_ProfilePicturePicker> {
   @override
   void initState() {
     super.initState();
-    _iconId = widget.current.match(
-      () => widget.userId % UserIcon.iconCount,
-      (picture) => picture.iconId,
-    );
-    _backgroundColorId = widget.current.match(
-      () => widget.userId % UserIcon.colors.length,
-      (picture) => picture.backgroundColorId,
-    );
+    _iconId = widget.profile.profilePicture.iconId;
+    _backgroundColorId = widget.profile.profilePicture.backgroundColorId;
   }
 
   bool get _hasChanges {
-    return widget.current.match(
-      () => true,
-      (picture) =>
-          picture.iconId != _iconId ||
-          picture.backgroundColorId != _backgroundColorId,
-    );
+    return widget.profile.profilePicture.iconId != _iconId ||
+        widget.profile.profilePicture.backgroundColorId != _backgroundColorId;
   }
 
   Future<void> _onSave() async {
-    final result = await context.read<ProfilePictureCubit>().setProfilePicture(
+    final dismissLoadingOverlay = showLoadingOverlay(context);
+
+    final result = await context.read<ProfileCubit>().updateProfilePicture(
       ProfilePicture(iconId: _iconId, backgroundColorId: _backgroundColorId),
     );
-    if (!context.mounted) return;
+    if (!mounted) return;
+    dismissLoadingOverlay(context);
 
     result.match(
       (failure) => showSnackBar(context: context, message: failure.reason),
       (_) {
+        // The leaderboard renders the same picture, so refresh it.
+        unawaited(context.read<LeaderboardCubit>().loadLeaderboard());
         showSuccessSnackBar(
           context: context,
           message: 'Profile picture updated',
@@ -122,7 +104,7 @@ class _ProfilePicturePickerState extends State<_ProfilePicturePicker> {
         const Gap(8),
         Center(
           child: UserIcon.large(
-            id: widget.userId,
+            id: widget.profile.id,
             icon: _iconId,
             background: _backgroundColorId,
           ),

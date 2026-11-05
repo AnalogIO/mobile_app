@@ -1,8 +1,6 @@
 import 'package:cafe_analog_app/core/widgets/user_icon.dart';
 import 'package:cafe_analog_app/features/settings/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/fpdart.dart' show none;
 import 'package:go_router/go_router.dart';
 
 class ProfileCard extends StatelessWidget {
@@ -14,11 +12,6 @@ class ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    final picture = switch (context.watch<ProfilePictureCubit>().state) {
-      ProfilePictureLoaded(:final picture) => picture,
-      _ => none<ProfilePicture>(),
-    }.toNullable();
-
     return Padding(
       padding: const .only(left: 16, right: 16, bottom: 24, top: 8),
       child: ListTile(
@@ -29,8 +22,8 @@ class ProfileCard extends StatelessWidget {
           backgroundColor: colorScheme.surfaceContainerLow,
           child: UserIcon.small(
             id: profile.id,
-            icon: picture?.iconId,
-            background: picture?.backgroundColorId,
+            icon: profile.profilePicture.iconId,
+            background: profile.profilePicture.backgroundColorId,
           ),
         ),
         title: Text(
