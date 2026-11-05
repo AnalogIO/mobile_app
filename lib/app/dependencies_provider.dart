@@ -88,9 +88,6 @@ class DependenciesProvider extends StatelessWidget {
           create: (context) => SettingsRepository(
             accountApi: AccountApi(executor: context.read()),
             programmesApi: ProgrammesApi(executor: context.read()),
-            profilePictureLocalStore: ProfilePictureLocalStore(
-              store: context.read(),
-            ),
           ),
         ),
       ],

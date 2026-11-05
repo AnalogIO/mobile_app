@@ -52,10 +52,13 @@ Profile card, account information, about, legal and logout.
 - **Terms of service are not linked yet.** `https://www.cafeanalog.dk/terms`
   currently returns 404, so the tile was removed rather than shipping a broken
   link. Add it back once the page exists (tracked by mobile_app issue #41).
-- The profile picture (icon + background color) is stored **locally** in
-  `SharedPreferences` (`ProfilePictureLocalStore`), because the backend has no
-  profile picture fields. When the backend gains `profilePictureId` and
-  `profileBackgroundColor` (see the old app's `feature/change-profile-pic`
-  branch), swap the local store for API calls in `SettingsRepository`. The
-  picture is cleared together with the other user context on logout
-  (`DependenciesProvider.clearAuthenticatedUserContext`).
+- The profile picture (icon + background color) is part of the user profile:
+  `GET /api/v2/account` returns `profileIcon` and `profileBackgroundColor`, and
+  `PUT /api/v2/account` updates both. It is loaded and changed through
+  `ProfileCubit`; there is no separate picture cubit or local store.
+  `SettingsRepository` maps the generated enums to the ids rendered by
+  `UserIcon`, whose icon assets and background palette are ordered like the
+  backend enums. `ProfilePicture` lives in `core/` because the statistics
+  feature renders the same pictures on the leaderboard.
+- Changing the profile picture refreshes the app-scoped `LeaderboardCubit`,
+  since leaderboard entries show the same picture.

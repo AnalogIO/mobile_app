@@ -22,7 +22,11 @@ class LeaderboardListEntry extends StatelessWidget {
         children: [
           LeaderboardRankMedal(entry.rank),
           const Gap(16),
-          UserIcon.small(id: entry.userId),
+          UserIcon.small(
+            id: entry.userId,
+            icon: entry.profilePicture.iconId,
+            background: entry.profilePicture.backgroundColorId,
+          ),
         ],
       ),
       title: Text(
