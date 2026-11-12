@@ -47,8 +47,6 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSMotionUsageDescription</key>
-	<string>This app requires access to the gyroscope to provide motion tracking information. swag</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
