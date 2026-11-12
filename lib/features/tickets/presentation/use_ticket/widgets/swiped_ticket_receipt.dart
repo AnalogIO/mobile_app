@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cafe_analog_app/core/responsive.dart';
 import 'package:cafe_analog_app/core/time_since.dart';
 import 'package:cafe_analog_app/core/widgets/always_light_theme.dart';
@@ -35,10 +37,12 @@ class SwipedTicketReceipt extends StatelessWidget {
         builder: (context) {
           return Tilt(
             tiltConfig: const TiltConfig(
+              enableReverse: true,
               leaveCurve: Curves.easeInOutCubicEmphasized,
-              leaveDuration: Duration(milliseconds: 600),
+              leaveDuration: Duration(milliseconds: 100),
             ),
             child: TiltBaseContainer(
+              lightConfig: const LightConfig(disable: true),
               shadowConfig: const ShadowBaseConfig(
                 color: Colors.black,
                 maxBlurRadius: 24,
@@ -54,7 +58,13 @@ class SwipedTicketReceipt extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    const Positioned.fill(child: RotatingBeansBackground()),
+                    const Positioned.fill(
+                      child: TiltParallax(
+                        filterQuality: FilterQuality.low,
+                        offset: Offset(-20, -30),
+                        child: RotatingBeansBackground(),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(24),
                       child: Column(
@@ -65,11 +75,37 @@ class SwipedTicketReceipt extends StatelessWidget {
                             children: [
                               Text('Swiped via $productName ticket'),
                               const Gap(16),
-                              Text(
-                                drinkName,
-                                style: TextTheme.of(context).headlineLarge
-                                    ?.copyWith(fontWeight: .bold),
-                                // style: AppTextStyle.ownedTicket,
+                              Stack(
+                                children: [
+                                  TiltParallax(
+                                    offset: const Offset(-1, -1),
+                                    child: ImageFiltered(
+                                      imageFilter: ImageFilter.blur(
+                                        sigmaX: 3,
+                                        sigmaY: 3,
+                                      ),
+                                      child: Text(
+                                        drinkName,
+                                        style: TextTheme.of(context)
+                                            .headlineLarge
+                                            ?.copyWith(
+                                              fontWeight: .bold,
+                                              color: Colors.black.withAlpha(50),
+                                            ),
+                                        // style: AppTextStyle.ownedTicket,
+                                      ),
+                                    ),
+                                  ),
+                                  TiltParallax(
+                                    offset: const Offset(3, 3),
+                                    child: Text(
+                                      drinkName,
+                                      style: TextTheme.of(context).headlineLarge
+                                          ?.copyWith(fontWeight: .bold),
+                                      // style: AppTextStyle.ownedTicket,
+                                    ),
+                                  ),
+                                ],
                               ),
                               const Gap(12),
                               _TimeAgoText(localTime: localTime),
