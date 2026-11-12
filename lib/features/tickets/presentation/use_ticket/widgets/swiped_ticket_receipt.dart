@@ -29,10 +29,11 @@ class SwipedTicketReceipt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localTime = time.toLocal();
-    return AlwaysLightTheme(
-      builder: (context) {
-        return IgnorePointer(
-          child: Tilt(
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pop(),
+      child: AlwaysLightTheme(
+        builder: (context) {
+          return Tilt(
             tiltConfig: const TiltConfig(
               leaveCurve: Curves.easeInOutCubicEmphasized,
               leaveDuration: Duration(milliseconds: 600),
@@ -103,9 +104,9 @@ class SwipedTicketReceipt extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
