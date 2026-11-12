@@ -84,6 +84,16 @@ class ProfileCubit extends Cubit<ProfileState> {
         .run();
   }
 
+  /// Updates the user's profile picture.
+  ///
+  /// See [updateName] for how successes and failures are handled.
+  Future<Either<Failure, Unit>> updateProfilePicture(ProfilePicture picture) {
+    return _repository.updateProfilePicture(picture).map((profile) {
+      emit(ProfileLoaded(profile));
+      return unit;
+    }).run();
+  }
+
   /// Requests deletion of the user's account.
   ///
   /// Emits no states: the account is only deleted once the verification email

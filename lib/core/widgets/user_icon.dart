@@ -7,21 +7,23 @@ class UserIcon extends StatelessWidget {
   const new small({required this.id, this.icon, this.background, super.key})
     : size = 40;
 
-  /// The palette of profile picture background colors.
+  /// The palette of profile picture background colors, in the same order as
+  /// the backend's `ProfileBackgroundColor` enum.
   static const colors = [
-    Color(0xffedd8e9), // lavender
-    Color(0xfff3c9c2), // blush
-    Color(0xffdce0c7), // sage
-    Color(0xffcbc7eb), // lilac
-    Color(0xffd5b6a8), // tan
-    Color(0xffa0dab5), // mint
-    Color(0xffb9e0d8), // teal
-    Color(0xffF4E7B8), // pastel yellow
-    Color(0xff9fcee8), // sky blue
-    Color(0xffb9c8e8), // periwinkle
+    Color(0xffedd8e9), // LavenderPink
+    Color(0xffbde7c6), // MintGreen
+    Color(0xffdce0c7), // SageGreen
+    Color(0xffcbc7eb), // Periwinkle
+    Color(0xffc19b94), // DustyRose
+    Color(0xffa0dab5), // Seafoam
+    Color(0xfff8d9da), // BlushPink
+    Color(0xffCDFCF6), // Aqua
+    Color(0xff92BA92), // MossGreen
+    Color(0xff86b4c3), // SteelBlue
   ];
 
-  /// Number of available profile picture icons.
+  /// Number of available profile picture icons, in the same order as the
+  /// backend's `ProfileIcon` enum and the `coffee<id>.png` assets.
   static const iconCount = 10;
 
   final int id;

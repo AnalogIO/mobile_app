@@ -1,5 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cafe_analog_app/core/failures.dart';
+import 'package:cafe_analog_app/core/profile_picture.dart';
 import 'package:cafe_analog_app/features/settings/data/settings_repository.dart';
 import 'package:cafe_analog_app/features/settings/models/user_profile.dart';
 import 'package:cafe_analog_app/features/settings/presentation/bloc/profile_cubit.dart';
@@ -9,6 +10,8 @@ import 'package:mocktail/mocktail.dart';
 
 class _MockSettingsRepository extends Mock implements SettingsRepository;
 
+const _picture = ProfilePicture(iconId: 3, backgroundColorId: 5);
+
 UserProfile _profile({
   int id = 1,
   String name = 'Monir',
@@ -16,6 +19,7 @@ UserProfile _profile({
   String occupation = 'Software Development',
   int? programmeId = 1,
   bool appearAnonymous = false,
+  ProfilePicture profilePicture = _picture,
 }) {
   return UserProfile(
     id: id,
@@ -24,6 +28,7 @@ UserProfile _profile({
     occupation: occupation,
     programmeId: programmeId,
     appearAnonymous: appearAnonymous,
+    profilePicture: profilePicture,
   );
 }
 
@@ -135,6 +140,23 @@ void main() {
       ],
     );
 
+    blocTest<ProfileCubit, ProfileState>(
+      'updateProfilePicture: emits loaded with the new picture',
+      build: () {
+        when(() => repository.updateProfilePicture(_picture))
+            .thenAnswer((_) => TaskEither.right(_profile()));
+        return ProfileCubit(repository: repository);
+      },
+      act: (cubit) => cubit.updateProfilePicture(_picture),
+      expect: () => [
+        isA<ProfileLoaded>().having(
+          (s) => s.profile.profilePicture,
+          'profilePicture',
+          _picture,
+        ),
+      ],
+    );
+
     group('update failures', () {
       test(
         'updateName: keeps the loaded state and returns the failure',
@@ -224,6 +246,34 @@ void main() {
           await cubit.loadProfile();
 
           final result = await cubit.updateOccupation(2);
+
+          expect(result.isLeft(), isTrue);
+          result.match(
+            (failure) => expect(failure.reason, 'boom'),
+            (_) => fail('Expected a failure, got a profile'),
+          );
+          expect(cubit.state, ProfileLoaded(_profile()));
+        },
+      );
+
+      test(
+        'updateProfilePicture: keeps the loaded state and returns the failure',
+        () async {
+          when(() => repository.getProfile())
+              .thenAnswer((_) => TaskEither.right(_profile()));
+          when(
+            () => repository.updateProfilePicture(
+              const ProfilePicture(iconId: 1, backgroundColorId: 2),
+            ),
+          ).thenAnswer((_) => TaskEither.left(const UnexpectedFailure('boom')));
+
+          final cubit = ProfileCubit(repository: repository);
+          addTearDown(cubit.close);
+          await cubit.loadProfile();
+
+          final result = await cubit.updateProfilePicture(
+            const ProfilePicture(iconId: 1, backgroundColorId: 2),
+          );
 
           expect(result.isLeft(), isTrue);
           result.match(
