@@ -12,7 +12,8 @@ class Screen extends StatelessWidget {
     this.onRefresh,
     super.key,
   }) : _body = ListView(
-         physics: const AlwaysScrollableScrollPhysics(),
+         physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics()),
          children: [...children, const Gap(16)],
        );
 
@@ -33,6 +34,7 @@ class Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AnalogAppBar(
         title: name,
         onBrightnessChanged: (brightness) {
