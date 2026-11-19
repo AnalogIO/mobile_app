@@ -28,7 +28,7 @@ dependencies:
   shared_preferences: ^2.5.4
   url_launcher: ^6.3.2
   confetti: ^0.8.0
-  material_ui: any
+  material_ui: 1.11.1
 dev_dependencies:
   bloc_test: ^10.0.0
   flutter_test:
