@@ -16,15 +16,19 @@ class ReceiptDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final details = switch (receipt) {
       PurchaseReceipt(
+        :final ticketName,
         :final numberOfTickets,
         :final priceDKK,
-        :final status,
         :final orderId,
+        :final orderDate,
       ) =>
         [
-          _Detail('Tickets', '$numberOfTickets'),
-          _Detail('Price', '$priceDKK DKK'),
-          _Detail('Status', status.label),
+          _Detail('Product', ticketName),
+          _Detail('Quantity', '$numberOfTickets'),
+          _Detail('Order Date',
+                  DateFormat('dd.MM.yyyy HH:mm').format(orderDate),
+                  ),
+          _Detail('Total in DKK (incl. 25% VAT)', '$priceDKK DKK'),
           _Detail('Order ID', orderId),
         ],
       VoucherReceipt(:final numberOfTickets) => [
@@ -44,16 +48,34 @@ class ReceiptDetailsScreen extends StatelessWidget {
       children: [
         ListTile(
           title: Text(
-            receipt.ticketName,
+            'Order Details',
             style: Theme.of(context).textTheme.titleLarge
-                ?.copyWith(fontWeight: .bold),
-          ),
-          subtitle: Text(DateFormat('dd.MM.yyyy HH:mm').format(date)),
+                ?.copyWith(fontWeight: .bold))
         ),
-        const Divider(),
-        for (final detail in details)
-          ListTile(title: Text(detail.label), trailing: Text(detail.value)),
-      ],
+        for (final detail in details) ...[
+          ListTile(
+            title: Text(
+              detail.label,
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(fontWeight: .bold),
+            ),
+            subtitle: Text(detail.value),
+          ),
+          const Divider(),
+        ],
+        ListTile(
+          title: Text(
+            'Seller',
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(fontWeight: .bold)),
+                subtitle: const Text('Cafe Analog\n' + 
+                               'Rued Langgaards Vej 7\n' +
+                               '2300 Copenhagen S\n' +
+                               'CVR: 34657343\n\n' + 
+                               'support@analog.dk\n' +
+                               'www.cafeanalog.dk'), 
+            ),
+      ]
     );
   }
 }
