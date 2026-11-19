@@ -1,6 +1,6 @@
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'select_menu_item_content.dart';
 part 'swipe_ticket_content.dart';

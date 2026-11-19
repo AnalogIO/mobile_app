@@ -3,10 +3,10 @@ import 'package:cafe_analog_app/core/widgets/failure_message.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/features/login/login.dart';
 import 'package:cafe_analog_app/features/settings/settings.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Screen shown when a new user opens the registration link from the
 /// "Welcome to Analog" email.

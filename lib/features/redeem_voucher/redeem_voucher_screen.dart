@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/form.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class RedeemVoucherScreen extends StatelessWidget {
   const new({super.key}) : initialVoucherCode = '';

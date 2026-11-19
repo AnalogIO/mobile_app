@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Show a simple snackbar with the given message.
 void showSnackBar({required BuildContext context, required String message}) {

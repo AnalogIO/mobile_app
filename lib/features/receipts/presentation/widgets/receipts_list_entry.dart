@@ -1,6 +1,6 @@
 import 'package:cafe_analog_app/features/receipts/models/models.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ReceiptsListEntry extends StatelessWidget {
   const new({required this.receipt, this.onTap, super.key});

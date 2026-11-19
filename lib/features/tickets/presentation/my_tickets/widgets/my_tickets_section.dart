@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 
 class MyTicketsSection extends StatelessWidget {
   const new({required this.ownedTicketGroups, super.key});

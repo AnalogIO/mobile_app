@@ -1,9 +1,9 @@
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/core/widgets/failure_message.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 class QuickStatsSection extends StatelessWidget {
   const new({super.key});

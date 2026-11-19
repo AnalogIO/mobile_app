@@ -2,8 +2,8 @@ import 'package:analog_api/analog_api.dart';
 import 'package:cafe_analog_app/core/environment.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 /// Creates and configures the Tonik API client and its Dio interceptors.

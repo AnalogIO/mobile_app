@@ -1,5 +1,5 @@
 import 'package:cafe_analog_app/core/widgets/screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Frequently asked questions, ported from the old app and updated for the
 /// magic-link / MobilePay flow.

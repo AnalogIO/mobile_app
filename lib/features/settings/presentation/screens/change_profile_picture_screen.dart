@@ -9,10 +9,10 @@ import 'package:cafe_analog_app/core/widgets/section_title.dart';
 import 'package:cafe_analog_app/core/widgets/user_icon.dart';
 import 'package:cafe_analog_app/features/settings/settings.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ChangeProfilePictureScreen extends StatelessWidget {
   const new({super.key});

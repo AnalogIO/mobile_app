@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A widget that fades in its child after a specified delay.
 class DelayedFadeIn extends StatefulWidget {

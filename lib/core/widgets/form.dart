@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The type of validation to apply to the form input.
 enum FormInputType { email, nonEmptyString }

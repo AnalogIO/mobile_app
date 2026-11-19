@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Forces a widget subtree to resolve theme-dependent values using light mode.
 class AlwaysLightTheme extends StatelessWidget {

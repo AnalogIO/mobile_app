@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/user_icon.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
-import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 class LeaderboardListEntry extends StatelessWidget {
   const new({required this.entry, super.key});

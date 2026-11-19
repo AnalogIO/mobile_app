@@ -2,9 +2,9 @@ import 'package:cafe_analog_app/app/pending_login_redirect_store.dart';
 import 'package:cafe_analog_app/core/loading_overlay.dart';
 import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/features/login/presentation/bloc/authentication_cubit.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A widget that listens to authentication state changes from [AuthCubit]
 /// and performs app-wide navigation and UI side effects:

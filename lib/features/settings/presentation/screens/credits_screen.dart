@@ -1,9 +1,9 @@
 import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/core/widgets/section_title.dart';
-import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _analogIoGitHubUrl = 'https://github.com/AnalogIO/';

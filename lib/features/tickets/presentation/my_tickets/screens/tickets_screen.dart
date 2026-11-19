@@ -2,8 +2,8 @@ import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.
 import 'package:cafe_analog_app/core/widgets/failure_message.dart';
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 
 class TicketsScreen extends StatelessWidget {
   const new({super.key});

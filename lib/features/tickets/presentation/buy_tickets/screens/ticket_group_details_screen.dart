@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Screen that shows details about a [PurchasableTicketGroup], including a
 /// button to purchase it.

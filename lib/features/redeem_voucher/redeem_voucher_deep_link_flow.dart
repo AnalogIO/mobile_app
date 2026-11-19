@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:cafe_analog_app/core/dialog.dart';
 import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A screen that wraps [RedeemVoucherScreen] to handle redeeming a voucher
 /// from a deep link.
