@@ -198,9 +198,10 @@ Scope cubits as low as possible:
 
 - Tests live in `test/`, mirroring the `lib/` layout where practical (`test/tickets/`, `test/core/`, `test/http/`). App-level tests (router, auth, app wiring) live at the `test/` root.
 - Cubit tests use `bloc_test` and `mocktail` mocks of the repository (see `test/tickets/owned_tickets_cubit_test.dart`).
-- Before pushing, run `make fix` (format + auto-fixes), `flutter analyze`, `flutter test`, and at least one `flutter build` for the platform you touched. Android debug builds of both flavours and iOS simulator builds run in CI; release-signing secrets are not available to pull requests.
+- Before pushing, run `make fix` (format + auto-fixes) and then `make check` (the format, analyze and test checks CI runs). CI builds Android debug for both flavours and the iOS simulator; release-signing secrets are not available to pull requests.
+- Flutter and Dart are pinned per project in [`.fvmrc`](.fvmrc) (setup in the [README](README.md)), so run them through `fvm` or the Make targets.
 - CI (`.github/workflows/main.yaml`) runs the same checks: format, analyze, tests with coverage, Android debug/release builds and iOS simulator builds, plus a spell check over all Markdown files. PR titles must follow the conventional commits spec (semantic-pull-request workflow).
-- When upgrading Flutter, also update the Android Gradle wrapper, Android Gradle Plugin and Kotlin Gradle Plugin to the versions used by the Flutter template (`flutter create` in a scratch project). Flutter refuses to build when the Gradle version is below its minimum, and the CI build jobs catch this.
+- When upgrading Flutter, pin the new release with `fvm install <version>` and `fvm use <version>`, update `environment.flutter` and `environment.sdk` in `pubspec.yaml` to match (see the [README](README.md)). Also, update the Android Gradle wrapper, Android Gradle Plugin and Kotlin Gradle Plugin to the versions used by the Flutter template (`fvm flutter create` in a scratch project). Flutter refuses to build when the Gradle version is below its minimum, and the CI build jobs catch this.
 
 ## Documentation
 
