@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/analog_circular_progress_indicator.dart';
 import 'package:cafe_analog_app/core/widgets/delayed_fade_in.dart';
-import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 class UseTicketLoadingScreen extends StatelessWidget {
   const new({super.key});

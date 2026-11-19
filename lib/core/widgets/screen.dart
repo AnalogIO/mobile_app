@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/app/app_brightness_provider.dart';
 import 'package:cafe_analog_app/core/widgets/app_bar.dart';
-import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 class Screen extends StatelessWidget {
   /// Creates a Screen with a ListView body and optional

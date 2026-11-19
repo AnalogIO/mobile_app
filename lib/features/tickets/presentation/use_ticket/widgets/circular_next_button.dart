@@ -1,6 +1,6 @@
 // Modified version of https://github.com/imtoori/flutter-slide-to-act
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CircularNextButton extends StatelessWidget {
   const new({this.onPressed, super.key});

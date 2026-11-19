@@ -5,10 +5,10 @@ import 'package:cafe_analog_app/core/failures.dart';
 import 'package:cafe_analog_app/core/loading_overlay.dart';
 import 'package:cafe_analog_app/core/snackbar.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Coordinates the purchase flow by listening to [PurchaseFlowCubit] state

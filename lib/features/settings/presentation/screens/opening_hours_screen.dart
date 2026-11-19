@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/features/settings/settings.dart';
-import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 class OpeningHoursScreen extends StatelessWidget {
   const new({super.key});

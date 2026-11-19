@@ -1,9 +1,9 @@
 import 'package:cafe_analog_app/core/loading_overlay.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:confetti/confetti.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 Future<void> redeemVoucher({
   required BuildContext context,

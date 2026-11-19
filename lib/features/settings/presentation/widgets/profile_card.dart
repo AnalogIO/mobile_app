@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/user_icon.dart';
 import 'package:cafe_analog_app/features/settings/settings.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ProfileCard extends StatelessWidget {
   const new({required this.profile, super.key});
