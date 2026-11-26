@@ -100,7 +100,6 @@ class _SwipedTicketReceiptState extends State<SwipedTicketReceipt> {
                                   widget.drinkName,
                                   style: TextTheme.of(context).headlineLarge
                                       ?.copyWith(fontWeight: .bold),
-                                  // style: AppTextStyle.ownedTicket,
                                 ),
                               ),
                               const Gap(12),
