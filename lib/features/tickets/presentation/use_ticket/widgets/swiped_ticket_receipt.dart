@@ -14,7 +14,7 @@ final String Function(DateTime date) _formatDate = DateFormat(
 ).format;
 
 /// A receipt that is shown when a ticket is swiped.
-class SwipedTicketReceipt extends StatefulWidget {
+class SwipedTicketReceipt extends StatelessWidget {
   const new({
     required this.productName,
     required this.drinkName,
@@ -29,14 +29,6 @@ class SwipedTicketReceipt extends StatefulWidget {
   final bool isTestEnvironment;
 
   @override
-  State<SwipedTicketReceipt> createState() => _SwipedTicketReceiptState();
-}
-
-class _SwipedTicketReceiptState extends State<SwipedTicketReceipt> {
-  DateTime initialTime = DateTime.now().toLocal();
-  double textShadowOpacity = 0;
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
@@ -44,17 +36,6 @@ class _SwipedTicketReceiptState extends State<SwipedTicketReceipt> {
         builder: (context) {
           return Tilt(
             fps: 150,
-            onGestureMove: (model, _) {
-              if (model.angle.dx.abs() > 1 || model.angle.dy.abs() > 1) {
-                setState(() {
-                  textShadowOpacity = 0.3;
-                });
-              } else {
-                setState(() {
-                  textShadowOpacity = 0;
-                });
-              }
-            },
             tiltConfig: const TiltConfig(
               enableReverse: true,
               leaveCurve: Curves.easeInOutCubicEmphasized,
@@ -70,7 +51,7 @@ class _SwipedTicketReceiptState extends State<SwipedTicketReceipt> {
               child: Container(
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  color: widget.isTestEnvironment
+                  color: isTestEnvironment
                       ? Theme.of(context).colorScheme.error.withAlpha(200)
                       : Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(24),
@@ -92,23 +73,20 @@ class _SwipedTicketReceiptState extends State<SwipedTicketReceipt> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Swiped via ${widget.productName} ticket'),
+                              Text('Swiped via $productName ticket'),
                               const Gap(16),
                               TiltParallax(
                                 offset: const Offset(2, 2),
                                 child: Text(
-                                  widget.drinkName,
+                                  drinkName,
                                   style: TextTheme.of(context).headlineLarge
                                       ?.copyWith(fontWeight: .bold),
                                 ),
                               ),
                               const Gap(12),
-                              _TimeAgoText(
-                                initialTime: initialTime,
-                                nowTime: DateTime.now(),
-                              ),
+                              _TimeAgoText(initialTime: time),
                               Text(
-                                _formatDate(initialTime),
+                                _formatDate(time),
                                 style: TextTheme.of(context).bodyLarge,
                               ),
                             ],
@@ -147,16 +125,23 @@ class _SwipedTicketReceiptState extends State<SwipedTicketReceipt> {
 
 /// A human-readable "time ago" text that updates in real time.
 class _TimeAgoText extends StatelessWidget {
-  const new({required this.initialTime, required this.nowTime});
+  const new({required this.initialTime});
 
   final DateTime initialTime;
-  final DateTime nowTime;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      timeSince(initialTime, now: nowTime),
-      style: TextTheme.of(context).bodyLarge?.copyWith(fontWeight: .bold),
+    return StreamBuilder(
+      stream: Stream.periodic(
+        const Duration(seconds: 1),
+        (_) => DateTime.now(),
+      ),
+      builder: (context, asyncSnapshot) {
+        return Text(
+          timeSince(initialTime, now: asyncSnapshot.data),
+          style: TextTheme.of(context).bodyLarge?.copyWith(fontWeight: .bold),
+        );
+      },
     );
   }
 }
