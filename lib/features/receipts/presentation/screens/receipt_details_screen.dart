@@ -1,5 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/screen.dart';
+import 'package:cafe_analog_app/core/widgets/section_title.dart';
 import 'package:cafe_analog_app/features/receipts/receipts.dart';
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -16,15 +18,19 @@ class ReceiptDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final details = switch (receipt) {
       PurchaseReceipt(
+        :final ticketName,
         :final numberOfTickets,
         :final priceDKK,
-        :final status,
         :final orderId,
+        :final orderDate,
       ) =>
         [
-          _Detail('Tickets', '$numberOfTickets'),
-          _Detail('Price', '$priceDKK DKK'),
-          _Detail('Status', status.label),
+          _Detail('Product', ticketName),
+          _Detail('Quantity', '$numberOfTickets'),
+          _Detail('Order Date',
+                  DateFormat('dd.MM.yyyy HH:mm').format(orderDate),
+                  ),
+          _Detail('Total in DKK (incl. 25% VAT)', 'DKK $priceDKK,-'),
           _Detail('Order ID', orderId),
         ],
       VoucherReceipt(:final numberOfTickets) => [
@@ -40,20 +46,47 @@ class ReceiptDetailsScreen extends StatelessWidget {
     };
 
     return Screen.listView(
-      name: 'Receipt',
+      name: 'Purchase receipt',
       children: [
         ListTile(
           title: Text(
-            receipt.ticketName,
+            'Order details',
             style: Theme.of(context).textTheme.titleLarge
-                ?.copyWith(fontWeight: .bold),
-          ),
-          subtitle: Text(DateFormat('dd.MM.yyyy HH:mm').format(date)),
+                ?.copyWith(fontWeight: .bold))
         ),
-        const Divider(),
-        for (final detail in details)
-          ListTile(title: Text(detail.label), trailing: Text(detail.value)),
-      ],
+        for (final detail in details) ...[
+          ListTile(
+            visualDensity: .compact,
+            title: Text(
+              detail.label,
+            ),
+            subtitle: Text(detail.value),
+          ),
+          const Divider(),
+        ],
+        const Gap(16),
+        const SectionTitle('Seller'),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const Expanded(
+              child: ListTile( 
+                subtitle: Text(
+                'Cafe Analog\n'
+                'Rued Langgaards Vej 7\n'
+                '2300 Copenhagen S\n'
+                'CVR: 34657343\n\n'
+                'support@analog.dk\n'
+                'www.cafeanalog.dk',
+              ),)
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16, bottom: 10),
+              child: Image.asset('assets/images/logo-dark.png', width: 67),// 67 lets goo
+            ),
+          ],
+        )
+      ]
     );
   }
 }
