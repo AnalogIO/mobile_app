@@ -34,11 +34,11 @@ class SwipedTicketReceipt extends StatefulWidget {
 }
 
 class _SwipedTicketReceiptState extends State<SwipedTicketReceipt> {
+  DateTime initialTime = DateTime.now().toLocal();
   double textShadowOpacity = 0;
 
   @override
   Widget build(BuildContext context) {
-    final localTime = widget.time.toLocal();
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
       child: AlwaysLightTheme(
@@ -95,48 +95,22 @@ class _SwipedTicketReceiptState extends State<SwipedTicketReceipt> {
                             children: [
                               Text('Swiped via ${widget.productName} ticket'),
                               const Gap(16),
-                              Stack(
-                                children: [
-                                  TiltParallax(
-                                    offset: const Offset(-1, -1),
-                                    child: AnimatedOpacity(
-                                      opacity: textShadowOpacity,
-                                      duration: const Duration(
-                                        milliseconds: 200,
-                                      ),
-                                      child: ImageFiltered(
-                                        imageFilter: ImageFilter.blur(
-                                          sigmaX: 3,
-                                          sigmaY: 3,
-                                        ),
-                                        child: Text(
-                                          widget.drinkName,
-                                          style: TextTheme.of(context)
-                                              .headlineLarge
-                                              ?.copyWith(
-                                                fontWeight: .bold,
-                                                color: Colors.black,
-                                              ),
-                                          // style: AppTextStyle.ownedTicket,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TiltParallax(
-                                    offset: const Offset(3, 3),
-                                    child: Text(
-                                      widget.drinkName,
-                                      style: TextTheme.of(context).headlineLarge
-                                          ?.copyWith(fontWeight: .bold),
-                                      // style: AppTextStyle.ownedTicket,
-                                    ),
-                                  ),
-                                ],
+                              TiltParallax(
+                                offset: const Offset(2, 2),
+                                child: Text(
+                                  widget.drinkName,
+                                  style: TextTheme.of(context).headlineLarge
+                                      ?.copyWith(fontWeight: .bold),
+                                  // style: AppTextStyle.ownedTicket,
+                                ),
                               ),
                               const Gap(12),
-                              _TimeAgoText(localTime: localTime),
+                              _TimeAgoText(
+                                initialTime: initialTime,
+                                nowTime: DateTime.now(),
+                              ),
                               Text(
-                                _formatDate(localTime),
+                                _formatDate(initialTime),
                                 style: TextTheme.of(context).bodyLarge,
                               ),
                             ],
@@ -175,25 +149,16 @@ class _SwipedTicketReceiptState extends State<SwipedTicketReceipt> {
 
 /// A human-readable "time ago" text that updates in real time.
 class _TimeAgoText extends StatelessWidget {
-  const new({required this.localTime});
+  const new({required this.initialTime, required this.nowTime});
 
-  final DateTime localTime;
+  final DateTime initialTime;
+  final DateTime nowTime;
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DateTime>(
-      stream: Stream.periodic(
-        const Duration(seconds: 1),
-        (_) => DateTime.now(),
-      ),
-      initialData: DateTime.now(),
-      builder: (context, snapshot) {
-        final now = snapshot.data!;
-        return Text(
-          timeSince(localTime, now: now),
-          style: TextTheme.of(context).bodyLarge?.copyWith(fontWeight: .bold),
-        );
-      },
+    return Text(
+      timeSince(initialTime, now: nowTime),
+      style: TextTheme.of(context).bodyLarge?.copyWith(fontWeight: .bold),
     );
   }
 }
