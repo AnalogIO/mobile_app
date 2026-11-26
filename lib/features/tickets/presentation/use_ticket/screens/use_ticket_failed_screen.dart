@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class UseTicketFailedScreen extends StatelessWidget {
   const new({required this.reason, super.key});

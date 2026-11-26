@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A decorative background with rotating beans used by [SwipedTicketReceipt].
 class RotatingBeansBackground extends StatelessWidget {

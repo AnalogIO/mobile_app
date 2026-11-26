@@ -5,10 +5,10 @@ import 'package:cafe_analog_app/core/responsive.dart';
 import 'package:cafe_analog_app/core/time_since.dart';
 import 'package:cafe_analog_app/core/widgets/always_light_theme.dart';
 import 'package:cafe_analog_app/features/tickets/presentation/use_ticket/widgets/rotating_beans_background.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_tilt/flutter_tilt.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 final String Function(DateTime date) _formatDate = DateFormat(
   'EEE d MMM y HH:mm',

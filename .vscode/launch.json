@@ -16,6 +16,8 @@
         "lib/main.dart"
       ]
     },
+    // `localhost` is the device itself. This config is for the iOS simulator
+    // (or an Android emulator after `adb reverse tcp:8080 tcp:8080`).
     {
       "name": "Debug mode (local backend)",
       "request": "launch",
@@ -27,6 +29,21 @@
         "--target",
         "lib/main.dart",
         "--dart-define=API_BASE_URL=http://localhost:8080"
+      ]
+    },
+    // The Android emulator reaches the host machine (and the local backend)
+    // through 10.0.2.2, so it cannot use the `localhost` config above.
+    {
+      "name": "Debug mode (local backend, Android emulator)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--flavor",
+        "development",
+        "--target",
+        "lib/main.dart",
+        "--dart-define=API_BASE_URL=http://10.0.2.2:8080"
       ]
     },
     {

@@ -1,4 +1,5 @@
 import 'package:cafe_analog_app/core/failures.dart';
+import 'package:cafe_analog_app/core/profile_picture.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart' as api;
 import 'package:collection/collection.dart';
@@ -42,6 +43,13 @@ class StatisticsRepository {
                     rank: entry.rank,
                     drinksConsumed: entry.score,
                     isCurrentUser: entry.id == currentUserId,
+                    // The generated enums preserve the backend enum order,
+                    // which is also the order of the icon assets and the
+                    // palette in `UserIcon`.
+                    profilePicture: ProfilePicture(
+                      iconId: entry.profileIcon.index,
+                      backgroundColorId: entry.profileBackgroundColor.index,
+                    ),
                   );
                 }
 

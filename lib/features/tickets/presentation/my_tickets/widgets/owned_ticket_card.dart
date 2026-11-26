@@ -1,9 +1,9 @@
 import 'package:cafe_analog_app/features/receipts/receipts.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 class OwnedTicketCard extends StatelessWidget {
   const new({required this.ownedGroup, super.key});

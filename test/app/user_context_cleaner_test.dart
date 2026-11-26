@@ -1,5 +1,4 @@
 import 'package:cafe_analog_app/app/user_context_cleaner.dart';
-import 'package:cafe_analog_app/features/settings/settings.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -27,13 +26,10 @@ void main() {
     },
   );
 
-  test('clears remembered drinks and the profile picture', () async {
+  test('clears remembered drinks', () async {
     await cleaner.clear();
 
     verify(() => store.remove(RememberedTicketDrinkLocalStore.storageKey))
-        .called(1);
-    verify(() => store.remove(ProfilePictureLocalStore.iconKey)).called(1);
-    verify(() => store.remove(ProfilePictureLocalStore.backgroundColorKey))
         .called(1);
   });
 
@@ -48,8 +44,6 @@ void main() {
     await cleaner.clear();
 
     verify(() => store.remove(RememberedTicketDrinkLocalStore.storageKey))
-        .called(1);
-    verify(() => store.remove(ProfilePictureLocalStore.backgroundColorKey))
         .called(1);
   });
 }

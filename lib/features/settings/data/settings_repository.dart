@@ -6,15 +6,10 @@ import 'package:fpdart/fpdart.dart';
 
 /// Handles data operations related to the user's profile.
 class SettingsRepository {
-  const new({
-    required this._accountApi,
-    required this._programmesApi,
-    required this._profilePictureLocalStore,
-  });
+  const new({required this._accountApi, required this._programmesApi});
 
   final AccountApi _accountApi;
   final ProgrammesApi _programmesApi;
-  final ProfilePictureLocalStore _profilePictureLocalStore;
 
   /// Fetches the current user's profile.
   TaskEither<Failure, UserProfile> getProfile() {
@@ -55,19 +50,16 @@ class SettingsRepository {
     return _accountApi.requestAccountDeletion();
   }
 
-  /// Fetches the user's chosen profile picture, or `none()` when not set.
-  ///
-  /// The picture is stored locally until the backend supports it.
-  TaskEither<Failure, Option<ProfilePicture>> getProfilePicture() {
-    return TaskEither.tryCatch(
-      () async => _profilePictureLocalStore.getProfilePicture(),
-      (error, _) => LocalStorageFailure(error.toString()),
+  /// Updates the user's chosen profile picture.
+  TaskEither<Failure, UserProfile> updateProfilePicture(
+    ProfilePicture picture,
+  ) {
+    final request = api.UpdateUserRequest(
+      profileIcon: api.ProfileIcon.values[picture.iconId],
+      profileBackgroundColor:
+          api.ProfileBackgroundColor.values[picture.backgroundColorId],
     );
-  }
-
-  /// Saves the user's chosen profile picture locally.
-  TaskEither<Failure, Unit> saveProfilePicture(ProfilePicture picture) {
-    return _profilePictureLocalStore.saveProfilePicture(picture);
+    return _accountApi.updateUser(request).map(_mapToProfile);
   }
 
   /// Fetches the list of available study programmes (occupations).
@@ -97,6 +89,12 @@ class SettingsRepository {
           : programme.shortName,
       programmeId: programme.id,
       appearAnonymous: response.privacyActivated,
+      // The generated enums preserve the backend enum order, which is also the
+      // order of the icon assets and the palette in `UserIcon`.
+      profilePicture: ProfilePicture(
+        iconId: response.profileIcon.index,
+        backgroundColorId: response.profileBackgroundColor.index,
+      ),
     );
   }
 }

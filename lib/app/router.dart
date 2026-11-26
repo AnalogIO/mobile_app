@@ -10,11 +10,10 @@ import 'package:cafe_analog_app/features/redeem_voucher/redeem_voucher.dart';
 import 'package:cafe_analog_app/features/settings/settings.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AnalogGoRouter {
   new _internal();
@@ -282,7 +281,7 @@ class AnalogGoRouter {
             StatefulShellBranch(
               routes: [
                 ShellRoute(
-                  // Provide the profile cubits to all routes under /settings
+                  // Provide the profile cubit to all routes under /settings
                   builder: (context, state, child) {
                     return MultiBlocProvider(
                       providers: [
@@ -292,15 +291,6 @@ class AnalogGoRouter {
                               repository: context.read(),
                             );
                             unawaited(cubit.loadProfile());
-                            return cubit;
-                          },
-                        ),
-                        BlocProvider(
-                          create: (context) {
-                            final cubit = ProfilePictureCubit(
-                              repository: context.read(),
-                            );
-                            unawaited(cubit.loadProfilePicture());
                             return cubit;
                           },
                         ),

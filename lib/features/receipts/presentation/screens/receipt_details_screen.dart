@@ -1,7 +1,7 @@
 import 'package:cafe_analog_app/core/widgets/screen.dart';
 import 'package:cafe_analog_app/features/receipts/receipts.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Read-only details for a receipt selected from the receipts list.
 ///

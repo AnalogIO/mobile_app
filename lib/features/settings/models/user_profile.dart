@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/core/profile_picture.dart';
 import 'package:equatable/equatable.dart';
 
 /// The current user's profile as displayed in the settings.
@@ -9,6 +10,7 @@ class UserProfile extends Equatable {
     required this.occupation,
     required this.programmeId,
     required this.appearAnonymous,
+    required this.profilePicture,
   });
 
   final int id;
@@ -25,6 +27,9 @@ class UserProfile extends Equatable {
   /// Whether the user's name is hidden from the leaderboard.
   final bool appearAnonymous;
 
+  /// The icon and background color shown for the user.
+  final ProfilePicture profilePicture;
+
   @override
   List<Object?> get props => [
     id,
@@ -33,5 +38,6 @@ class UserProfile extends Equatable {
     occupation,
     programmeId,
     appearAnonymous,
+    profilePicture,
   ];
 }

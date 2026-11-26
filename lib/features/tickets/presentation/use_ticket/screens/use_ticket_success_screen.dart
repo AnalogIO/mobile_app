@@ -1,6 +1,6 @@
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:material_ui/material_ui.dart';
 
 class UseTicketSuccessScreen extends StatelessWidget {
   const new({

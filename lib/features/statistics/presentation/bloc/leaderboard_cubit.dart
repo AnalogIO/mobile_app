@@ -10,6 +10,14 @@ class LeaderboardCubit extends Cubit<LeaderboardState> {
 
   final StatisticsRepository _repository;
 
+  /// Whether a load was requested while another one was in flight.
+  ///
+  /// App-scoped callers (for example the settings feature after a profile
+  /// change) can request a refresh at any time. Keep a single request queued
+  /// so their change is not missed, then run it once the in-flight load
+  /// settles.
+  bool _refreshQueued = false;
+
   /// Loads the leaderboard for the currently selected filter.
   ///
   /// Behaves as both an initial load and a refresh: if data is already
@@ -20,6 +28,7 @@ class LeaderboardCubit extends Cubit<LeaderboardState> {
     final currentState = state;
     if (currentState is LeaderboardLoading ||
         currentState is LeaderboardRefreshing) {
+      _refreshQueued = true;
       return;
     }
 
@@ -62,5 +71,9 @@ class LeaderboardCubit extends Cubit<LeaderboardState> {
       (failure) => emit(LeaderboardFailure(failure.reason, filter: filter)),
       (leaderboard) => emit(LeaderboardLoaded(leaderboard, filter: filter)),
     );
+
+    if (!_refreshQueued) return;
+    _refreshQueued = false;
+    await loadLeaderboard();
   }
 }

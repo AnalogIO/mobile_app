@@ -23,7 +23,7 @@
 // SOFTWARE.
 
 import 'package:cafe_analog_app/features/tickets/tickets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Slider call to action component
 class SlideAction extends StatefulWidget {

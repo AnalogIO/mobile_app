@@ -1,46 +1,33 @@
-# Detect OS for cross-platform sed compatibility
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Darwin)
-	SED_INPLACE := sed -i '' -E
-else
-	SED_INPLACE := sed -i -E
-endif
+FVM ?= fvm
+FLUTTER ?= $(FVM) flutter
+DART ?= $(FVM) dart
 
-.PHONY: help upgrade-flutter upgrade-deps api api-check api-update clean get swagger coverage fix
+.PHONY: help setup check-flutter check upgrade-deps api api-check api-update clean get swagger coverage fix
 
 .DEFAULT_GOAL := help
 
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-upgrade-flutter: ## Upgrade Flutter/Dart and pin versions in config files
-	flutter upgrade
-	@set -eu; \
-	flutter_version=$$(flutter --version | awk 'NR == 1 { print $$2 }'); \
-	dart_version=$$(dart --version 2>&1 | awk '{print $$4}'); \
-	if [ -z "$$flutter_version" ] || [ -z "$$dart_version" ]; then \
-		echo "Failed to detect Flutter/Dart versions"; \
+# Runs before every Flutter/Dart target so a missing command fails with a hint
+# instead of "command not found".
+check-flutter:
+	@command -v $(firstword $(FLUTTER)) >/dev/null 2>&1 || { \
+		echo "'$(FLUTTER)' not found: Flutter is managed by FVM here (see .fvmrc)."; \
+		echo "Install it (https://fvm.app) and run 'make setup'."; \
 		exit 1; \
-	fi; \
-	echo "Updating Flutter version to $$flutter_version and Dart version to $$dart_version"; \
-	awk -v flutter_version="$$flutter_version" -v dart_version="$$dart_version" '\
-		BEGIN { in_environment = 0 } \
-		/^environment:/ { in_environment = 1; print; next } \
-		in_environment && /^[^[:space:]]/ { in_environment = 0 } \
-		in_environment && /^  sdk:/ { print "  sdk: ^" dart_version; next } \
-		in_environment && /^  flutter:/ { print "  flutter: " flutter_version; next } \
-		{ print } \
-	' pubspec.yaml > pubspec.yaml.tmp; \
-	mv pubspec.yaml.tmp pubspec.yaml; \
-	$(SED_INPLACE) "s/^([[:space:]]*flutter_version:).*/\\1 $$flutter_version/" .github/workflows/main.yaml
-	flutter pub get
+	}
 
-upgrade-deps: ## Upgrade all dependencies to latest versions
-	flutter pub upgrade --major-versions
+setup: check-flutter ## Install the pinned Flutter SDK (fvm) and fetch dependencies
+	$(FVM) install
+	$(FLUTTER) pub get
 
-api: ## Generate the Tonik API client from the committed v2 spec
-	dart run tonik --package-name=analog_api --spec=swagger/coffeecard_api_v2.json --output-dir=packages --backend=dio --overwrite
-	dart format packages/analog_api/lib
+upgrade-deps: check-flutter ## Upgrade all dependencies to latest versions
+	$(FLUTTER) pub upgrade --major-versions
+
+api: check-flutter ## Generate the Tonik API client from the committed v2 spec
+	$(DART) run tonik --package-name=analog_api --spec=swagger/coffeecard_api_v2.json --output-dir=packages --backend=dio --overwrite
+	$(DART) format packages/analog_api/lib
 
 api-check: api ## Regenerate the client and fail if the committed output drifted
 	@if ! git diff --quiet -- packages/analog_api || [ -n "$$(git ls-files --others --exclude-standard packages/analog_api)" ]; then \
@@ -51,20 +38,25 @@ api-check: api ## Regenerate the client and fail if the committed output drifted
 
 api-update: swagger api ## Fetch the latest v2 spec, then regenerate the client
 
-clean: ## Clean build artifacts and reset dependencies
-	flutter clean
-	flutter pub get
+clean: check-flutter ## Clean build artifacts and reset dependencies
+	$(FLUTTER) clean
+	$(FLUTTER) pub get
 
-get: ## Get dependencies
-	flutter pub get
+get: check-flutter ## Get dependencies
+	$(FLUTTER) pub get
 
 swagger: ## Fetch the latest v2 OpenAPI spec
 	curl -o swagger/coffeecard_api_v2.json https://core.dev.analogio.dk/swagger/v2/swagger.json
 
-coverage: ## Run tests with coverage and generate report
-	flutter test --coverage
+coverage: check-flutter ## Run tests with coverage and generate report
+	$(FLUTTER) test --coverage
 	genhtml coverage/lcov.info -o coverage/html
 
-fix: ## Format code and fix issues that can be fixed automatically
-	dart format .
-	dart fix --apply
+check: check-flutter ## Run the checks CI runs (format, analyze, tests)
+	$(DART) format --set-exit-if-changed --output=none lib test
+	$(FLUTTER) analyze lib test
+	$(FLUTTER) test
+
+fix: check-flutter ## Format code and fix issues that can be fixed automatically
+	$(DART) format .
+	$(DART) fix --apply

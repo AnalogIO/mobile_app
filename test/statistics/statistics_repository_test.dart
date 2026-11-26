@@ -1,3 +1,4 @@
+import 'package:cafe_analog_app/core/profile_picture.dart';
 import 'package:cafe_analog_app/features/statistics/statistics.dart';
 import 'package:cafe_analog_app/infrastructure/http/http.dart' as api;
 import 'package:flutter_test/flutter_test.dart';
@@ -59,6 +60,16 @@ void main() {
       expect(entries.map((entry) => entry.userId), [1, 99]);
       expect(entries.last.isCurrentUser, isTrue);
       expect(entries.last.rank, 0);
+      expect(
+        entries.first.profilePicture,
+        // `coffeeCup` is the 1st icon and `mossGreen` the 9th color.
+        const ProfilePicture(iconId: 0, backgroundColorId: 8),
+      );
+      expect(
+        entries.last.profilePicture,
+        // `teabag` is the 10th icon and `aqua` the 8th color.
+        const ProfilePicture(iconId: 9, backgroundColorId: 7),
+      );
     },
   );
 
